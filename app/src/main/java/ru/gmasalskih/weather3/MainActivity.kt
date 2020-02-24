@@ -2,12 +2,14 @@ package ru.gmasalskih.weather3
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import ru.gmasalskih.weather3.R
+import androidx.databinding.DataBindingUtil
+import ru.gmasalskih.weather3.databinding.ActivityMainBinding
+
 
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        val binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
     }
 }
