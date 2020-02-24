@@ -1,7 +1,8 @@
-package ru.gmasalskih.weather3
+package ru.gmasalskih.weather3.screens
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import ru.gmasalskih.weather3.R
 
 class MainActivity : AppCompatActivity() {
 
