@@ -11,16 +11,51 @@
         android:label="fragment_weather"
         tools:layout="@layout/fragment_weather" >
         <action
-            android:id="@+id/action_weatherFragment_to_aboutFragment"
-            app:destination="@id/aboutFragment" />
+            android:id="@+id/action_weatherFragment_to_citySelectionFragment"
+            app:destination="@id/citySelectionFragment" />
+        <action
+            android:id="@+id/action_weatherFragment_to_dateSelectionFragment"
+            app:destination="@id/dateSelectionFragment" />
+        <action
+            android:id="@+id/action_weatherFragment_to_cityWebPageFragment"
+            app:destination="@id/cityWebPageFragment" />
     </fragment>
     <fragment
         android:id="@+id/aboutFragment"
         android:name="ru.gmasalskih.weather3.screens.about.AboutFragment"
         android:label="fragment_about"
-        tools:layout="@layout/fragment_about" >
+        tools:layout="@layout/fragment_about" />
+    <fragment
+        android:id="@+id/citySelectionFragment"
+        android:name="ru.gmasalskih.weather3.screens.city_selection.CitySelectionFragment"
+        android:label="fragment_city_selection"
+        tools:layout="@layout/fragment_city_selection" >
         <action
-            android:id="@+id/action_aboutFragment_to_weatherFragment"
+            android:id="@+id/action_citySelectionFragment_to_weatherFragment"
             app:destination="@id/weatherFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/cityWebPageFragment"
+        android:name="ru.gmasalskih.weather3.screens.city_web_page.CityWebPageFragment"
+        android:label="fragment_city_web_page"
+        tools:layout="@layout/fragment_city_web_page" />
+    <fragment
+        android:id="@+id/dateSelectionFragment"
+        android:name="ru.gmasalskih.weather3.screens.date_selection.DateSelectionFragment"
+        android:label="fragment_date_selection"
+        tools:layout="@layout/fragment_date_selection" >
+        <action
+            android:id="@+id/action_dateSelectionFragment_to_weatherFragment"
+            app:destination="@id/weatherFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/favoriteCityFragment"
+        android:name="ru.gmasalskih.weather3.screens.favorite_city.FavoriteCityFragment"
+        android:label="fragment_favorite_city"
+        tools:layout="@layout/fragment_favorite_city" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="ru.gmasalskih.weather3.screens.settings.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings" />
 </navigation>

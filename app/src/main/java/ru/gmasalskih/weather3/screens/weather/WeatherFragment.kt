@@ -9,14 +9,23 @@ import androidx.navigation.findNavController
 import ru.gmasalskih.weather3.databinding.FragmentWeatherBinding
 
 class WeatherFragment : Fragment() {
+
+    lateinit var binding: FragmentWeatherBinding
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding = FragmentWeatherBinding.inflate(inflater, container, false)
-        binding.textView.setOnClickListener {
-            it.findNavController().navigate(WeatherFragmentDirections.actionWeatherFragmentToAboutFragment())
+        binding = FragmentWeatherBinding.inflate(inflater, container, false)
+        binding.btnCitySelection.setOnClickListener {
+            it.findNavController().navigate(WeatherFragmentDirections.actionWeatherFragmentToCitySelectionFragment())
+        }
+        binding.btnCityWebPage.setOnClickListener {
+            it.findNavController().navigate(WeatherFragmentDirections.actionWeatherFragmentToCityWebPageFragment())
+        }
+        binding.btnDateSelection.setOnClickListener {
+            it.findNavController().navigate(WeatherFragmentDirections.actionWeatherFragmentToDateSelectionFragment())
         }
         return binding.root
     }

@@ -16,7 +16,7 @@ class AboutFragment : Fragment() {
     ): View? {
         val binding = FragmentAboutBinding.inflate(inflater, container, false)
         binding.textView2.setOnClickListener {
-            it.findNavController().navigate(AboutFragmentDirections.actionAboutFragmentToWeatherFragment())
+
         }
         return binding.root
     }

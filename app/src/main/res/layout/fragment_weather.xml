@@ -19,6 +19,40 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/btn_city_selection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="City selection"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_city_web_page"
+            app:layout_constraintEnd_toStartOf="@+id/btn_city_web_page"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/btn_city_web_page" />
+
+        <Button
+            android:id="@+id/btn_city_web_page"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="city web page"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btn_date_selection"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btn_city_selection"
+            app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+        <Button
+            android:id="@+id/btn_date_selection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="date selection"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_city_web_page"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btn_city_web_page"
+            app:layout_constraintTop_toTopOf="@+id/btn_city_web_page" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>
