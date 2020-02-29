@@ -17,9 +17,6 @@ class CitySelectionFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentCitySelectionBinding.inflate(inflater, container, false)
-        binding.textView7.setOnClickListener {
-
-        }
         return binding.root
     }
 

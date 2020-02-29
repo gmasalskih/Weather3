@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.findNavController
 import ru.gmasalskih.weather3.databinding.FragmentFavoriteCityBinding
 
 class FavoriteCityFragment : Fragment() {
@@ -17,9 +16,6 @@ class FavoriteCityFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentFavoriteCityBinding.inflate(inflater, container, false)
-        binding.textView4.setOnClickListener {
-
-        }
         return binding.root
     }
 

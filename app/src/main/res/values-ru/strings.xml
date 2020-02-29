@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Погода3</string>
+    <string name="about">О приложении</string>
+    <string name="settings">Настройки</string>
+    <string name="favorite_city">Избранные города</string>
+    <string name="city_selection">Выбор города</string>
+    <string name="city_web_page">Веб-страница города</string>
+    <string name="date_selection">Выбор даты</string>
+    <string name="weather_city">Погода в городе</string>
+    <string name="about_text">Это мое первое учебное приложение!</string>
+    <string name="item">Item</string>
+</resources>
