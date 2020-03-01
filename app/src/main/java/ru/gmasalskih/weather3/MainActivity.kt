@@ -8,6 +8,7 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import ru.gmasalskih.weather3.databinding.ActivityMainBinding
+import ru.gmasalskih.weather3.utils.ObserveLifeCycle
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,7 +20,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         drawerLayout = binding.drawerLayout
-
         navController = findNavController(R.id.navHost)
         NavigationUI.setupActionBarWithNavController(this, navController, drawerLayout)
         NavigationUI.setupWithNavController(binding.navView, navController)

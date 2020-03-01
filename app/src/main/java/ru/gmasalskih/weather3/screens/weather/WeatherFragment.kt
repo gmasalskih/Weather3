@@ -7,10 +7,13 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import ru.gmasalskih.weather3.R
 import ru.gmasalskih.weather3.databinding.FragmentWeatherBinding
+import ru.gmasalskih.weather3.utils.ObserveLifeCycle
+import timber.log.Timber
 
 class WeatherFragment : Fragment() {
 
     lateinit var binding: FragmentWeatherBinding
+    lateinit var observeLifeCycle: ObserveLifeCycle
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,12 +34,18 @@ class WeatherFragment : Fragment() {
                 .navigate(WeatherFragmentDirections.actionWeatherFragmentToDateSelectionFragment())
         }
         setHasOptionsMenu(true)
+        observeLifeCycle = ObserveLifeCycle(lifecycle)
         return binding.root
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.overflow_menu, menu)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        Timber.i("--- onSaveInstanceState")
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
