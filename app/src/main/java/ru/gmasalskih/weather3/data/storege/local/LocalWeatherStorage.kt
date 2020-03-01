@@ -4,7 +4,7 @@ import ru.gmasalskih.weather3.data.*
 
 val localWeatherStorage = (1..7).map {
     Weather(
-        city = localCityStorage[it],
+        city = localCityStorage[it-1],
         temp = it,
         timestamp = "2020-01-0$it",
         windSpeed = it,

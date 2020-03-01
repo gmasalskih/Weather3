@@ -1,6 +1,6 @@
 package ru.gmasalskih.weather3.data
 
-enum class Cloudiness(value: Double) {
+enum class Cloudiness(val value: Double) {
     CLEAR(0.0),
     PARTLY_CLOUDY(0.25),
     CLOUDY_CLEAR_AT_TIMES(0.5),

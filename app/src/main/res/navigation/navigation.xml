@@ -22,6 +22,10 @@
             <argument
                 android:name="urlWebPage" />
         </action>
+        <argument
+            android:name="cityName"
+            app:argType="string"
+            android:defaultValue="City #1" />
     </fragment>
     <fragment
         android:id="@+id/aboutFragment"

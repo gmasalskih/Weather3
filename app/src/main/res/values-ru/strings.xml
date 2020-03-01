@@ -10,4 +10,6 @@
     <string name="weather_city">Погода в городе</string>
     <string name="about_text">Это мое первое учебное приложение!</string>
     <string name="item">Item</string>
+    <string name="windSpeed_format">%dм/с</string>
+    <string name="pressure_format">%d мм рт. ст.</string>
 </resources>

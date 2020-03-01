@@ -9,4 +9,8 @@
     <string name="weather_city">Weather in the city</string>
     <string name="about_text">This is my first training app!</string>
     <string name="item">Item</string>
+    <string name="temp_format" translatable="false">%d℃</string>
+    <string name="windSpeed_format">%dm/s</string>
+    <string name="pressure_format">%d mm Hg</string>
+    <string name="humidity_format" translatable="false">%d%%</string>
 </resources>

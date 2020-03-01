@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".screens.weather.WeatherFragment">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="ru.gmasalskih.weather3.screens.weather.WeatherViewModel" />
+    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -11,14 +17,94 @@
 
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/timestamp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="32dp"
+            android:gravity="center"
+            android:text="@{viewModel.currentWeather.timestamp}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:hint="2020.01.01" />
+
+        <ImageView
+            android:id="@+id/weather_icon"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="32dp"
+            android:src="@drawable/ic_wb_sunny_black_24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/timestamp" />
+
+        <TextView
+            android:id="@+id/temp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="WeatherFragment"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="16dp"
+            android:text="@{@string/temp_format(viewModel.currentWeather.temp)}"
+            android:textSize="42sp"
+            app:layout_constraintEnd_toStartOf="@+id/windSpeed"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="@+id/weather_icon"
+            app:layout_constraintTop_toBottomOf="@+id/weather_icon"
+            tools:hint="10C" />
+
+        <TextView
+            android:id="@+id/windSpeed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{@string/windSpeed_format(viewModel.currentWeather.windSpeed)}"
+            app:layout_constraintBottom_toTopOf="@+id/pressure"
+            app:layout_constraintEnd_toEndOf="@+id/weather_icon"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/temp"
+            app:layout_constraintTop_toTopOf="@+id/temp"
+            tools:hint="10m/s" />
+
+        <TextView
+            android:id="@+id/pressure"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{@string/pressure_format(viewModel.currentWeather.pressure)}"
+            app:layout_constraintBottom_toTopOf="@+id/humidity"
+            app:layout_constraintEnd_toEndOf="@+id/windSpeed"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/windSpeed"
+            app:layout_constraintTop_toBottomOf="@+id/windSpeed"
+            tools:hint="733 mm Hg" />
+
+        <TextView
+            android:id="@+id/humidity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{@string/humidity_format(viewModel.currentWeather.humidity)}"
+            app:layout_constraintBottom_toBottomOf="@+id/temp"
+            app:layout_constraintEnd_toEndOf="@+id/windSpeed"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/windSpeed"
+            app:layout_constraintTop_toBottomOf="@+id/pressure"
+            tools:hint="80%" />
+
+        <TextView
+            android:id="@+id/cityName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:gravity="center"
+            android:text="@{viewModel.currentWeather.city.name}"
+            android:textSize="36sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/temp"
+            tools:hint="City #1" />
 
         <Button
             android:id="@+id/btn_city_selection"
@@ -28,6 +114,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/btn_city_web_page"
             app:layout_constraintEnd_toStartOf="@+id/btn_city_web_page"
             app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/btn_city_web_page" />
 
@@ -39,8 +126,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/btn_date_selection"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/btn_city_selection"
-            app:layout_constraintTop_toBottomOf="@+id/textView" />
+            app:layout_constraintStart_toEndOf="@+id/btn_city_selection" />
 
         <Button
             android:id="@+id/btn_date_selection"

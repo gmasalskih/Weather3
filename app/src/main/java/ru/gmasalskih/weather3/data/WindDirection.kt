@@ -1,6 +1,6 @@
 package ru.gmasalskih.weather3.data
 
-enum class WindDirection(value:String) {
+enum class WindDirection(val value: String) {
     NORTHWEST("nw"),
     NORTH("n"),
     NORTHEASTERN("ne"),

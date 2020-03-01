@@ -1,6 +1,6 @@
 package ru.gmasalskih.weather3.data
 
-enum class WeatherCondition(value:String) {
+enum class WeatherCondition(val value: String) {
     CLEAR("clear"),
     PARTLY_CLOUDY("partly-cloudy"),
     CLOUDY("cloudy"),

@@ -10,4 +10,5 @@ interface IWeatherProvider {
     fun getWeather(cityUUID: UUID, timestamp: String): Weather
     fun getWeather(lat: Double, lon: Double): Weather
     fun getWeather(lat: Double, lon: Double, timestamp: String): Weather
+    fun getAllWeather(): List<Weather>
 }

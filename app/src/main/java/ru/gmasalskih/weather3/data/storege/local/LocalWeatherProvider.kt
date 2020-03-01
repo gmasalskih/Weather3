@@ -25,4 +25,8 @@ object LocalWeatherProvider : IWeatherProvider {
 
     override fun getWeather(lat: Double, lon: Double, timestamp: String): Weather =
         storage.first { it.city.lat == lat && it.city.lon == lon && it.timestamp == timestamp }
+
+    override fun getAllWeather(): List<Weather> {
+        return storage
+    }
 }
