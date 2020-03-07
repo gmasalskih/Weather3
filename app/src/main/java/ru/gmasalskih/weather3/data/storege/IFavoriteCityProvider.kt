@@ -6,4 +6,5 @@ interface IFavoriteCityProvider {
     fun getFavoriteCities(): List<City>
     fun addCity(city: City): Boolean
     fun delCity(city: City) : Boolean
+    fun clearFavoriteCities(): Unit
 }

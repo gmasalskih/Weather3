@@ -12,4 +12,6 @@ object LocalFavoriteCityProvider : IFavoriteCityProvider {
     override fun addCity(city: City): Boolean = storage.add(city)
 
     override fun delCity(city: City): Boolean = storage.remove(city)
+
+    override fun clearFavoriteCities() = storage.clear()
 }

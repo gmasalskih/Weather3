@@ -7,4 +7,6 @@ interface ICityProvider {
     fun getCity(name: String): City
     fun getCity(lat: Double, lon: Double): City
     fun getCity(uuid: UUID): City
+    fun addCity(city: City): Boolean
+    fun removeCity(city: City): Boolean
 }

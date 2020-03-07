@@ -25,6 +25,7 @@
             android:layout_marginEnd="32dp"
             android:gravity="center"
             android:text="@{viewModel.currentWeather.timestamp}"
+            android:onClick="@{() -> viewModel.onDateSelect()}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -100,44 +101,33 @@
             android:gravity="center"
             android:text="@{viewModel.currentWeather.city.name}"
             android:textSize="36sp"
+            android:onClick="@{()-> viewModel.onCitySelect()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/temp"
             tools:hint="City #1" />
 
-        <Button
-            android:id="@+id/btn_city_selection"
+        <ImageView
+            android:id="@+id/cityWebPage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="City selection"
-            app:layout_constraintBottom_toBottomOf="@+id/btn_city_web_page"
-            app:layout_constraintEnd_toStartOf="@+id/btn_city_web_page"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintHorizontal_chainStyle="spread_inside"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/btn_city_web_page" />
-
-        <Button
-            android:id="@+id/btn_city_web_page"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="city web page"
+            android:layout_marginStart="32dp"
+            android:layout_marginBottom="32dp"
+            android:src="@drawable/ic_language_black_24dp"
+            android:onClick="@{() -> viewModel.onCityWebPageSelect()}"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btn_date_selection"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/btn_city_selection" />
+            app:layout_constraintStart_toStartOf="parent" />
 
-        <Button
-            android:id="@+id/btn_date_selection"
+        <ImageView
+            android:id="@+id/favoriteCity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="date selection"
-            app:layout_constraintBottom_toBottomOf="@+id/btn_city_web_page"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/btn_city_web_page"
-            app:layout_constraintTop_toTopOf="@+id/btn_city_web_page" />
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="32dp"
+            android:src="@drawable/ic_favorite_border_black_24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

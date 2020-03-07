@@ -16,4 +16,10 @@ object LocalCityProvider : ICityProvider {
 
     override fun getCity(uuid: UUID): City =
         storage.first { it.uuid == uuid }
+
+    override fun addCity(city: City): Boolean =
+        storage.add(city)
+
+    override fun removeCity(city: City): Boolean =
+        storage.remove(city)
 }
