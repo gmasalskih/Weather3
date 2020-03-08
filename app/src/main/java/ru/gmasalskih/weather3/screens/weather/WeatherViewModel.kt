@@ -4,13 +4,20 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import ru.gmasalskih.weather3.data.Weather
+import ru.gmasalskih.weather3.data.storege.ICityProvider
+import ru.gmasalskih.weather3.data.storege.IFavoriteCityProvider
 import ru.gmasalskih.weather3.data.storege.IWeatherProvider
+import ru.gmasalskih.weather3.data.storege.local.LocalCityProvider
+import ru.gmasalskih.weather3.data.storege.local.LocalFavoriteCityProvider
 import ru.gmasalskih.weather3.data.storege.local.LocalWeatherProvider
 import timber.log.Timber
 
-class WeatherViewModel(cityName: String, timestamp: String) : ViewModel() {
+class WeatherViewModel(var cityName: String, var timestamp: String) : ViewModel() {
 
     private val weatherProvider: IWeatherProvider = LocalWeatherProvider
+    private val favoriteCityProvider: IFavoriteCityProvider = LocalFavoriteCityProvider
+    private val cityProvider: ICityProvider = LocalCityProvider
+    private val city = cityProvider.getCity(cityName)
 
     private val _currentWeather = MutableLiveData<Weather>()
     val currentWeather: LiveData<Weather>
@@ -35,16 +42,19 @@ class WeatherViewModel(cityName: String, timestamp: String) : ViewModel() {
 
     init {
         Timber.i("--- WeatherViewModel created!")
-        if(timestamp == "2020-01-01"){
+        if (timestamp == "2020-01-01") {
             _currentWeather.value = weatherProvider.getWeather(cityName)
         } else {
             _currentWeather.value = weatherProvider.getWeather(cityName, timestamp)
         }
-
-
+        updateFavoriteCityStatus()
         _isCitySelected.value = false
         _isDateSelected.value = false
         _isCityWebPageSelected.value = false
+    }
+
+    fun updateFavoriteCityStatus() {
+        _isCityFavoriteSelected.value = favoriteCityProvider.isCityFavorite(city)
     }
 
     // Click Event
@@ -61,6 +71,17 @@ class WeatherViewModel(cityName: String, timestamp: String) : ViewModel() {
     fun onDateSelect() {
         _isDateSelected.value = true
         _isDateSelected.value = false
+    }
+
+    fun onToggleFavoriteCity() {
+        _isCityFavoriteSelected.value?.let {
+            if (it) {
+                favoriteCityProvider.delCity(city)
+            } else{
+                favoriteCityProvider.addCity(city)
+            }
+            updateFavoriteCityStatus()
+        }
     }
 
     override fun onCleared() {

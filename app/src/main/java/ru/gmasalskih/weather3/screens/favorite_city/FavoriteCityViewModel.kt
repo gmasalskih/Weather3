@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import ru.gmasalskih.weather3.data.City
 import ru.gmasalskih.weather3.data.storege.local.LocalFavoriteCityProvider
 import timber.log.Timber
-import java.util.*
 
 class FavoriteCityViewModel : ViewModel() {
 
@@ -18,8 +17,8 @@ class FavoriteCityViewModel : ViewModel() {
         _favoriteCityList.value = LocalFavoriteCityProvider.getFavoriteCities()
     }
 
-    fun onClickFavoriteCity(cityUUID: UUID){
-        LocalFavoriteCityProvider.delCity(cityUUID)
+    fun onClickFavoriteCity(city: City){
+        LocalFavoriteCityProvider.delCity(city)
         _favoriteCityList.value = LocalFavoriteCityProvider.getFavoriteCities()
     }
 

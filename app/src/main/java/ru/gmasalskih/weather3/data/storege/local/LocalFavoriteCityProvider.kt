@@ -15,11 +15,8 @@ object LocalFavoriteCityProvider : IFavoriteCityProvider {
     override fun addCity(city: City): Boolean = storage.add(city)
 
     override fun delCity(city: City): Boolean = storage.remove(city)
-    override fun delCity(cityUUID: UUID): Boolean {
-        val city = storage.firstOrNull {
-            it.uuid == cityUUID
-        } ?: return false
-        return delCity(city)
-    }
+
+    override fun isCityFavorite(city: City): Boolean = storage.contains(city)
+
     override fun clearFavoriteCities() = storage.clear()
 }

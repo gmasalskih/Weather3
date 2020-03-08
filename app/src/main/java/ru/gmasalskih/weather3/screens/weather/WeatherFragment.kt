@@ -46,6 +46,15 @@ class WeatherFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.updateFavoriteCityStatus()
+        viewModel.isCityFavoriteSelected.observe(viewLifecycleOwner, Observer {event: Boolean ->
+            Timber.i("--- !!!${event}")
+            if(event){
+                binding.favoriteCity.setImageResource(R.drawable.ic_favorite_black_24dp)
+            } else {
+                binding.favoriteCity.setImageResource(R.drawable.ic_favorite_border_black_24dp)
+            }
+        })
 
         viewModel.isDateSelected.observe(viewLifecycleOwner, Observer { event: Boolean ->
             if (event) {

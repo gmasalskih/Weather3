@@ -5,9 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.*
 import ru.gmasalskih.weather3.data.City
 import ru.gmasalskih.weather3.databinding.ListItemFavoriteCityBinding
-import java.util.*
 
-class FavoriteCityListAdapter (private val clickListener: FavoriteCityClickListener) :
+class FavoriteCityListAdapter(private val clickListener: FavoriteCityClickListener) :
     ListAdapter<City, FavoriteCityListAdapter.ViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -49,8 +48,8 @@ class FavoriteCityListAdapter (private val clickListener: FavoriteCityClickListe
         }
     }
 
-    class FavoriteCityClickListener(val clickListener: (cityID:UUID) -> Unit){
-        fun onClick(city:City) = clickListener(city.uuid)
+    class FavoriteCityClickListener(val clickListener: (city: City) -> Unit) {
+        fun onClick(city: City) = clickListener(city)
     }
 }
 
