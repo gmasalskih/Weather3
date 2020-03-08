@@ -35,8 +35,6 @@ class WeatherFragment : Fragment() {
         viewModelFactory = WeatherViewModelFactory(args.cityName, args.date)
         //
 
-        Timber.i("--- ${UUID.randomUUID()}")
-
         viewModel = ViewModelProvider(this, viewModelFactory).get(WeatherViewModel::class.java)
         binding.viewModel = viewModel
         binding.lifecycleOwner = this

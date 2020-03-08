@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="city"
+            type="ru.gmasalskih.weather3.data.City" />
+
+        <variable
+            name="clickListener"
+            type="ru.gmasalskih.weather3.screens.favorite_city.FavoriteCityListAdapter.FavoriteCityClickListener" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        app:cardCornerRadius="4dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp">
+
+            <TextView
+                android:id="@+id/city_name"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:textSize="24sp"
+                app:cityName="@{city}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:hint="City" />
+
+            <TextView
+                android:id="@+id/city_lat"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:cityLat="@{city}"
+                app:layout_constraintBottom_toBottomOf="@+id/city_name"
+                app:layout_constraintEnd_toStartOf="@+id/favorite_icon"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/city_name"
+                app:layout_constraintTop_toBottomOf="@+id/city_lon"
+                tools:hint="city_lat" />
+
+            <TextView
+                android:id="@+id/city_lon"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:cityLat="@{city}"
+                app:layout_constraintBottom_toTopOf="@+id/city_lat"
+                app:layout_constraintEnd_toStartOf="@+id/favorite_icon"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/city_name"
+                app:layout_constraintTop_toTopOf="@+id/city_name"
+                tools:hint="city_lon" />
+
+            <ImageView
+                android:id="@+id/favorite_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{()->clickListener.onClick(city)}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_favorite_black_24dp" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.cardview.widget.CardView>
+</layout>
+
