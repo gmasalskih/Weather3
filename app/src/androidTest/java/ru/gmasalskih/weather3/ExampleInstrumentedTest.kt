@@ -22,3 +22,5 @@ class ExampleInstrumentedTest {
         assertEquals("ru.gmasalskih.weather3", appContext.packageName)
     }
 }
+
+
