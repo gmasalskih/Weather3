@@ -12,4 +12,9 @@
     <string name="item">Item</string>
     <string name="windSpeed_format">%dм/с</string>
     <string name="pressure_format">%d мм рт. ст.</string>
+    <string name="msg_favorite_city_deleted">был удален</string>
+    <string name="yes_btn">Да</string>
+    <string name="no_btn">Нет</string>
+    <string name="del_favorite_city_title">Удалить любимый город</string>
+    <string name="del_favorite_city_msg">Вы уверены, что хотите удалить любимый город?</string>
 </resources>

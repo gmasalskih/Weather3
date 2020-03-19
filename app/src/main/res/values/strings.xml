@@ -13,4 +13,9 @@
     <string name="windSpeed_format">%dm/s</string>
     <string name="pressure_format">%d mm Hg</string>
     <string name="humidity_format" translatable="false">%d%%</string>
+    <string name="msg_favorite_city_deleted">was deleted</string>
+    <string name="yes_btn">Yes</string>
+    <string name="no_btn">No</string>
+    <string name="del_favorite_city_title">Delete favorite city</string>
+    <string name="del_favorite_city_msg">Are you sure you want to delete your favorite city?</string>
 </resources>
