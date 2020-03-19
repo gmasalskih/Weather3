@@ -58,3 +58,4 @@ class FavoriteCityFragment : Fragment() {
         })
     }
 }
+
