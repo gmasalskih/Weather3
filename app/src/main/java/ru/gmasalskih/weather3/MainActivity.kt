@@ -19,7 +19,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Timber.i("--- onCreate")
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         drawerLayout = binding.drawerLayout
         navController = findNavController(R.id.navHost)
@@ -27,32 +26,9 @@ class MainActivity : AppCompatActivity() {
         NavigationUI.setupWithNavController(binding.navView, navController)
     }
 
-    override fun onStart() {
-        super.onStart()
-        Timber.i("--- onStart")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Timber.i("--- onResume")
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Timber.i("--- onPause")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Timber.i("--- onStop")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Timber.i("--- onDestroy")
-    }
-
     override fun onSupportNavigateUp(): Boolean {
         return NavigationUI.navigateUp(navController, drawerLayout)
     }
 }
+
+
