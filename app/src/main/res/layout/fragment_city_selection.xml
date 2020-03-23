@@ -43,6 +43,16 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/enter_city_name"
             app:layout_constraintTop_toTopOf="@+id/enter_city_name" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Этого TextView в проде не будет!!! Здесь нужно ввести имя города в формате City #_. В конце, вместо _, имени города нужно подставить цифру от 1 до 10. Нпример City #6."
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/enter_city_name" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

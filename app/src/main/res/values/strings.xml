@@ -20,4 +20,5 @@
     <string name="del_favorite_city_msg">Are you sure you want to delete your favorite city?</string>
     <string name="enter_city_name_hint">Enter city name</string>
     <string name="confirm_city_name_btn">Confirm</string>
+    <string name="city_not_found">not found</string>
 </resources>

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import ru.gmasalskih.weather3.R
 import ru.gmasalskih.weather3.databinding.FragmentCitySelectionBinding
 import ru.gmasalskih.weather3.utils.toast
 
@@ -43,7 +44,7 @@ class CitySelectionFragment : Fragment() {
                     view.findNavController().navigate(action)
                 } else{
                     context?.let {
-                        "$cityName not faund".toast(context!!)
+                        "$cityName ${resources.getText(R.string.city_not_found)}".toast(it)
                     }
                 }
             }
