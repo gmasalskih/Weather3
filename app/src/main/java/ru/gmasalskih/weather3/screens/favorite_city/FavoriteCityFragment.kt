@@ -5,14 +5,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import ru.gmasalskih.weather3.R
 import ru.gmasalskih.weather3.data.City
 import ru.gmasalskih.weather3.databinding.FragmentFavoriteCityBinding
-import ru.gmasalskih.weather3.utils.show
+import ru.gmasalskih.weather3.utils.toast
 
 class FavoriteCityFragment : Fragment() {
 
@@ -43,7 +42,7 @@ class FavoriteCityFragment : Fragment() {
                 .setMessage(resources.getText(R.string.del_favorite_city_msg))
                 .setPositiveButton(resources.getText(R.string.yes_btn)) { _, _ ->
                     viewModel.onDeleteFavoriteCity(city)
-                    "${city.name} ${resources.getText(R.string.msg_favorite_city_deleted)}".show(it)
+                    "${city.name} ${resources.getText(R.string.msg_favorite_city_deleted)}".toast(it)
                 }
                 .setNegativeButton(resources.getText(R.string.no_btn), null)
                 .create()

@@ -5,6 +5,6 @@ import android.widget.Toast
 
 const val DATE_PATTERN = "yyyy-MM-dd"
 
-inline fun String.show(context: Context){
+fun String.toast(context: Context){
     Toast.makeText(context, this, Toast.LENGTH_SHORT).show()
 }
