@@ -17,4 +17,6 @@
     <string name="no_btn">Нет</string>
     <string name="del_favorite_city_title">Удалить любимый город</string>
     <string name="del_favorite_city_msg">Вы уверены, что хотите удалить любимый город?</string>
+    <string name="enter_city_name_hint">Введите название города</string>
+    <string name="confirm_city_name_btn">Подтвердить</string>
 </resources>

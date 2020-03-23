@@ -47,7 +47,7 @@
             android:text="@{@string/temp_format(viewModel.currentWeather.temp)}"
             android:textSize="30sp"
             app:layout_constraintBottom_toTopOf="@+id/city_name"
-            app:layout_constraintEnd_toStartOf="@+id/windSpeed"
+            app:layout_constraintEnd_toStartOf="@+id/wind_speed"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toStartOf="@+id/city_name"
@@ -55,7 +55,7 @@
             tools:hint="10C" />
 
         <TextView
-            android:id="@+id/windSpeed"
+            android:id="@+id/wind_speed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@{@string/windSpeed_format(viewModel.currentWeather.windSpeed)}"
@@ -74,7 +74,7 @@
             android:textSize="30sp"
             app:layout_constraintEnd_toStartOf="@+id/humidity"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/windSpeed"
+            app:layout_constraintStart_toEndOf="@+id/wind_speed"
             app:layout_constraintTop_toTopOf="@+id/temp"
             tools:hint="733 mm Hg" />
 
@@ -108,7 +108,7 @@
             tools:hint="City #1" />
 
         <ImageView
-            android:id="@+id/cityWebPage"
+            android:id="@+id/city_web_page"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
@@ -119,7 +119,7 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <ImageView
-            android:id="@+id/favoriteCity"
+            android:id="@+id/favorite_city"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="32dp"

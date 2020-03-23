@@ -54,7 +54,7 @@ class WeatherViewModel(var cityName: String, var timestamp: String) : ViewModel(
     }
 
     fun updateFavoriteCityStatus() {
-        _isCityFavoriteSelected.value = favoriteCityProvider.isCityFavorite(city)
+        _isCityFavoriteSelected.value = favoriteCityProvider.isCityFavorite(city!!)
     }
 
     // Click Event
@@ -74,11 +74,11 @@ class WeatherViewModel(var cityName: String, var timestamp: String) : ViewModel(
     }
 
     fun onToggleFavoriteCity() {
-        _isCityFavoriteSelected.value?.let {
-            if (it) {
-                favoriteCityProvider.delCity(city)
-            } else{
-                favoriteCityProvider.addCity(city)
+        _isCityFavoriteSelected.value?.let { event: Boolean ->
+            if (event) {
+                favoriteCityProvider.delCity(city!!)
+            } else {
+                favoriteCityProvider.addCity(city!!)
             }
             updateFavoriteCityStatus()
         }

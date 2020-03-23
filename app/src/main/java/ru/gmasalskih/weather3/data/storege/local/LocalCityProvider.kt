@@ -8,14 +8,14 @@ object LocalCityProvider : ICityProvider {
 
     private val storage = localCityStorage
 
-    override fun getCity(name: String): City =
-        storage.first { it.name == name }
+    override fun getCity(name: String): City? =
+        storage.firstOrNull { it.name == name }
 
-    override fun getCity(lat: Double, lon: Double): City =
-        storage.first { it.lat == lat && it.lon == lon }
+    override fun getCity(lat: Double, lon: Double): City? =
+        storage.firstOrNull { it.lat == lat && it.lon == lon }
 
-    override fun getCity(uuid: UUID): City =
-        storage.first { it.uuid == uuid }
+    override fun getCity(uuid: UUID): City? =
+        storage.firstOrNull { it.uuid == uuid }
 
     override fun addCity(city: City): Boolean =
         storage.add(city)

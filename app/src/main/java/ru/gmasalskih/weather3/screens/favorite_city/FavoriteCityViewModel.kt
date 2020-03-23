@@ -1,6 +1,5 @@
 package ru.gmasalskih.weather3.screens.favorite_city
 
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

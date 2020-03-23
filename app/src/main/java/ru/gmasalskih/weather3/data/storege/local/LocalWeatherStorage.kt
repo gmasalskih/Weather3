@@ -8,7 +8,7 @@ import java.util.*
 val localWeatherStorage = (1..10).map { cityNum: Int ->
         (0..6).map { dayNum: Int ->
             Weather(
-                city = LocalCityProvider.getCity("City #$cityNum"),
+                city = LocalCityProvider.getCity("City #$cityNum")!!,
                 temp = cityNum,
                 timestamp = addDay(dayNum),
                 windSpeed = cityNum,
