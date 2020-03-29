@@ -5,7 +5,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="city"
             type="ru.gmasalskih.weather3.data.City" />

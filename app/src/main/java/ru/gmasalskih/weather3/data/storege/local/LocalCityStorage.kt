@@ -7,7 +7,7 @@ val localCityStorage = HashSet<City>().apply {
         (1..10).map {
             var city = City(
                 name = "City #$it",
-                shortName = "City #$it",
+                addressLine = "City #$it",
                 lat = it.toDouble(),
                 lon = it.toDouble()
             )
