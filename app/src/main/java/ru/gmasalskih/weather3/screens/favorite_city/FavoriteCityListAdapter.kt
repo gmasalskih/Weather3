@@ -40,11 +40,11 @@ class FavoriteCityListAdapter(private val clickListener: FavoriteCityClickListen
 
     class DiffCallback : DiffUtil.ItemCallback<City>() {
         override fun areItemsTheSame(oldItem: City, newItem: City): Boolean {
-            return oldItem.uuid == newItem.uuid
+            return oldItem == newItem
         }
 
         override fun areContentsTheSame(oldItem: City, newItem: City): Boolean {
-            return oldItem == newItem
+            return oldItem.lat == newItem.lat && oldItem.lon == newItem.lon
         }
     }
 

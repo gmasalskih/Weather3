@@ -3,7 +3,12 @@ package ru.gmasalskih.weather3.screens.weather
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import ru.gmasalskih.weather3.data.Weather
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import ru.gmasalskih.weather3.data.*
+import ru.gmasalskih.weather3.data.entity.geocoder.BaseGeocoderEntity
+import ru.gmasalskih.weather3.data.entity.weather.BaseWeatherEntity
 import ru.gmasalskih.weather3.data.storege.ICityProvider
 import ru.gmasalskih.weather3.data.storege.IFavoriteCityProvider
 import ru.gmasalskih.weather3.data.storege.IWeatherProvider
@@ -12,12 +17,16 @@ import ru.gmasalskih.weather3.data.storege.local.LocalFavoriteCityProvider
 import ru.gmasalskih.weather3.data.storege.local.LocalWeatherProvider
 import timber.log.Timber
 
-class WeatherViewModel(var cityName: String, var timestamp: String) : ViewModel() {
+class WeatherViewModel(
+    var cityName: String,
+    var lon: Float,
+    var lat: Float
+) : ViewModel() {
 
     private val weatherProvider: IWeatherProvider = LocalWeatherProvider
     private val favoriteCityProvider: IFavoriteCityProvider = LocalFavoriteCityProvider
     private val cityProvider: ICityProvider = LocalCityProvider
-    private val city = cityProvider.getCity(cityName)
+    private var city: City = City(name = cityName, lon = lon, lat = lat)
 
     private val _currentWeather = MutableLiveData<Weather>()
     val currentWeather: LiveData<Weather>
@@ -41,16 +50,40 @@ class WeatherViewModel(var cityName: String, var timestamp: String) : ViewModel(
 
 
     init {
+        cityProvider.addCity(city)
         Timber.i("--- WeatherViewModel created!")
-        if (timestamp == "2020-01-01") {
-            _currentWeather.value = weatherProvider.getWeather(cityName)
-        } else {
-            _currentWeather.value = weatherProvider.getWeather(cityName, timestamp)
-        }
+        getResponse(lon, lat)
         updateFavoriteCityStatus()
         _isCitySelected.value = false
         _isDateSelected.value = false
         _isCityWebPageSelected.value = false
+    }
+
+    fun getResponse(lon: Float, lat: Float) {
+        Timber.i("--- $lon $lat")
+        WeatherApi.apiService.getWeather(lon = lon, lat = lat).enqueue(object :
+            Callback<BaseWeatherEntity> {
+            override fun onFailure(call: Call<BaseWeatherEntity>, t: Throwable) {
+                Timber.i("--- ${t.message}")
+            }
+
+            override fun onResponse(
+                call: Call<BaseWeatherEntity>,
+                response: Response<BaseWeatherEntity>
+            ) {
+                val result: BaseWeatherEntity? = response.body()
+                result?.let {
+                    _currentWeather.value = Weather(
+                        city = city,
+                        temp = it.fact.temp,
+                        timestamp = it.now_dt,
+                        windSpeed = it.fact.wind_speed.toInt(),
+                        pressure = it.fact.pressure_mm,
+                        humidity = it.fact.humidity
+                    )
+                }
+            }
+        })
     }
 
     fun updateFavoriteCityStatus() {
@@ -76,9 +109,9 @@ class WeatherViewModel(var cityName: String, var timestamp: String) : ViewModel(
     fun onToggleFavoriteCity() {
         _isCityFavoriteSelected.value?.let { event: Boolean ->
             if (event) {
-                favoriteCityProvider.delCity(city!!)
+                favoriteCityProvider.delCity(city)
             } else {
-                favoriteCityProvider.addCity(city!!)
+                favoriteCityProvider.addCity(city)
             }
             updateFavoriteCityStatus()
         }

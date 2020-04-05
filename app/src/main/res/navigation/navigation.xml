@@ -25,11 +25,15 @@
         <argument
             android:name="cityName"
             app:argType="string"
-            android:defaultValue="City #1" />
+            android:defaultValue="Москва" />
         <argument
-            android:name="date"
-            app:argType="string"
-            android:defaultValue="2020-01-01" />
+            android:name="lon"
+            app:argType="float"
+            android:defaultValue="37.617635" />
+        <argument
+            android:name="lat"
+            app:argType="float"
+            android:defaultValue="55.755814" />
     </fragment>
     <fragment
         android:id="@+id/aboutFragment"

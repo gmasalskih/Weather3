@@ -1,4 +1,4 @@
-package ru.gmasalskih.weather3.data.storege.internet
+package ru.gmasalskih.weather3.data.entity.geocoder
 
 import com.google.gson.annotations.SerializedName
 

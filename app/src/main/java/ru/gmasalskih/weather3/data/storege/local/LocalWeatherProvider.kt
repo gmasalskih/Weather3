@@ -16,16 +16,10 @@ object LocalWeatherProvider : IWeatherProvider {
     override fun getWeather(cityName: String, timestamp: String): Weather =
         storage.first { it.city.name == cityName && it.timestamp == timestamp }
 
-    override fun getWeather(cityUUID: UUID): Weather =
-        storage.first { it.city.uuid == cityUUID }
-
-    override fun getWeather(cityUUID: UUID, timestamp: String): Weather =
-        storage.first { it.city.uuid == cityUUID && it.timestamp == timestamp }
-
-    override fun getWeather(lat: Double, lon: Double): Weather =
+    override fun getWeather(lat: Float, lon: Float): Weather =
         storage.first { it.city.lat == lat && it.city.lon == lon }
 
-    override fun getWeather(lat: Double, lon: Double, timestamp: String): Weather =
+    override fun getWeather(lat: Float, lon: Float, timestamp: String): Weather =
         storage.first { it.city.lat == lat && it.city.lon == lon && it.timestamp == timestamp }
 
     override fun getAllWeather(): List<Weather> {

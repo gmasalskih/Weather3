@@ -10,8 +10,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
-import ru.gmasalskih.weather3.R
-import ru.gmasalskih.weather3.data.CitySelection
+import ru.gmasalskih.weather3.data.City
 import ru.gmasalskih.weather3.databinding.FragmentCitySelectionBinding
 import ru.gmasalskih.weather3.utils.toast
 import timber.log.Timber
@@ -47,7 +46,7 @@ class CitySelectionFragment : Fragment() {
             adapter.submitList(it)
         })
 
-        binding.enterCityName.addTextChangedListener(object: TextWatcher{
+        binding.enterCityName.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 //NOP
             }
@@ -62,9 +61,16 @@ class CitySelectionFragment : Fragment() {
         })
     }
 
-    private fun onCitySelected(citySelection: CitySelection){
+    private fun onCitySelected(city: City) {
         context?.let {
-            "$citySelection".toast(it)
+            val action = CitySelectionFragmentDirections.actionCitySelectionFragmentToWeatherFragment().apply {
+                setCityName(city.name!!)
+                setLat(city.lat!!)
+                setLon(city.lon!!)
+            }
+            view!!.findNavController().navigate(action)
+//            "$city".toast(it)
+//            Timber.i("--- $city")
         }
     }
 

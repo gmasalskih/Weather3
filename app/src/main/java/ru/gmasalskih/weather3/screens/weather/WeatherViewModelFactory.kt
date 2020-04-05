@@ -4,11 +4,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import java.lang.IllegalArgumentException
 
-class WeatherViewModelFactory(private val cityName: String, private val timestamp: String) :
+class WeatherViewModelFactory(
+    private val cityName: String,
+    private val lon: Float,
+    private val lat: Float
+) :
     ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(WeatherViewModel::class.java)) {
-            return WeatherViewModel(cityName, timestamp) as T
+            return WeatherViewModel(
+                cityName = cityName,
+                lon = lon,
+                lat = lat
+            ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

@@ -8,8 +8,8 @@ val localCityStorage = HashSet<City>().apply {
             var city = City(
                 name = "City #$it",
                 addressLine = "City #$it",
-                lat = it.toDouble(),
-                lon = it.toDouble()
+                lat = it.toFloat(),
+                lon = it.toFloat()
             )
             if(it%2 == 0){
                 LocalFavoriteCityProvider.addCity(city)

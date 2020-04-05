@@ -6,9 +6,7 @@ import java.util.*
 interface IWeatherProvider {
     fun getWeather(cityName: String): Weather
     fun getWeather(cityName: String, timestamp: String): Weather
-    fun getWeather(cityUUID: UUID): Weather
-    fun getWeather(cityUUID: UUID, timestamp: String): Weather
-    fun getWeather(lat: Double, lon: Double): Weather
-    fun getWeather(lat: Double, lon: Double, timestamp: String): Weather
+    fun getWeather(lat: Float, lon: Float): Weather
+    fun getWeather(lat: Float, lon: Float, timestamp: String): Weather
     fun getAllWeather(): List<Weather>
 }

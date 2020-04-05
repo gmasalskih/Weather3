@@ -4,11 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import retrofit2.*
-import ru.gmasalskih.weather3.data.CitySelection
+import ru.gmasalskih.weather3.data.City
 import ru.gmasalskih.weather3.data.storege.ICityProvider
-import ru.gmasalskih.weather3.data.storege.internet.FeatureMember
-import ru.gmasalskih.weather3.data.storege.internet.GeocoderApi
-import ru.gmasalskih.weather3.data.storege.internet.Json4Kotlin_Base
+import ru.gmasalskih.weather3.data.entity.geocoder.FeatureMember
+import ru.gmasalskih.weather3.data.GeocoderApi
+import ru.gmasalskih.weather3.data.entity.geocoder.BaseGeocoderEntity
 import ru.gmasalskih.weather3.data.storege.local.LocalCityProvider
 import timber.log.Timber
 
@@ -20,8 +20,8 @@ class CitySelectionViewModel : ViewModel() {
     val isCityConfirmed: LiveData<Boolean>
         get() = _isCityConfirmed
 
-    private val _responseListCity = MutableLiveData<List<CitySelection>>()
-    val responseListCity: LiveData<List<CitySelection>>
+    private val _responseListCity = MutableLiveData<List<City>>()
+    val responseListCity: LiveData<List<City>>
         get() = _responseListCity
 
     init {
@@ -36,21 +36,21 @@ class CitySelectionViewModel : ViewModel() {
 
     fun getResponse(cityName: String) {
         Timber.i("--- $cityName")
-        GeocoderApi.apiService.getCoordinate(cityName).enqueue(object : Callback<Json4Kotlin_Base> {
-            override fun onFailure(call: Call<Json4Kotlin_Base>, t: Throwable) {
+        GeocoderApi.apiService.getCoordinate(cityName).enqueue(object : Callback<BaseGeocoderEntity> {
+            override fun onFailure(call: Call<BaseGeocoderEntity>, t: Throwable) {
                 Timber.i("--- ${t.message}")
             }
 
             override fun onResponse(
-                call: Call<Json4Kotlin_Base>,
-                response: Response<Json4Kotlin_Base>
+                call: Call<BaseGeocoderEntity>,
+                response: Response<BaseGeocoderEntity>
             ) {
-                val result: Json4Kotlin_Base? = response.body()
+                val result: BaseGeocoderEntity? = response.body()
                 result?.let {
                     val listFeatureMember = it.response.geoObjectCollection.featureMember
                     if (listFeatureMember.isNotEmpty()) {
                         _responseListCity.value = listFeatureMember.map {
-                            CitySelection(
+                            City(
                                 addressLine = getAddressLine(it),
                                 countryName = getCountryName(it),
                                 countyCode = getCountyCode(it),
@@ -81,21 +81,12 @@ class CitySelectionViewModel : ViewModel() {
         return fm.geoObject.name
     }
 
-    private fun getLat(fm: FeatureMember): Double {
-        return fm.geoObject.point.pos.split(" ")[0].toDouble()
+    private fun getLat(fm: FeatureMember): Float {
+        return fm.geoObject.point.pos.split(" ")[1].toFloat()
     }
 
-    private fun getLon(fm: FeatureMember): Double {
-        return fm.geoObject.point.pos.split(" ")[1].toDouble()
-    }
-
-
-    fun isEnteredCityValid(cityName: String): Boolean {
-        return cityName != ""
-    }
-
-    fun hasEnteredCity(cityName: String): Boolean {
-        return cityProvider.getCity(cityName) != null
+    private fun getLon(fm: FeatureMember): Float {
+        return fm.geoObject.point.pos.split(" ")[0].toFloat()
     }
 
     override fun onCleared() {

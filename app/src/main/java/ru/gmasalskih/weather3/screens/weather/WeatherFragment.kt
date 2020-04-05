@@ -31,7 +31,11 @@ class WeatherFragment : Fragment() {
         arguments?.let {
             args = WeatherFragmentArgs.fromBundle(it)
         }
-        viewModelFactory = WeatherViewModelFactory(args.cityName, args.date)
+        viewModelFactory = WeatherViewModelFactory(
+            cityName = args.cityName,
+            lon = args.lon,
+            lat = args.lat
+        )
         //
 
         viewModel = ViewModelProvider(this, viewModelFactory).get(WeatherViewModel::class.java)
@@ -45,15 +49,15 @@ class WeatherFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.updateFavoriteCityStatus()
+//        viewModel.updateFavoriteCityStatus()
         initObserveViewModel(view)
     }
 
 
-    private fun initObserveViewModel(view: View){
-        viewModel.isCityFavoriteSelected.observe(viewLifecycleOwner, Observer {event: Boolean ->
+    private fun initObserveViewModel(view: View) {
+        viewModel.isCityFavoriteSelected.observe(viewLifecycleOwner, Observer { event: Boolean ->
             Timber.i("--- !!!${event}")
-            if(event){
+            if (event) {
                 binding.favoriteCity.setImageResource(R.drawable.ic_favorite_black_24dp)
             } else {
                 binding.favoriteCity.setImageResource(R.drawable.ic_favorite_border_black_24dp)
@@ -66,7 +70,7 @@ class WeatherFragment : Fragment() {
                     view.findNavController()
                         .navigate(
                             WeatherFragmentDirections.actionWeatherFragmentToDateSelectionFragment(
-                                weather.city.name
+                                weather.city.name!!
                             )
                         )
                 }
@@ -84,7 +88,7 @@ class WeatherFragment : Fragment() {
             if (event) {
                 viewModel.currentWeather.value?.let { weather: Weather ->
                     view.findNavController().navigate(
-                        WeatherFragmentDirections.actionWeatherFragmentToCityWebPageFragment(weather.city.url)
+                        WeatherFragmentDirections.actionWeatherFragmentToCityWebPageFragment(weather.city.url!!)
                     )
                 }
             }

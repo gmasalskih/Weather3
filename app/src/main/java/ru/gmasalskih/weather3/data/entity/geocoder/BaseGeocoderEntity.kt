@@ -1,8 +1,8 @@
-package ru.gmasalskih.weather3.data.storege.internet
+package ru.gmasalskih.weather3.data.entity.geocoder
 
 import com.google.gson.annotations.SerializedName
 
-data class Json4Kotlin_Base (
+data class BaseGeocoderEntity (
 	@SerializedName("response")
 	val response : Response
 )

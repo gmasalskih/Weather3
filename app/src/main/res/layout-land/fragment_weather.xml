@@ -98,7 +98,7 @@
             android:layout_marginEnd="32dp"
             android:gravity="center"
             android:onClick="@{()-> viewModel.onCitySelect()}"
-            android:text="@{viewModel.currentWeather.city.name}"
+            android:text="@{viewModel.cityName}"
             android:textSize="36sp"
             app:layout_constraintBottom_toBottomOf="@+id/weather_icon"
             app:layout_constraintEnd_toEndOf="parent"

@@ -1,4 +1,4 @@
-package ru.gmasalskih.weather3.data.storege.internet
+package ru.gmasalskih.weather3.data
 
 import okhttp3.*
 import okhttp3.logging.*
@@ -7,6 +7,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
+import ru.gmasalskih.weather3.data.entity.geocoder.BaseGeocoderEntity
 import timber.log.Timber
 
 private const val BASE_URL_GEOCODER = "https://geocode-maps.yandex.ru/1.x/"
@@ -33,7 +34,7 @@ private val APIGeocoder = Retrofit.Builder()
 
 interface GeocoderApiService {
     @GET("?apikey=$KEY_GEOCODER&format=json&results=100")
-    fun getCoordinate(@Query("geocode") cityName: String): Call<Json4Kotlin_Base>
+    fun getCoordinate(@Query("geocode") cityName: String): Call<BaseGeocoderEntity>
 }
 
 object GeocoderApi{
