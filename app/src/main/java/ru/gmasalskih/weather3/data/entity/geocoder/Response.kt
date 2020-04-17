@@ -5,5 +5,5 @@ import ru.gmasalskih.weather3.data.entity.geocoder.GeoObjectCollection
 
 data class Response (
 	@SerializedName("GeoObjectCollection")
-	val geoObjectCollection : GeoObjectCollection
+	val geoObjectCollection : GeoObjectCollection?
 )

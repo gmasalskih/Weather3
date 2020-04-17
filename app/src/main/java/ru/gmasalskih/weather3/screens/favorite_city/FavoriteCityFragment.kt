@@ -9,7 +9,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import ru.gmasalskih.weather3.R
-import ru.gmasalskih.weather3.data.City
+import ru.gmasalskih.weather3.data.entity.City
 import ru.gmasalskih.weather3.databinding.FragmentFavoriteCityBinding
 import ru.gmasalskih.weather3.utils.toast
 
@@ -17,7 +17,7 @@ class FavoriteCityFragment : Fragment() {
 
     lateinit var binding: FragmentFavoriteCityBinding
     lateinit var viewModel: FavoriteCityViewModel
-    lateinit var adapter : FavoriteCityListAdapter
+    private lateinit var adapter : FavoriteCityListAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

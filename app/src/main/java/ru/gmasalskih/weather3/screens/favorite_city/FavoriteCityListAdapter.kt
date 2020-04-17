@@ -3,7 +3,7 @@ package ru.gmasalskih.weather3.screens.favorite_city
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.*
-import ru.gmasalskih.weather3.data.City
+import ru.gmasalskih.weather3.data.entity.City
 import ru.gmasalskih.weather3.databinding.ListItemFavoriteCityBinding
 
 class FavoriteCityListAdapter(private val clickListener: FavoriteCityClickListener) :

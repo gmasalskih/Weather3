@@ -10,19 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <fragment
-                android:id="@+id/navHost"
-                android:name="androidx.navigation.fragment.NavHostFragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:defaultNavHost="true"
-                app:navGraph="@navigation/navigation" />
-
-        </FrameLayout>
+        <include layout="@layout/content_main"/>
 
         <com.google.android.material.navigation.NavigationView
             android:id="@+id/navView"
@@ -34,6 +22,4 @@
 
     </androidx.drawerlayout.widget.DrawerLayout>
 
-
 </layout>
-

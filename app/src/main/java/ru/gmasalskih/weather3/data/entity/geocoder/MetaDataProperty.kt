@@ -5,5 +5,5 @@ import ru.gmasalskih.weather3.data.entity.geocoder.GeocoderMetaData
 
 data class MetaDataProperty (
 	@SerializedName("GeocoderMetaData")
-	val geocoderMetaData : GeocoderMetaData
+	val geocoderMetaData : GeocoderMetaData?
 )

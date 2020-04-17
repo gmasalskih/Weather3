@@ -3,30 +3,30 @@ package ru.gmasalskih.weather3.screens.weather
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import ru.gmasalskih.weather3.data.*
-import ru.gmasalskih.weather3.data.entity.geocoder.BaseGeocoderEntity
-import ru.gmasalskih.weather3.data.entity.weather.BaseWeatherEntity
-import ru.gmasalskih.weather3.data.storege.ICityProvider
-import ru.gmasalskih.weather3.data.storege.IFavoriteCityProvider
-import ru.gmasalskih.weather3.data.storege.IWeatherProvider
-import ru.gmasalskih.weather3.data.storege.local.LocalCityProvider
-import ru.gmasalskih.weather3.data.storege.local.LocalFavoriteCityProvider
-import ru.gmasalskih.weather3.data.storege.local.LocalWeatherProvider
+import ru.gmasalskih.weather3.api.GeocoderApi
+import ru.gmasalskih.weather3.api.WeatherApi
+import ru.gmasalskih.weather3.data.ICityProvider
+import ru.gmasalskih.weather3.data.IFavoriteCityProvider
+import ru.gmasalskih.weather3.data.IWeatherProvider
+import ru.gmasalskih.weather3.data.entity.City
+import ru.gmasalskih.weather3.data.entity.Weather
+import ru.gmasalskih.weather3.data.providers.CityProvider
+import ru.gmasalskih.weather3.data.providers.FavoriteCityProvider
+import ru.gmasalskih.weather3.data.providers.WeatherProvider
+import ru.gmasalskih.weather3.utils.TAG_LOG
 import timber.log.Timber
 
 class WeatherViewModel(
-    var cityName: String,
     var lon: Float,
     var lat: Float
 ) : ViewModel() {
+    private val weatherProvider: IWeatherProvider = WeatherProvider
+    private val favoriteCityProvider: IFavoriteCityProvider = FavoriteCityProvider
+    private val cityProvider: ICityProvider = CityProvider
 
-    private val weatherProvider: IWeatherProvider = LocalWeatherProvider
-    private val favoriteCityProvider: IFavoriteCityProvider = LocalFavoriteCityProvider
-    private val cityProvider: ICityProvider = LocalCityProvider
-    private var city: City = City(name = cityName, lon = lon, lat = lat)
+    private val _currentLocation = MutableLiveData<City>()
+    val currentLocation: LiveData<City>
+        get() = _currentLocation
 
     private val _currentWeather = MutableLiveData<Weather>()
     val currentWeather: LiveData<Weather>
@@ -48,46 +48,40 @@ class WeatherViewModel(
     val isCityFavoriteSelected: LiveData<Boolean>
         get() = _isCityFavoriteSelected
 
-
     init {
-        cityProvider.addCity(city)
-        Timber.i("--- WeatherViewModel created!")
-        getResponse(lon, lat)
+        initCity();
         updateFavoriteCityStatus()
         _isCitySelected.value = false
         _isDateSelected.value = false
+        _isCityFavoriteSelected.value = false
         _isCityWebPageSelected.value = false
+        Timber.i("$TAG_LOG WeatherViewModel created!")
     }
 
-    fun getResponse(lon: Float, lat: Float) {
-        Timber.i("--- $lon $lat")
-        WeatherApi.apiService.getWeather(lon = lon, lat = lat).enqueue(object :
-            Callback<BaseWeatherEntity> {
-            override fun onFailure(call: Call<BaseWeatherEntity>, t: Throwable) {
-                Timber.i("--- ${t.message}")
+    private fun initCity() {
+        if (cityProvider.getCity(lat = lat, lon = lon) == null) {
+            GeocoderApi.getResponse("$lon,$lat") {
+                cityProvider.addCity(it.first())
+                _currentLocation.value = it.first()
+                sendWeatherRequest()
             }
+        }
+    }
 
-            override fun onResponse(
-                call: Call<BaseWeatherEntity>,
-                response: Response<BaseWeatherEntity>
-            ) {
-                val result: BaseWeatherEntity? = response.body()
-                result?.let {
-                    _currentWeather.value = Weather(
-                        city = city,
-                        temp = it.fact.temp,
-                        timestamp = it.now_dt,
-                        windSpeed = it.fact.wind_speed.toInt(),
-                        pressure = it.fact.pressure_mm,
-                        humidity = it.fact.humidity
-                    )
-                }
+    private fun sendWeatherRequest() {
+        _currentLocation.value?.let { city: City ->
+            WeatherApi.getResponse(city) { weather: Weather ->
+                _currentWeather.value = weather
+                weatherProvider.addWeather(weather)
             }
-        })
+        }
+
     }
 
     fun updateFavoriteCityStatus() {
-        _isCityFavoriteSelected.value = favoriteCityProvider.isCityFavorite(city!!)
+        _currentLocation.value?.let { city: City ->
+            _isCityFavoriteSelected.value = favoriteCityProvider.isCityFavorite(city)
+        }
     }
 
     // Click Event
@@ -108,17 +102,19 @@ class WeatherViewModel(
 
     fun onToggleFavoriteCity() {
         _isCityFavoriteSelected.value?.let { event: Boolean ->
-            if (event) {
-                favoriteCityProvider.delCity(city)
-            } else {
-                favoriteCityProvider.addCity(city)
+            _currentLocation.value?.let { city: City ->
+                if (event) {
+                    favoriteCityProvider.removeCity(city)
+                } else {
+                    favoriteCityProvider.addCity(city)
+                }
+                updateFavoriteCityStatus()
             }
-            updateFavoriteCityStatus()
         }
     }
 
     override fun onCleared() {
         super.onCleared()
-        Timber.i("--- WeatherViewModel cleared!")
+        Timber.i("$TAG_LOG WeatherViewModel cleared!")
     }
 }

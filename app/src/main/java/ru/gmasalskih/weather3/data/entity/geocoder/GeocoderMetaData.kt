@@ -6,17 +6,17 @@ import ru.gmasalskih.weather3.data.entity.geocoder.AddressDetails
 
 data class GeocoderMetaData (
     @SerializedName("precision")
-	val precision : String,
+	val precision : String?,
 
     @SerializedName("text")
-	val text : String,
+	val text : String?,
 
     @SerializedName("kind")
-	val kind : String,
+	val kind : String?,
 
     @SerializedName("Address")
-	val address : Address,
+	val address : Address?,
 
     @SerializedName("AddressDetails")
-	val addressDetails : AddressDetails
+	val addressDetails : AddressDetails?
 )

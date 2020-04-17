@@ -9,17 +9,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import ru.gmasalskih.weather3.data.City
+import ru.gmasalskih.weather3.data.entity.City
 import ru.gmasalskih.weather3.databinding.FragmentCitySelectionBinding
-import ru.gmasalskih.weather3.utils.toast
-import timber.log.Timber
 
 class CitySelectionFragment : Fragment() {
 
     lateinit var binding: FragmentCitySelectionBinding
     lateinit var viewModel: CitySelectionViewModel
-    lateinit var adapter: SelectionCityListAdapter
+    private lateinit var adapter: SelectionCityListAdapter
+    private lateinit var navController: NavController
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,71 +39,31 @@ class CitySelectionFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initObserveViewModel(view)
-        Timber.i("--- AAA")
-        viewModel.responseListCity.observe(viewLifecycleOwner, Observer {
-            Timber.i("--- AAA$it")
-            adapter.submitList(it)
-        })
+        navController = view.findNavController()
+        initObserveViewModel()
 
         binding.enterCityName.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                //NOP
+                viewModel.sendGeocoderRequest(s.toString())
             }
 
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                //NOP
-            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+    }
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                viewModel.getResponse(s.toString())
-            }
+    private fun initObserveViewModel() {
+        viewModel.responseListCity.observe(viewLifecycleOwner, Observer {
+            adapter.submitList(it)
         })
     }
 
     private fun onCitySelected(city: City) {
-        context?.let {
-            val action = CitySelectionFragmentDirections.actionCitySelectionFragmentToWeatherFragment().apply {
-                setCityName(city.name!!)
-                setLat(city.lat!!)
-                setLon(city.lon!!)
+        val action = CitySelectionFragmentDirections
+            .actionCitySelectionFragmentToWeatherFragment().apply {
+                lat = city.lat
+                lon = city.lon
             }
-            view!!.findNavController().navigate(action)
-//            "$city".toast(it)
-//            Timber.i("--- $city")
-        }
-    }
-
-    private fun initObserveViewModel(view: View) {
-        viewModel.isCityConfirmed.observe(viewLifecycleOwner, Observer { event: Boolean ->
-            if (event) {
-
-                val cityName = binding.enterCityName.text.toString()
-                viewModel.getResponse(cityName)
-//                if (viewModel.isEnteredCityValid(cityName) && viewModel.hasEnteredCity(cityName)) {
-//                    val action =
-//                        CitySelectionFragmentDirections.actionCitySelectionFragmentToWeatherFragment()
-//                            .apply {
-//                                setCityName(cityName)
-//                            }
-//                    view.findNavController().navigate(action)
-//                } else {
-//                    context?.let {
-//                        "$cityName ${resources.getText(R.string.city_not_found)}".toast(it)
-//                    }
-//                }
-
-
-            }
-        })
-
-//        viewModel.response.observe(viewLifecycleOwner, Observer { event: String? ->
-//            event?.let {
-//                Timber.i("--- $it")
-//            }
-//
-//        })
-
+        navController.navigate(action)
     }
 }
-

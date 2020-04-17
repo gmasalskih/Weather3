@@ -13,6 +13,6 @@ class ObserveLifeCycle(lifecycle: Lifecycle) : LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_ANY)
     fun statusLifecycle(source: LifecycleOwner, event: Lifecycle.Event){
-        Timber.i("--- ${source.javaClass.simpleName} - ${event.name}")
+        Timber.i("$TAG_LOG ${source.javaClass.simpleName} - ${event.name}")
     }
 }

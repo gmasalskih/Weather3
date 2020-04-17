@@ -23,10 +23,6 @@
                 android:name="urlWebPage" />
         </action>
         <argument
-            android:name="cityName"
-            app:argType="string"
-            android:defaultValue="Москва" />
-        <argument
             android:name="lon"
             app:argType="float"
             android:defaultValue="37.617635" />

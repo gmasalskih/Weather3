@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModelProvider
 import java.lang.IllegalArgumentException
 
 class WeatherViewModelFactory(
-    private val cityName: String,
     private val lon: Float,
     private val lat: Float
 ) :
@@ -13,7 +12,6 @@ class WeatherViewModelFactory(
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(WeatherViewModel::class.java)) {
             return WeatherViewModel(
-                cityName = cityName,
                 lon = lon,
                 lat = lat
             ) as T

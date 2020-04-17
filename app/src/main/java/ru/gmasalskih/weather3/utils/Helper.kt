@@ -4,9 +4,10 @@ import android.content.Context
 import android.widget.TextView
 import android.widget.Toast
 import androidx.databinding.BindingAdapter
-import ru.gmasalskih.weather3.data.City
+import ru.gmasalskih.weather3.data.entity.City
 
 const val DATE_PATTERN = "yyyy-MM-dd"
+const val TAG_LOG = "---"
 
 fun String.toast(context: Context){
     Toast.makeText(context, this, Toast.LENGTH_SHORT).show()

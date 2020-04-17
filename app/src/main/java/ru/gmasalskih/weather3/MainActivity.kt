@@ -8,8 +8,6 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import ru.gmasalskih.weather3.databinding.ActivityMainBinding
-import ru.gmasalskih.weather3.utils.ObserveLifeCycle
-import timber.log.Timber
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,13 +20,11 @@ class MainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         drawerLayout = binding.drawerLayout
         navController = findNavController(R.id.navHost)
-        NavigationUI.setupActionBarWithNavController(this, navController, drawerLayout)
         NavigationUI.setupWithNavController(binding.navView, navController)
+        NavigationUI.setupActionBarWithNavController(this, navController, drawerLayout)
     }
 
     override fun onSupportNavigateUp(): Boolean {
         return NavigationUI.navigateUp(navController, drawerLayout)
     }
 }
-
-

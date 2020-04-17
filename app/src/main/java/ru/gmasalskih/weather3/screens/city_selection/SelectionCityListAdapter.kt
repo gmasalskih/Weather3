@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import ru.gmasalskih.weather3.data.City
+import ru.gmasalskih.weather3.data.entity.City
 import ru.gmasalskih.weather3.databinding.ListItemCitySelectionBinding
 
 class SelectionCityListAdapter(private val clickListener: SelectionCityClickListener) :

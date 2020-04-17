@@ -99,7 +99,7 @@
             android:layout_marginEnd="32dp"
             android:gravity="center"
             android:onClick="@{()-> viewModel.onCitySelect()}"
-            android:text="@{viewModel.cityName}"
+            android:text="@{viewModel.currentLocation.name}"
             android:textSize="36sp"
             app:layout_constraintBottom_toTopOf="@+id/city_web_page"
             app:layout_constraintEnd_toEndOf="parent"
