@@ -59,12 +59,16 @@ class WeatherViewModel(
     }
 
     private fun initLocation() {
-        if (locationProvider.getLocation(lat = lat, lon = lon) == null) {
+        var location = locationProvider.getLocation(lat = lat, lon = lon)
+        if (location == null) {
             GeocoderApi.getResponse("$lon,$lat") {
                 locationProvider.addLocation(it.first())
                 _currentLocation.value = it.first()
                 sendWeatherRequest()
             }
+        } else{
+            _currentLocation.value = location
+            sendWeatherRequest()
         }
     }
 
@@ -75,7 +79,6 @@ class WeatherViewModel(
                 weatherProvider.addWeather(weather)
             }
         }
-
     }
 
     fun updateFavoriteLocationStatus() {

@@ -39,7 +39,7 @@ private val APIGeocoder = Retrofit.Builder()
     .build()
 
 interface GeocoderApiService {
-    @GET("?apikey=$KEY_GEOCODER&format=json&results=100")
+    @GET("?apikey=$KEY_GEOCODER&format=json&results=100&kind=locality")
     fun getGeocoderEntity(@Query("geocode") geocode: String): Call<BaseGeocoderEntity?>
 }
 
