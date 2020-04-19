@@ -9,7 +9,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import ru.gmasalskih.weather3.R
-import ru.gmasalskih.weather3.data.entity.City
+import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.databinding.FragmentFavoriteCityBinding
 import ru.gmasalskih.weather3.utils.toast
 
@@ -35,14 +35,14 @@ class FavoriteCityFragment : Fragment() {
         return binding.root
     }
 
-    private fun onDeleteFavoriteCity(city: City){
+    private fun onDeleteFavoriteCity(location: Location){
         activity?.let {
             AlertDialog.Builder(it)
-                .setTitle("${resources.getText(R.string.del_favorite_city_title)} ${city.name}")
+                .setTitle("${resources.getText(R.string.del_favorite_city_title)} ${location.name}")
                 .setMessage(resources.getText(R.string.del_favorite_city_msg))
                 .setPositiveButton(resources.getText(R.string.yes_btn)) { _, _ ->
-                    viewModel.onDeleteFavoriteCity(city)
-                    "${city.name} ${resources.getText(R.string.msg_favorite_city_deleted)}".toast(it)
+                    viewModel.onDeleteFavoriteCity(location)
+                    "${location.name} ${resources.getText(R.string.msg_favorite_city_deleted)}".toast(it)
                 }
                 .setNegativeButton(resources.getText(R.string.no_btn), null)
                 .create()
@@ -52,7 +52,7 @@ class FavoriteCityFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.favoriteCityList.observe(viewLifecycleOwner, Observer {
+        viewModel.favoriteLocationList.observe(viewLifecycleOwner, Observer {
             adapter.submitList(it)
         })
     }

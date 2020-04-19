@@ -9,7 +9,7 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import ru.gmasalskih.weather3.R
-import ru.gmasalskih.weather3.data.entity.City
+import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.data.entity.Weather
 import ru.gmasalskih.weather3.databinding.FragmentWeatherBinding
 import ru.gmasalskih.weather3.utils.ObserveLifeCycle
@@ -65,15 +65,15 @@ class WeatherFragment : Fragment() {
             binding.favoriteCity.setImageResource(icoFavorite)
         })
 
-        viewModel.currentLocation.observe(viewLifecycleOwner, Observer { city: City ->
-            binding.cityName.text = city.name
+        viewModel.currentLocation.observe(viewLifecycleOwner, Observer { location: Location ->
+            binding.cityName.text = location.name
         })
 
         viewModel.isDateSelected.observe(viewLifecycleOwner, Observer { event: Boolean ->
             if (event) {
                 viewModel.currentWeather.value?.let { weather: Weather ->
                     val action = WeatherFragmentDirections
-                        .actionWeatherFragmentToDateSelectionFragment(weather.city.name)
+                        .actionWeatherFragmentToDateSelectionFragment(weather.location.name)
                     navController.navigate(action)
                 }
             }
@@ -91,7 +91,7 @@ class WeatherFragment : Fragment() {
             if (event) {
                 viewModel.currentWeather.value?.let { weather: Weather ->
                     val action = WeatherFragmentDirections
-                        .actionWeatherFragmentToCityWebPageFragment(weather.city.url)
+                        .actionWeatherFragmentToCityWebPageFragment(weather.location.url)
                     navController.navigate(action)
                 }
             }

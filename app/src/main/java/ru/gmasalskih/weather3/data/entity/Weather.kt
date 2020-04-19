@@ -1,10 +1,8 @@
 package ru.gmasalskih.weather3.data.entity
 
-import ru.gmasalskih.weather3.data.entity.City
-
 data class Weather(
     val timestamp: String = "2020-01-01",
-    val city: City = City(),
+    val location: Location = Location(),
     val temp: Int = 0,
     val windSpeed: Int = 0,
     val windDirection: String = "c",

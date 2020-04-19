@@ -11,7 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import ru.gmasalskih.weather3.data.entity.City
+import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.databinding.FragmentCitySelectionBinding
 
 class CitySelectionFragment : Fragment() {
@@ -53,16 +53,16 @@ class CitySelectionFragment : Fragment() {
     }
 
     private fun initObserveViewModel() {
-        viewModel.responseListCity.observe(viewLifecycleOwner, Observer {
+        viewModel.responseListLocation.observe(viewLifecycleOwner, Observer {
             adapter.submitList(it)
         })
     }
 
-    private fun onCitySelected(city: City) {
+    private fun onCitySelected(location: Location) {
         val action = CitySelectionFragmentDirections
             .actionCitySelectionFragmentToWeatherFragment().apply {
-                lat = city.lat
-                lon = city.lon
+                lat = location.lat
+                lon = location.lon
             }
         navController.navigate(action)
     }

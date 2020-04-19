@@ -8,7 +8,7 @@ import ru.gmasalskih.weather3.api.WeatherApi
 import ru.gmasalskih.weather3.data.ICityProvider
 import ru.gmasalskih.weather3.data.IFavoriteCityProvider
 import ru.gmasalskih.weather3.data.IWeatherProvider
-import ru.gmasalskih.weather3.data.entity.City
+import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.data.entity.Weather
 import ru.gmasalskih.weather3.data.providers.CityProvider
 import ru.gmasalskih.weather3.data.providers.FavoriteCityProvider
@@ -24,8 +24,8 @@ class WeatherViewModel(
     private val favoriteCityProvider: IFavoriteCityProvider = FavoriteCityProvider
     private val cityProvider: ICityProvider = CityProvider
 
-    private val _currentLocation = MutableLiveData<City>()
-    val currentLocation: LiveData<City>
+    private val _currentLocation = MutableLiveData<Location>()
+    val currentLocation: LiveData<Location>
         get() = _currentLocation
 
     private val _currentWeather = MutableLiveData<Weather>()
@@ -69,8 +69,8 @@ class WeatherViewModel(
     }
 
     private fun sendWeatherRequest() {
-        _currentLocation.value?.let { city: City ->
-            WeatherApi.getResponse(city) { weather: Weather ->
+        _currentLocation.value?.let { location: Location ->
+            WeatherApi.getResponse(location) { weather: Weather ->
                 _currentWeather.value = weather
                 weatherProvider.addWeather(weather)
             }
@@ -79,8 +79,8 @@ class WeatherViewModel(
     }
 
     fun updateFavoriteCityStatus() {
-        _currentLocation.value?.let { city: City ->
-            _isCityFavoriteSelected.value = favoriteCityProvider.isCityFavorite(city)
+        _currentLocation.value?.let { location: Location ->
+            _isCityFavoriteSelected.value = favoriteCityProvider.isCityFavorite(location)
         }
     }
 
@@ -102,11 +102,11 @@ class WeatherViewModel(
 
     fun onToggleFavoriteCity() {
         _isCityFavoriteSelected.value?.let { event: Boolean ->
-            _currentLocation.value?.let { city: City ->
+            _currentLocation.value?.let { location: Location ->
                 if (event) {
-                    favoriteCityProvider.removeCity(city)
+                    favoriteCityProvider.removeCity(location)
                 } else {
-                    favoriteCityProvider.addCity(city)
+                    favoriteCityProvider.addCity(location)
                 }
                 updateFavoriteCityStatus()
             }

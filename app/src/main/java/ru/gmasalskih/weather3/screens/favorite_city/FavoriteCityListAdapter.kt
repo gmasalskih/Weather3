@@ -3,11 +3,11 @@ package ru.gmasalskih.weather3.screens.favorite_city
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.*
-import ru.gmasalskih.weather3.data.entity.City
+import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.databinding.ListItemFavoriteCityBinding
 
 class FavoriteCityListAdapter(private val clickListener: FavoriteCityClickListener) :
-    ListAdapter<City, FavoriteCityListAdapter.ViewHolder>(DiffCallback()) {
+    ListAdapter<Location, FavoriteCityListAdapter.ViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder.from(parent)
@@ -21,7 +21,7 @@ class FavoriteCityListAdapter(private val clickListener: FavoriteCityClickListen
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(
-            item: City,
+            item: Location,
             clickListener: FavoriteCityClickListener
         ) {
             binding.city = item
@@ -38,18 +38,18 @@ class FavoriteCityListAdapter(private val clickListener: FavoriteCityClickListen
         }
     }
 
-    class DiffCallback : DiffUtil.ItemCallback<City>() {
-        override fun areItemsTheSame(oldItem: City, newItem: City): Boolean {
+    class DiffCallback : DiffUtil.ItemCallback<Location>() {
+        override fun areItemsTheSame(oldItem: Location, newItem: Location): Boolean {
             return oldItem == newItem
         }
 
-        override fun areContentsTheSame(oldItem: City, newItem: City): Boolean {
+        override fun areContentsTheSame(oldItem: Location, newItem: Location): Boolean {
             return oldItem.lat == newItem.lat && oldItem.lon == newItem.lon
         }
     }
 
-    class FavoriteCityClickListener(val clickListener: (city: City) -> Unit) {
-        fun onClick(city: City) = clickListener(city)
+    class FavoriteCityClickListener(val clickListener: (location: Location) -> Unit) {
+        fun onClick(location: Location) = clickListener(location)
     }
 }
 

@@ -9,7 +9,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
-import ru.gmasalskih.weather3.data.entity.City
+import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.data.entity.geocoder.BaseGeocoderEntity
 import ru.gmasalskih.weather3.data.entity.geocoder.FeatureMember
 import ru.gmasalskih.weather3.data.entity.geocoder.GeoObject
@@ -47,7 +47,7 @@ object GeocoderApi {
     private val apiService: GeocoderApiService by lazy {
         APIGeocoder.create(GeocoderApiService::class.java)
     }
-    fun getResponse(geocode: String, callback: (List<City>) -> Unit) {
+    fun getResponse(geocode: String, callback: (List<Location>) -> Unit) {
         apiService.getGeocoderEntity(geocode)
             .enqueue(object : Callback<BaseGeocoderEntity?> {
                 override fun onFailure(call: Call<BaseGeocoderEntity?>, t: Throwable) {
@@ -61,7 +61,7 @@ object GeocoderApi {
                         val list = listFM.mapNotNull { fm: FeatureMember ->
                             fm.geoObject
                         }.map { geoObject: GeoObject ->
-                            City(
+                            Location(
                                 addressLine = getAddressLine(geoObject),
                                 countryName = getCountryName(geoObject),
                                 countyCode = getCountyCode(geoObject),

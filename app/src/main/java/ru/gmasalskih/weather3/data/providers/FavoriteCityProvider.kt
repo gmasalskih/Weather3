@@ -1,6 +1,6 @@
 package ru.gmasalskih.weather3.data.providers
 
-import ru.gmasalskih.weather3.data.entity.City
+import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.data.IFavoriteCityProvider
 import ru.gmasalskih.weather3.data.storege.local.localFavoriteCityStorage
 
@@ -10,15 +10,15 @@ object FavoriteCityProvider :
     private val storage =
         localFavoriteCityStorage
 
-    override fun getFavoriteCities(): List<City> = storage.sortedBy {
+    override fun getFavoriteCities(): List<Location> = storage.sortedBy {
         it.name
     }.toList()
 
-    override fun addCity(city: City): Boolean = storage.add(city)
+    override fun addCity(location: Location): Boolean = storage.add(location)
 
-    override fun removeCity(city: City): Boolean = storage.remove(city)
+    override fun removeCity(location: Location): Boolean = storage.remove(location)
 
-    override fun isCityFavorite(city: City): Boolean = storage.contains(city)
+    override fun isCityFavorite(location: Location): Boolean = storage.contains(location)
 
     override fun clearFavoriteCities() = storage.clear()
 }

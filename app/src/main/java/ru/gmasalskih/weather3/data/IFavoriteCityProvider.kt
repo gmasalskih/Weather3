@@ -1,11 +1,11 @@
 package ru.gmasalskih.weather3.data
 
-import ru.gmasalskih.weather3.data.entity.City
+import ru.gmasalskih.weather3.data.entity.Location
 
 interface IFavoriteCityProvider {
-    fun getFavoriteCities(): List<City>
-    fun addCity(city: City): Boolean
-    fun removeCity(city: City) : Boolean
-    fun isCityFavorite(city: City): Boolean
+    fun getFavoriteCities(): List<Location>
+    fun addCity(location: Location): Boolean
+    fun removeCity(location: Location) : Boolean
+    fun isCityFavorite(location: Location): Boolean
     fun clearFavoriteCities(): Unit
 }

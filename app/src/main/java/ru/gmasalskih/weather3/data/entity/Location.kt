@@ -1,6 +1,6 @@
 package ru.gmasalskih.weather3.data.entity
 
-data class City(
+data class Location(
     val name: String = "",
     val addressLine: String = "",
     val countryName: String = "",

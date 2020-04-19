@@ -7,7 +7,7 @@
     <data>
         <variable
             name="city"
-            type="ru.gmasalskih.weather3.data.entity.City" />
+            type="ru.gmasalskih.weather3.data.entity.Location" />
 
         <variable
             name="clickListener"

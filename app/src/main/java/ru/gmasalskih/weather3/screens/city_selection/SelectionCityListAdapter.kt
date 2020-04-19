@@ -5,11 +5,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import ru.gmasalskih.weather3.data.entity.City
+import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.databinding.ListItemCitySelectionBinding
 
 class SelectionCityListAdapter(private val clickListener: SelectionCityClickListener) :
-    ListAdapter<City, SelectionCityListAdapter.ViewHolder>(DiffCallback()) {
+    ListAdapter<Location, SelectionCityListAdapter.ViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder.from(parent)
@@ -22,7 +22,7 @@ class SelectionCityListAdapter(private val clickListener: SelectionCityClickList
     class ViewHolder private constructor(val binding: ListItemCitySelectionBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(
-            item: City,
+            item: Location,
             clickListener: SelectionCityClickListener
         ) {
             binding.city = item
@@ -39,17 +39,17 @@ class SelectionCityListAdapter(private val clickListener: SelectionCityClickList
     }
 
 
-    class DiffCallback : DiffUtil.ItemCallback<City>() {
-        override fun areItemsTheSame(oldItem: City, newItem: City): Boolean {
+    class DiffCallback : DiffUtil.ItemCallback<Location>() {
+        override fun areItemsTheSame(oldItem: Location, newItem: Location): Boolean {
             return oldItem.addressLine == newItem.addressLine
         }
 
-        override fun areContentsTheSame(oldItem: City, newItem: City): Boolean {
+        override fun areContentsTheSame(oldItem: Location, newItem: Location): Boolean {
             return oldItem == newItem
         }
     }
 
-    class SelectionCityClickListener(val clickListener: (citySelection: City) -> Unit) {
-        fun onClick(citySelection: City) = clickListener(citySelection)
+    class SelectionCityClickListener(val clickListener: (locationSelection: Location) -> Unit) {
+        fun onClick(locationSelection: Location) = clickListener(locationSelection)
     }
 }
