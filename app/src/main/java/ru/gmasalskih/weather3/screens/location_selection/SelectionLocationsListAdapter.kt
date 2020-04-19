@@ -1,4 +1,4 @@
-package ru.gmasalskih.weather3.screens.city_selection
+package ru.gmasalskih.weather3.screens.location_selection
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,10 +6,10 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ru.gmasalskih.weather3.data.entity.Location
-import ru.gmasalskih.weather3.databinding.ListItemCitySelectionBinding
+import ru.gmasalskih.weather3.databinding.ListItemLocationSelectionBinding
 
-class SelectionCityListAdapter(private val clickListener: SelectionCityClickListener) :
-    ListAdapter<Location, SelectionCityListAdapter.ViewHolder>(DiffCallback()) {
+class SelectionLocationsListAdapter(private val clickListener: SelectionLocationClickListener) :
+    ListAdapter<Location, SelectionLocationsListAdapter.ViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder.from(parent)
@@ -19,20 +19,20 @@ class SelectionCityListAdapter(private val clickListener: SelectionCityClickList
         holder.bind(getItem(position), clickListener)
     }
 
-    class ViewHolder private constructor(val binding: ListItemCitySelectionBinding) :
+    class ViewHolder private constructor(val binding: ListItemLocationSelectionBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(
             item: Location,
-            clickListener: SelectionCityClickListener
+            clickListener: SelectionLocationClickListener
         ) {
-            binding.city = item
+            binding.location = item
             binding.clickListener = clickListener
         }
 
         companion object {
             fun from(parent: ViewGroup): ViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = ListItemCitySelectionBinding.inflate(layoutInflater, parent, false)
+                val binding = ListItemLocationSelectionBinding.inflate(layoutInflater, parent, false)
                 return ViewHolder(binding)
             }
         }
@@ -49,7 +49,7 @@ class SelectionCityListAdapter(private val clickListener: SelectionCityClickList
         }
     }
 
-    class SelectionCityClickListener(val clickListener: (locationSelection: Location) -> Unit) {
+    class SelectionLocationClickListener(val clickListener: (locationSelection: Location) -> Unit) {
         fun onClick(locationSelection: Location) = clickListener(locationSelection)
     }
 }

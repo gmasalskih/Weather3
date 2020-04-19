@@ -24,8 +24,8 @@
             android:onClick="@{() -> viewModel.onDateSelect()}"
             android:text="@{viewModel.currentWeather.timestamp}"
             app:layout_constraintBottom_toTopOf="@+id/temp"
-            app:layout_constraintEnd_toEndOf="@+id/city_name"
-            app:layout_constraintStart_toStartOf="@+id/city_name"
+            app:layout_constraintEnd_toEndOf="@+id/location_name"
+            app:layout_constraintStart_toStartOf="@+id/location_name"
             app:layout_constraintTop_toTopOf="@+id/weather_icon"
             tools:hint="2020.01.01" />
 
@@ -46,11 +46,11 @@
             android:layout_height="wrap_content"
             android:text="@{@string/temp_format(viewModel.currentWeather.temp)}"
             android:textSize="30sp"
-            app:layout_constraintBottom_toTopOf="@+id/city_name"
+            app:layout_constraintBottom_toTopOf="@+id/location_name"
             app:layout_constraintEnd_toStartOf="@+id/wind_speed"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
-            app:layout_constraintStart_toStartOf="@+id/city_name"
+            app:layout_constraintStart_toStartOf="@+id/location_name"
             app:layout_constraintTop_toBottomOf="@+id/timestamp"
             tools:hint="10C" />
 
@@ -91,13 +91,13 @@
             tools:hint="80%" />
 
         <TextView
-            android:id="@+id/city_name"
+            android:id="@+id/location_name"
             android:layout_width="0dp"
             android:layout_height="56dp"
             android:layout_marginStart="32dp"
             android:layout_marginEnd="32dp"
             android:gravity="center"
-            android:onClick="@{()-> viewModel.onCitySelect()}"
+            android:onClick="@{()-> viewModel.onLocationSelect()}"
             android:text="@{viewModel.currentLocation.name}"
             android:textSize="36sp"
             app:layout_constraintBottom_toBottomOf="@+id/weather_icon"
@@ -108,23 +108,23 @@
             tools:hint="City #1" />
 
         <ImageView
-            android:id="@+id/city_web_page"
+            android:id="@+id/location_web_page"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginBottom="32dp"
-            android:onClick="@{() -> viewModel.onCityWebPageSelect()}"
+            android:onClick="@{() -> viewModel.onLocationWebPageSelect()}"
             android:src="@drawable/ic_language_black_24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
         <ImageView
-            android:id="@+id/favorite_city"
+            android:id="@+id/favorite_location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="32dp"
             android:layout_marginBottom="32dp"
-            android:onClick="@{() -> viewModel.onToggleFavoriteCity()}"
+            android:onClick="@{() -> viewModel.onToggleFavoriteLocation()}"
             android:src="@drawable/ic_favorite_border_black_24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />

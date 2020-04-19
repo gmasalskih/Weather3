@@ -17,5 +17,4 @@
             app:navGraph="@navigation/navigation" />
 
     </FrameLayout>
-
 </layout>

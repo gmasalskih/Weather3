@@ -8,17 +8,17 @@
     <fragment
         android:id="@+id/weatherFragment"
         android:name="ru.gmasalskih.weather3.screens.weather.WeatherFragment"
-        android:label="@string/weather_city"
+        android:label="@string/weather_location"
         tools:layout="@layout/fragment_weather">
         <action
-            android:id="@+id/action_weatherFragment_to_citySelectionFragment"
-            app:destination="@id/citySelectionFragment" />
+            android:id="@+id/action_weatherFragment_to_locationSelectionFragment"
+            app:destination="@id/locationSelectionFragment" />
         <action
             android:id="@+id/action_weatherFragment_to_dateSelectionFragment"
             app:destination="@id/dateSelectionFragment" />
         <action
-            android:id="@+id/action_weatherFragment_to_cityWebPageFragment"
-            app:destination="@id/cityWebPageFragment" >
+            android:id="@+id/action_weatherFragment_to_locationWebPageFragment"
+            app:destination="@id/locationWebPageFragment" >
             <argument
                 android:name="urlWebPage" />
         </action>
@@ -37,19 +37,19 @@
         android:label="@string/about"
         tools:layout="@layout/fragment_about" />
     <fragment
-        android:id="@+id/citySelectionFragment"
-        android:name="ru.gmasalskih.weather3.screens.city_selection.CitySelectionFragment"
-        android:label="@string/city_selection"
-        tools:layout="@layout/fragment_city_selection">
+        android:id="@+id/locationSelectionFragment"
+        android:name="ru.gmasalskih.weather3.screens.location_selection.LocationSelectionFragment"
+        android:label="@string/location_selection"
+        tools:layout="@layout/fragment_location_selection">
         <action
-            android:id="@+id/action_citySelectionFragment_to_weatherFragment"
+            android:id="@+id/action_locationSelectionFragment_to_weatherFragment"
             app:destination="@id/weatherFragment" />
     </fragment>
     <fragment
-        android:id="@+id/cityWebPageFragment"
-        android:name="ru.gmasalskih.weather3.screens.city_web_page.CityWebPageFragment"
-        android:label="@string/city_web_page"
-        tools:layout="@layout/fragment_city_web_page" >
+        android:id="@+id/locationWebPageFragment"
+        android:name="ru.gmasalskih.weather3.screens.location_web_page.LocationWebPageFragment"
+        android:label="@string/location_web_page"
+        tools:layout="@layout/fragment_location_web_page" >
         <argument
             android:name="urlWebPage"
             app:argType="string" />
@@ -63,14 +63,14 @@
             android:id="@+id/action_dateSelectionFragment_to_weatherFragment"
             app:destination="@id/weatherFragment" />
         <argument
-            android:name="cityName"
+            android:name="locationName"
             app:argType="string" />
     </fragment>
     <fragment
-        android:id="@+id/favoriteCityFragment"
-        android:name="ru.gmasalskih.weather3.screens.favorite_city.FavoriteCityFragment"
-        android:label="@string/favorite_city"
-        tools:layout="@layout/fragment_favorite_city" />
+        android:id="@+id/favoriteLocationFragment"
+        android:name="ru.gmasalskih.weather3.screens.favorite_location.FavoriteLocationFragment"
+        android:label="@string/favorite_location"
+        tools:layout="@layout/fragment_favorite_location" />
     <fragment
         android:id="@+id/settingsFragment"
         android:name="ru.gmasalskih.weather3.screens.settings.SettingsFragment"

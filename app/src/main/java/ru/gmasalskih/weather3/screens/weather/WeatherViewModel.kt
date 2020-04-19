@@ -5,13 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import ru.gmasalskih.weather3.api.GeocoderApi
 import ru.gmasalskih.weather3.api.WeatherApi
-import ru.gmasalskih.weather3.data.ICityProvider
-import ru.gmasalskih.weather3.data.IFavoriteCityProvider
+import ru.gmasalskih.weather3.data.ILocationProvider
+import ru.gmasalskih.weather3.data.IFavoriteLocationProvider
 import ru.gmasalskih.weather3.data.IWeatherProvider
 import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.data.entity.Weather
-import ru.gmasalskih.weather3.data.providers.CityProvider
-import ru.gmasalskih.weather3.data.providers.FavoriteCityProvider
+import ru.gmasalskih.weather3.data.providers.LocationProvider
+import ru.gmasalskih.weather3.data.providers.FavoriteLocationProvider
 import ru.gmasalskih.weather3.data.providers.WeatherProvider
 import ru.gmasalskih.weather3.utils.TAG_LOG
 import timber.log.Timber
@@ -21,8 +21,8 @@ class WeatherViewModel(
     var lat: Float
 ) : ViewModel() {
     private val weatherProvider: IWeatherProvider = WeatherProvider
-    private val favoriteCityProvider: IFavoriteCityProvider = FavoriteCityProvider
-    private val cityProvider: ICityProvider = CityProvider
+    private val favoriteLocationProvider: IFavoriteLocationProvider = FavoriteLocationProvider
+    private val locationProvider: ILocationProvider = LocationProvider
 
     private val _currentLocation = MutableLiveData<Location>()
     val currentLocation: LiveData<Location>
@@ -32,36 +32,36 @@ class WeatherViewModel(
     val currentWeather: LiveData<Weather>
         get() = _currentWeather
 
-    private val _isCitySelected = MutableLiveData<Boolean>()
-    val isCitySelected: LiveData<Boolean>
-        get() = _isCitySelected
+    private val _isLocationSelected = MutableLiveData<Boolean>()
+    val isLocationSelected: LiveData<Boolean>
+        get() = _isLocationSelected
 
-    private val _isCityWebPageSelected = MutableLiveData<Boolean>()
-    val isCityWebPageSelected: LiveData<Boolean>
-        get() = _isCityWebPageSelected
+    private val _isLocationWebPageSelected = MutableLiveData<Boolean>()
+    val isLocationWebPageSelected: LiveData<Boolean>
+        get() = _isLocationWebPageSelected
 
     private val _isDateSelected = MutableLiveData<Boolean>()
     val isDateSelected: LiveData<Boolean>
         get() = _isDateSelected
 
-    private val _isCityFavoriteSelected = MutableLiveData<Boolean>()
-    val isCityFavoriteSelected: LiveData<Boolean>
-        get() = _isCityFavoriteSelected
+    private val _isLocationFavoriteSelected = MutableLiveData<Boolean>()
+    val isLocationFavoriteSelected: LiveData<Boolean>
+        get() = _isLocationFavoriteSelected
 
     init {
-        initCity();
-        updateFavoriteCityStatus()
-        _isCitySelected.value = false
+        initLocation();
+        updateFavoriteLocationStatus()
+        _isLocationSelected.value = false
         _isDateSelected.value = false
-        _isCityFavoriteSelected.value = false
-        _isCityWebPageSelected.value = false
+        _isLocationFavoriteSelected.value = false
+        _isLocationWebPageSelected.value = false
         Timber.i("$TAG_LOG WeatherViewModel created!")
     }
 
-    private fun initCity() {
-        if (cityProvider.getCity(lat = lat, lon = lon) == null) {
+    private fun initLocation() {
+        if (locationProvider.getLocation(lat = lat, lon = lon) == null) {
             GeocoderApi.getResponse("$lon,$lat") {
-                cityProvider.addCity(it.first())
+                locationProvider.addLocation(it.first())
                 _currentLocation.value = it.first()
                 sendWeatherRequest()
             }
@@ -78,21 +78,21 @@ class WeatherViewModel(
 
     }
 
-    fun updateFavoriteCityStatus() {
+    fun updateFavoriteLocationStatus() {
         _currentLocation.value?.let { location: Location ->
-            _isCityFavoriteSelected.value = favoriteCityProvider.isCityFavorite(location)
+            _isLocationFavoriteSelected.value = favoriteLocationProvider.isLocationFavorite(location)
         }
     }
 
     // Click Event
-    fun onCitySelect() {
-        _isCitySelected.value = true
-        _isCitySelected.value = false
+    fun onLocationSelect() {
+        _isLocationSelected.value = true
+        _isLocationSelected.value = false
     }
 
-    fun onCityWebPageSelect() {
-        _isCityWebPageSelected.value = true
-        _isCityWebPageSelected.value = false
+    fun onLocationWebPageSelect() {
+        _isLocationWebPageSelected.value = true
+        _isLocationWebPageSelected.value = false
     }
 
     fun onDateSelect() {
@@ -100,15 +100,15 @@ class WeatherViewModel(
         _isDateSelected.value = false
     }
 
-    fun onToggleFavoriteCity() {
-        _isCityFavoriteSelected.value?.let { event: Boolean ->
+    fun onToggleFavoriteLocation() {
+        _isLocationFavoriteSelected.value?.let { event: Boolean ->
             _currentLocation.value?.let { location: Location ->
                 if (event) {
-                    favoriteCityProvider.removeCity(location)
+                    favoriteLocationProvider.removeLocation(location)
                 } else {
-                    favoriteCityProvider.addCity(location)
+                    favoriteLocationProvider.addLocation(location)
                 }
-                updateFavoriteCityStatus()
+                updateFavoriteLocationStatus()
             }
         }
     }

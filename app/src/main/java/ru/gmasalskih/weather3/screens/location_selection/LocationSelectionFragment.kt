@@ -1,4 +1,4 @@
-package ru.gmasalskih.weather3.screens.city_selection
+package ru.gmasalskih.weather3.screens.location_selection
 
 import android.os.Bundle
 import android.text.Editable
@@ -12,28 +12,28 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import ru.gmasalskih.weather3.data.entity.Location
-import ru.gmasalskih.weather3.databinding.FragmentCitySelectionBinding
+import ru.gmasalskih.weather3.databinding.FragmentLocationSelectionBinding
 
-class CitySelectionFragment : Fragment() {
+class LocationSelectionFragment : Fragment() {
 
-    lateinit var binding: FragmentCitySelectionBinding
-    lateinit var viewModel: CitySelectionViewModel
-    private lateinit var adapter: SelectionCityListAdapter
+    lateinit var binding: FragmentLocationSelectionBinding
+    lateinit var viewModel: LocationSelectionViewModel
+    private lateinit var adapter: SelectionLocationsListAdapter
     private lateinit var navController: NavController
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentCitySelectionBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(this).get(CitySelectionViewModel::class.java)
-        adapter = SelectionCityListAdapter(SelectionCityListAdapter.SelectionCityClickListener {
+        binding = FragmentLocationSelectionBinding.inflate(inflater, container, false)
+        viewModel = ViewModelProvider(this).get(LocationSelectionViewModel::class.java)
+        adapter = SelectionLocationsListAdapter(SelectionLocationsListAdapter.SelectionLocationClickListener {
             onCitySelected(it)
         })
 
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
-        binding.selectionCityList.adapter = adapter
+        binding.selectionLocationList.adapter = adapter
         return binding.root
     }
 
@@ -42,7 +42,7 @@ class CitySelectionFragment : Fragment() {
         navController = view.findNavController()
         initObserveViewModel()
 
-        binding.enterCityName.addTextChangedListener(object : TextWatcher {
+        binding.enterLocationName.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 viewModel.sendGeocoderRequest(s.toString())
             }
@@ -59,8 +59,8 @@ class CitySelectionFragment : Fragment() {
     }
 
     private fun onCitySelected(location: Location) {
-        val action = CitySelectionFragmentDirections
-            .actionCitySelectionFragmentToWeatherFragment().apply {
+        val action = LocationSelectionFragmentDirections
+            .actionLocationSelectionFragmentToWeatherFragment().apply {
                 lat = location.lat
                 lon = location.lon
             }

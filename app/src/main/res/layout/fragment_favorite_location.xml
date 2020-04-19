@@ -3,16 +3,16 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".screens.favorite_city.FavoriteCityFragment">
+    tools:context=".screens.favorite_location.FavoriteLocationFragment">
 
     <data>
         <variable
             name="viewModel"
-            type="ru.gmasalskih.weather3.screens.favorite_city.FavoriteCityViewModel" />
+            type="ru.gmasalskih.weather3.screens.favorite_location.FavoriteLocationViewModel" />
     </data>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/favorite_city_list"
+        android:id="@+id/favorite_locations_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorPrimary"

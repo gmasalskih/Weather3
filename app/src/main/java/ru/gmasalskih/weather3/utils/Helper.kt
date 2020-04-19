@@ -13,43 +13,43 @@ fun String.toast(context: Context){
     Toast.makeText(context, this, Toast.LENGTH_SHORT).show()
 }
 
-@BindingAdapter("cityName")
+@BindingAdapter("locationName")
 fun TextView.setCityName(item: Location?) {
     item?.let { location: Location ->
         text = location.name
     }
 }
 
-@BindingAdapter("cityLat")
-fun TextView.setCityLat(item: Location?) {
+@BindingAdapter("locationLat")
+fun TextView.setLocationLat(item: Location?) {
     item?.let { location: Location ->
         text = location.lat.toString()
     }
 }
 
-@BindingAdapter("cityLon")
-fun TextView.setCityLon(item: Location?) {
+@BindingAdapter("locationLon")
+fun TextView.setLocationLon(item: Location?) {
     item?.let { location: Location ->
         text = location.lon.toString()
     }
 }
 
-@BindingAdapter("cityAddressLine")
-fun TextView.setCityAddressLine(item: Location?) {
+@BindingAdapter("locationAddressLine")
+fun TextView.setLocationAddressLine(item: Location?) {
     item?.let { location: Location ->
         text = location.addressLine
     }
 }
 
-@BindingAdapter("cityCountryName")
-fun TextView.setCityCountryName(item: Location?) {
+@BindingAdapter("locationCountryName")
+fun TextView.setLocationCountryName(item: Location?) {
     item?.let { location: Location ->
         text = location.countryName
     }
 }
 
-@BindingAdapter("cityCountyCode")
-fun TextView.setCityCountyCode(item: Location?) {
+@BindingAdapter("locationCountyCode")
+fun TextView.setLocationCountyCode(item: Location?) {
     item?.let { location: Location ->
         text = location.countyCode
     }

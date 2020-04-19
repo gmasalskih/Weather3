@@ -1,13 +1,13 @@
-package ru.gmasalskih.weather3.screens.favorite_city
+package ru.gmasalskih.weather3.screens.favorite_location
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.*
 import ru.gmasalskih.weather3.data.entity.Location
-import ru.gmasalskih.weather3.databinding.ListItemFavoriteCityBinding
+import ru.gmasalskih.weather3.databinding.ListItemFavoriteLocationBinding
 
-class FavoriteCityListAdapter(private val clickListener: FavoriteCityClickListener) :
-    ListAdapter<Location, FavoriteCityListAdapter.ViewHolder>(DiffCallback()) {
+class FavoriteLocationListAdapter(private val clickListener: FavoriteLocationClickListener) :
+    ListAdapter<Location, FavoriteLocationListAdapter.ViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder.from(parent)
@@ -17,14 +17,14 @@ class FavoriteCityListAdapter(private val clickListener: FavoriteCityClickListen
         holder.bind(getItem(position), clickListener)
     }
 
-    class ViewHolder private constructor(val binding: ListItemFavoriteCityBinding) :
+    class ViewHolder private constructor(val binding: ListItemFavoriteLocationBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(
             item: Location,
-            clickListener: FavoriteCityClickListener
+            clickListener: FavoriteLocationClickListener
         ) {
-            binding.city = item
+            binding.location = item
             binding.clickListener = clickListener
             binding.executePendingBindings()
         }
@@ -32,7 +32,7 @@ class FavoriteCityListAdapter(private val clickListener: FavoriteCityClickListen
         companion object {
             fun from(parent: ViewGroup): ViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = ListItemFavoriteCityBinding.inflate(layoutInflater, parent, false)
+                val binding = ListItemFavoriteLocationBinding.inflate(layoutInflater, parent, false)
                 return ViewHolder(binding)
             }
         }
@@ -48,7 +48,7 @@ class FavoriteCityListAdapter(private val clickListener: FavoriteCityClickListen
         }
     }
 
-    class FavoriteCityClickListener(val clickListener: (location: Location) -> Unit) {
+    class FavoriteLocationClickListener(val clickListener: (location: Location) -> Unit) {
         fun onClick(location: Location) = clickListener(location)
     }
 }

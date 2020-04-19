@@ -53,20 +53,20 @@ class WeatherFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = view.findNavController()
-        viewModel.updateFavoriteCityStatus()
+        viewModel.updateFavoriteLocationStatus()
         initObserveViewModel()
     }
 
     private fun initObserveViewModel() {
-        viewModel.isCityFavoriteSelected.observe(viewLifecycleOwner, Observer { event: Boolean ->
+        viewModel.isLocationFavoriteSelected.observe(viewLifecycleOwner, Observer { event: Boolean ->
             Timber.i("$TAG_LOG $event")
             val icoFavorite: Int =
                 if (event) R.drawable.ic_favorite_black_24dp else R.drawable.ic_favorite_border_black_24dp
-            binding.favoriteCity.setImageResource(icoFavorite)
+            binding.favoriteLocation.setImageResource(icoFavorite)
         })
 
         viewModel.currentLocation.observe(viewLifecycleOwner, Observer { location: Location ->
-            binding.cityName.text = location.name
+            binding.locationName.text = location.name
         })
 
         viewModel.isDateSelected.observe(viewLifecycleOwner, Observer { event: Boolean ->
@@ -79,19 +79,19 @@ class WeatherFragment : Fragment() {
             }
         })
 
-        viewModel.isCitySelected.observe(viewLifecycleOwner, Observer { event: Boolean ->
+        viewModel.isLocationSelected.observe(viewLifecycleOwner, Observer { event: Boolean ->
             if (event) {
                 val action = WeatherFragmentDirections
-                    .actionWeatherFragmentToCitySelectionFragment()
+                    .actionWeatherFragmentToLocationSelectionFragment()
                 navController.navigate(action)
             }
         })
 
-        viewModel.isCityWebPageSelected.observe(viewLifecycleOwner, Observer { event: Boolean ->
+        viewModel.isLocationWebPageSelected.observe(viewLifecycleOwner, Observer { event: Boolean ->
             if (event) {
                 viewModel.currentWeather.value?.let { weather: Weather ->
                     val action = WeatherFragmentDirections
-                        .actionWeatherFragmentToCityWebPageFragment(weather.location.url)
+                        .actionWeatherFragmentToLocationWebPageFragment(weather.location.url)
                     navController.navigate(action)
                 }
             }

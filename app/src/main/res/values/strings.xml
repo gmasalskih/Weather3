@@ -2,23 +2,23 @@
     <string name="app_name">Weather3</string>
     <string name="about">About</string>
     <string name="settings">Settings</string>
-    <string name="favorite_city">Favorite Cities</string>
-    <string name="city_selection">City selection</string>
-    <string name="city_web_page">City web page</string>
+    <string name="favorite_location">Favorite locations</string>
+    <string name="location_selection">locations selection</string>
+    <string name="location_web_page">locations web page</string>
     <string name="date_selection">Date selection</string>
-    <string name="weather_city">Weather in the city</string>
+    <string name="weather_location">Weather in the location</string>
     <string name="about_text">This is my first training app!</string>
     <string name="item">Item</string>
     <string name="temp_format" translatable="false">%d℃</string>
     <string name="windSpeed_format">%dm/s</string>
     <string name="pressure_format">%d mm Hg</string>
     <string name="humidity_format" translatable="false">%d%%</string>
-    <string name="msg_favorite_city_deleted">was deleted</string>
+    <string name="msg_favorite_location_deleted">was deleted</string>
     <string name="yes_btn">Yes</string>
     <string name="no_btn">No</string>
-    <string name="del_favorite_city_title">Delete favorite city</string>
-    <string name="del_favorite_city_msg">Are you sure you want to delete your favorite city?</string>
-    <string name="enter_city_name_hint">Enter city name</string>
-    <string name="confirm_city_name_btn">Confirm</string>
-    <string name="city_not_found">not found</string>
+    <string name="del_favorite_location_title">Delete favorite city</string>
+    <string name="del_favorite_location_msg">Are you sure you want to delete your favorite city?</string>
+    <string name="enter_location_name_hint">Enter location name</string>
+    <string name="confirm_location_name_btn">Confirm</string>
+    <string name="location_not_found">not found</string>
 </resources>

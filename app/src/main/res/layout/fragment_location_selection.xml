@@ -4,12 +4,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".screens.city_selection.CitySelectionFragment">
+    tools:context=".screens.location_selection.LocationSelectionFragment">
 
     <data>
         <variable
             name="viewModel"
-            type="ru.gmasalskih.weather3.screens.city_selection.CitySelectionViewModel" />
+            type="ru.gmasalskih.weather3.screens.location_selection.LocationSelectionViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -17,14 +17,14 @@
         android:layout_height="match_parent">
 
         <EditText
-            android:id="@+id/enter_city_name"
+            android:id="@+id/enter_location_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
             android:ems="10"
-            android:hint="@string/enter_city_name_hint"
+            android:hint="@string/enter_location_name_hint"
             android:inputType="text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -32,7 +32,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/selection_city_list"
+            android:id="@+id/selection_location_list"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="16dp"
@@ -40,9 +40,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/enter_city_name"
+            app:layout_constraintTop_toBottomOf="@+id/enter_location_name"
             app:layout_constraintVertical_bias="0.0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </layout>

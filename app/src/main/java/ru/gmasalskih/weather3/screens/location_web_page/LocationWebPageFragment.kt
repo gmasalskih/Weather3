@@ -1,4 +1,4 @@
-package ru.gmasalskih.weather3.screens.city_web_page
+package ru.gmasalskih.weather3.screens.location_web_page
 
 import android.os.Bundle
 import android.view.*
@@ -6,20 +6,20 @@ import androidx.core.app.ShareCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import ru.gmasalskih.weather3.R
-import ru.gmasalskih.weather3.databinding.FragmentCityWebPageBinding
+import ru.gmasalskih.weather3.databinding.FragmentLocationWebPageBinding
 
-class CityWebPageFragment : Fragment() {
+class LocationWebPageFragment : Fragment() {
 
-    lateinit var binding: FragmentCityWebPageBinding
-    lateinit var args: CityWebPageFragmentArgs
+    lateinit var binding: FragmentLocationWebPageBinding
+    lateinit var args: LocationWebPageFragmentArgs
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentCityWebPageBinding.inflate(inflater, container, false)
+        binding = FragmentLocationWebPageBinding.inflate(inflater, container, false)
         arguments?.let {
-            args = CityWebPageFragmentArgs.fromBundle(it)
+            args = LocationWebPageFragmentArgs.fromBundle(it)
         }
         binding.textView6.text = args.urlWebPage
         setHasOptionsMenu(true)
