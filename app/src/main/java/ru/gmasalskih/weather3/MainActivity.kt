@@ -20,11 +20,12 @@ class MainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         drawerLayout = binding.drawerLayout
         navController = findNavController(R.id.navHost)
+        setSupportActionBar(binding.appBarMain.toolbar)
         NavigationUI.setupWithNavController(binding.navView, navController)
         NavigationUI.setupActionBarWithNavController(this, navController, drawerLayout)
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        return NavigationUI.navigateUp(navController, drawerLayout)
+        return NavigationUI.navigateUp(navController, drawerLayout) || super.onSupportNavigateUp()
     }
 }

@@ -61,16 +61,24 @@ object WeatherApi {
                 call: Call<BaseWeatherEntity>,
                 response: Response<BaseWeatherEntity>
             ) {
-                response.body()?.let {
-                    val weather = Weather(
-                        location = location,
-                        temp = it.fact.temp,
-                        timestamp = it.now_dt,
-                        windSpeed = it.fact.wind_speed.toInt(),
-                        pressure = it.fact.pressure_mm,
-                        humidity = it.fact.humidity
-                    )
-                    callback(weather)
+                val body = response.body()
+                if (body != null && response.isSuccessful) {
+                    body.apply {
+                        val weather = Weather(
+                            location = location,
+                            temp = fact.temp,
+                            timestamp = now_dt,
+                            windSpeed = fact.wind_speed.toInt(),
+                            pressure = fact.pressure_mm,
+                            humidity = fact.humidity,
+                            icon = fact.icon,
+                            url = info.url
+                        )
+                        callback(weather)
+                    }
+                } else {
+                    // что-то пошло не по плану
+                    Timber.i("$TAG_LOG Код ответа сервера: ${response.code()} Данные с сервера ${response.raw()}")
                 }
             }
         })

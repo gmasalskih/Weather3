@@ -47,30 +47,39 @@ object GeocoderApi {
     private val apiService: GeocoderApiService by lazy {
         APIGeocoder.create(GeocoderApiService::class.java)
     }
+
     fun getResponse(geocode: String, callback: (List<Location>) -> Unit) {
         apiService.getGeocoderEntity(geocode)
             .enqueue(object : Callback<BaseGeocoderEntity?> {
                 override fun onFailure(call: Call<BaseGeocoderEntity?>, t: Throwable) {
                     Timber.i("$TAG_LOG ${t.message}")
                 }
+
                 override fun onResponse(
                     call: Call<BaseGeocoderEntity?>,
                     response: Response<BaseGeocoderEntity?>
                 ) {
-                    response.body()?.response?.geoObjectCollection?.featureMember?.let { listFM: List<FeatureMember> ->
-                        val list = listFM.mapNotNull { fm: FeatureMember ->
-                            fm.geoObject
-                        }.map { geoObject: GeoObject ->
-                            Location(
-                                addressLine = getAddressLine(geoObject),
-                                countryName = getCountryName(geoObject),
-                                countyCode = getCountyCode(geoObject),
-                                name = getName(geoObject),
-                                lat = getLat(geoObject),
-                                lon = getLon(geoObject)
-                            )
-                        }.toList()
-                        callback(list)
+                    val body = response.body()?.response?.geoObjectCollection?.featureMember
+                    if (body != null && response.isSuccessful) {
+                        body.let { listFM: List<FeatureMember> ->
+                            val list = listFM
+                                .mapNotNull { fm: FeatureMember ->
+                                    fm.geoObject
+                                }.map { geoObject: GeoObject ->
+                                    Location(
+                                        addressLine = getAddressLine(geoObject),
+                                        countryName = getCountryName(geoObject),
+                                        countyCode = getCountyCode(geoObject),
+                                        name = getName(geoObject),
+                                        lat = getLat(geoObject),
+                                        lon = getLon(geoObject)
+                                    )
+                                }.toList()
+                            callback(list)
+                        }
+                    } else {
+                        // что-то пошло не по плану
+                        Timber.i("$TAG_LOG Код ответа сервера: ${response.code()} Данные с сервера ${response.raw()}")
                     }
                 }
             })

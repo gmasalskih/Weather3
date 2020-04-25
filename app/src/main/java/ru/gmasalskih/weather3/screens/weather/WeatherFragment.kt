@@ -58,15 +58,21 @@ class WeatherFragment : Fragment() {
     }
 
     private fun initObserveViewModel() {
-        viewModel.isLocationFavoriteSelected.observe(viewLifecycleOwner, Observer { event: Boolean ->
-            Timber.i("$TAG_LOG $event")
-            val icoFavorite: Int =
-                if (event) R.drawable.ic_favorite_black_24dp else R.drawable.ic_favorite_border_black_24dp
-            binding.favoriteLocation.setImageResource(icoFavorite)
-        })
+        viewModel.isLocationFavoriteSelected.observe(
+            viewLifecycleOwner,
+            Observer { event: Boolean ->
+                Timber.i("$TAG_LOG $event")
+                val icoFavorite: Int =
+                    if (event) R.drawable.ic_favorite_black_24dp else R.drawable.ic_favorite_border_black_24dp
+                binding.favoriteLocation.setImageResource(icoFavorite)
+            })
 
         viewModel.currentLocation.observe(viewLifecycleOwner, Observer { location: Location ->
             binding.locationName.text = location.name
+        })
+
+        viewModel.currentWeather.observe(viewLifecycleOwner, Observer {
+            binding.weatherIcon.loadUrl("https://yastatic.net/weather/i/icons/blueye/color/svg/${it.icon}.svg")
         })
 
         viewModel.isDateSelected.observe(viewLifecycleOwner, Observer { event: Boolean ->
@@ -91,7 +97,7 @@ class WeatherFragment : Fragment() {
             if (event) {
                 viewModel.currentWeather.value?.let { weather: Weather ->
                     val action = WeatherFragmentDirections
-                        .actionWeatherFragmentToLocationWebPageFragment(weather.location.url)
+                        .actionWeatherFragmentToLocationWebPageFragment(weather.url)
                     navController.navigate(action)
                 }
             }

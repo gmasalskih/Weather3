@@ -20,25 +20,24 @@
             android:id="@+id/timestamp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
             android:gravity="center"
             android:onClick="@{() -> viewModel.onDateSelect()}"
             android:text="@{viewModel.currentWeather.timestamp}"
             app:layout_constraintBottom_toTopOf="@+id/temp"
-            app:layout_constraintEnd_toEndOf="@+id/location_name"
-            app:layout_constraintStart_toStartOf="@+id/location_name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/weather_icon"
             app:layout_constraintTop_toTopOf="@+id/weather_icon"
             tools:hint="2020.01.01" />
 
-        <ImageView
+        <WebView
             android:id="@+id/weather_icon"
             android:layout_width="200dp"
             android:layout_height="200dp"
-            android:layout_marginStart="32dp"
-            android:src="@drawable/ic_wb_sunny_black_24dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.4" />
+            app:layout_constraintBottom_toTopOf="@+id/location_web_page"
+            app:layout_constraintStart_toStartOf="@+id/location_web_page"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/temp"
@@ -49,7 +48,6 @@
             app:layout_constraintBottom_toTopOf="@+id/location_name"
             app:layout_constraintEnd_toStartOf="@+id/wind_speed"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toStartOf="@+id/location_name"
             app:layout_constraintTop_toBottomOf="@+id/timestamp"
             tools:hint="10C" />
@@ -60,7 +58,8 @@
             android:layout_height="wrap_content"
             android:text="@{@string/windSpeed_format(viewModel.currentWeather.windSpeed)}"
             android:textSize="30sp"
-            app:layout_constraintEnd_toStartOf="@+id/pressure"
+            app:layout_constraintBottom_toBottomOf="@+id/temp"
+            app:layout_constraintEnd_toStartOf="@+id/humidity"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/temp"
             app:layout_constraintTop_toTopOf="@+id/temp"
@@ -72,9 +71,10 @@
             android:layout_height="wrap_content"
             android:text="@{@string/pressure_format(viewModel.currentWeather.pressure)}"
             android:textSize="30sp"
-            app:layout_constraintEnd_toStartOf="@+id/humidity"
+            app:layout_constraintBottom_toBottomOf="@+id/temp"
+            app:layout_constraintEnd_toEndOf="@+id/location_name"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/wind_speed"
+            app:layout_constraintStart_toEndOf="@+id/humidity"
             app:layout_constraintTop_toTopOf="@+id/temp"
             tools:hint="733 mm Hg" />
 
@@ -82,12 +82,14 @@
             android:id="@+id/humidity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="136dp"
             android:text="@{@string/humidity_format(viewModel.currentWeather.humidity)}"
             android:textSize="30sp"
-            app:layout_constraintEnd_toEndOf="@+id/city_name"
+            app:layout_constraintBottom_toBottomOf="@+id/temp"
+            app:layout_constraintEnd_toStartOf="@+id/pressure"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/pressure"
-            app:layout_constraintTop_toTopOf="@+id/temp"
+            app:layout_constraintStart_toEndOf="@+id/wind_speed"
+            app:layout_constraintTop_toTopOf="parent"
             tools:hint="80%" />
 
         <TextView
@@ -102,7 +104,6 @@
             android:textSize="36sp"
             app:layout_constraintBottom_toBottomOf="@+id/weather_icon"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/weather_icon"
             app:layout_constraintTop_toBottomOf="@+id/temp"
             tools:hint="City #1" />
