@@ -3,19 +3,19 @@ package ru.gmasalskih.weather3.screens.weather
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
-import com.ahmadrosid.svgloader.SvgLoader
 import ru.gmasalskih.weather3.R
 import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.data.entity.Weather
 import ru.gmasalskih.weather3.databinding.FragmentWeatherBinding
 import ru.gmasalskih.weather3.utils.ObserveLifeCycle
 import ru.gmasalskih.weather3.utils.TAG_LOG
-import ru.gmasalskih.weather3.utils.URL_WEATHER_ICON
+import ru.gmasalskih.weather3.utils.setWeatherIcon
 import timber.log.Timber
 
 class WeatherFragment : Fragment() {
@@ -73,12 +73,9 @@ class WeatherFragment : Fragment() {
             binding.locationName.text = location.name
         })
 
-        viewModel.currentWeather.observe(viewLifecycleOwner, Observer {
-            binding.weatherIcon.apply {
-                SvgLoader.pluck()
-                    .with(activity)
-                    .setPlaceHolder(R.drawable.ic_cloud_grey, R.drawable.ic_cloud_off)
-                    .load("$URL_WEATHER_ICON${it.icon}.svg", this)
+        viewModel.currentWeather.observe(viewLifecycleOwner, Observer { weather: Weather ->
+            activity?.let { activity: FragmentActivity ->
+                binding.weatherIcon.setWeatherIcon(activity, weather.icon)
             }
         })
 

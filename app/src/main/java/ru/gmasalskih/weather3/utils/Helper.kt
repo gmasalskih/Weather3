@@ -5,13 +5,16 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.databinding.BindingAdapter
+import androidx.fragment.app.FragmentActivity
+import com.ahmadrosid.svgloader.SvgLoader
+import ru.gmasalskih.weather3.R
 import ru.gmasalskih.weather3.data.entity.Location
 
 const val DATE_PATTERN = "yyyy-MM-dd"
 const val TAG_LOG = "---"
 const val URL_WEATHER_ICON = "https://yastatic.net/weather/i/icons/blueye/color/svg/"
 
-fun String.toast(context: Context){
+fun String.toast(context: Context) {
     Toast.makeText(context, this, Toast.LENGTH_SHORT).show()
 }
 
@@ -55,4 +58,11 @@ fun TextView.setLocationCountyCode(item: Location?) {
     item?.let { location: Location ->
         text = location.countyCode
     }
+}
+
+fun ImageView.setWeatherIcon(activity: FragmentActivity, icon: String) {
+    SvgLoader.pluck()
+        .with(activity)
+        .setPlaceHolder(R.drawable.ic_cloud_grey, R.drawable.ic_cloud_off)
+        .load("$URL_WEATHER_ICON${icon}.svg", this)
 }
