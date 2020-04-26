@@ -82,14 +82,13 @@
             android:id="@+id/humidity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="136dp"
             android:text="@{@string/humidity_format(viewModel.currentWeather.humidity)}"
             android:textSize="30sp"
             app:layout_constraintBottom_toBottomOf="@+id/temp"
             app:layout_constraintEnd_toStartOf="@+id/pressure"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/wind_speed"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/temp"
             tools:hint="80%" />
 
         <TextView
