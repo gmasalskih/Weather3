@@ -15,6 +15,7 @@ import ru.gmasalskih.weather3.data.entity.Weather
 import ru.gmasalskih.weather3.databinding.FragmentWeatherBinding
 import ru.gmasalskih.weather3.utils.ObserveLifeCycle
 import ru.gmasalskih.weather3.utils.TAG_LOG
+import ru.gmasalskih.weather3.utils.URL_WEATHER_ICON
 import timber.log.Timber
 
 class WeatherFragment : Fragment() {
@@ -77,7 +78,7 @@ class WeatherFragment : Fragment() {
                 SvgLoader.pluck()
                     .with(activity)
                     .setPlaceHolder(R.drawable.ic_cloud_grey, R.drawable.ic_cloud_off)
-                    .load("https://yastatic.net/weather/i/icons/blueye/color/svg/${it.icon}.svg", this)
+                    .load("$URL_WEATHER_ICON${it.icon}.svg", this)
             }
         })
 

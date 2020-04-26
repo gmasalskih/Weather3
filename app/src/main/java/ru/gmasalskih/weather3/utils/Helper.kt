@@ -1,6 +1,7 @@
 package ru.gmasalskih.weather3.utils
 
 import android.content.Context
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.databinding.BindingAdapter
@@ -8,6 +9,7 @@ import ru.gmasalskih.weather3.data.entity.Location
 
 const val DATE_PATTERN = "yyyy-MM-dd"
 const val TAG_LOG = "---"
+const val URL_WEATHER_ICON = "https://yastatic.net/weather/i/icons/blueye/color/svg/"
 
 fun String.toast(context: Context){
     Toast.makeText(context, this, Toast.LENGTH_SHORT).show()
