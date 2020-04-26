@@ -3,11 +3,12 @@ package ru.gmasalskih.weather3.screens.weather
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.*
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
+import com.ahmadrosid.svgloader.SvgLoader
 import ru.gmasalskih.weather3.R
 import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.data.entity.Weather
@@ -72,7 +73,12 @@ class WeatherFragment : Fragment() {
         })
 
         viewModel.currentWeather.observe(viewLifecycleOwner, Observer {
-            binding.weatherIcon.loadUrl("https://yastatic.net/weather/i/icons/blueye/color/svg/${it.icon}.svg")
+            binding.weatherIcon.apply {
+                SvgLoader.pluck()
+                    .with(activity)
+                    .setPlaceHolder(R.drawable.ic_cloud_grey, R.drawable.ic_cloud_off)
+                    .load("https://yastatic.net/weather/i/icons/blueye/color/svg/${it.icon}.svg", this)
+            }
         })
 
         viewModel.isDateSelected.observe(viewLifecycleOwner, Observer { event: Boolean ->
