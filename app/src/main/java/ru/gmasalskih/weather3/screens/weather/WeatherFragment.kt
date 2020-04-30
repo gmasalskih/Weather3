@@ -37,10 +37,13 @@ class WeatherFragment : Fragment() {
         arguments?.let {
             args = WeatherFragmentArgs.fromBundle(it)
         }
-        viewModelFactory = WeatherViewModelFactory(
-            lon = args.lon,
-            lat = args.lat
-        )
+        activity?.let {
+            viewModelFactory = WeatherViewModelFactory(
+                lon = args.lon,
+                lat = args.lat,
+                app = it.application
+            )
+        }
         //
 
         viewModel = ViewModelProvider(this, viewModelFactory).get(WeatherViewModel::class.java)
