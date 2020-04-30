@@ -17,6 +17,7 @@ import ru.gmasalskih.weather3.databinding.FragmentLocationSelectionBinding
 class LocationSelectionFragment : Fragment() {
 
     lateinit var binding: FragmentLocationSelectionBinding
+    private lateinit var viewModelFactory: LocationSelectionViewModelFactory
     lateinit var viewModel: LocationSelectionViewModel
     private lateinit var adapter: SelectionLocationsListAdapter
     private lateinit var navController: NavController
@@ -26,10 +27,14 @@ class LocationSelectionFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentLocationSelectionBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(this).get(LocationSelectionViewModel::class.java)
-        adapter = SelectionLocationsListAdapter(SelectionLocationsListAdapter.SelectionLocationClickListener {
-            onCitySelected(it)
-        })
+        activity?.let {
+            viewModelFactory = LocationSelectionViewModelFactory(app = it.application)
+        }
+        viewModel = ViewModelProvider(this, viewModelFactory).get(LocationSelectionViewModel::class.java)
+        adapter =
+            SelectionLocationsListAdapter(SelectionLocationsListAdapter.SelectionLocationClickListener {
+                onCitySelected(it)
+            })
 
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
@@ -55,6 +60,10 @@ class LocationSelectionFragment : Fragment() {
         viewModel.responseListLocation.observe(viewLifecycleOwner, Observer {
             adapter.submitList(it)
         })
+        viewModel.db.getAllLocations().observe(viewLifecycleOwner, Observer {
+            adapter.submitList(it)
+        })
+
     }
 
     private fun onCitySelected(location: Location) {

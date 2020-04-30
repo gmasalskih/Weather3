@@ -1,7 +1,6 @@
 package ru.gmasalskih.weather3.screens.weather
 
 import android.app.Application
-import android.content.Context
 import androidx.lifecycle.*
 import kotlinx.coroutines.*
 import ru.gmasalskih.weather3.api.GeocoderApi
