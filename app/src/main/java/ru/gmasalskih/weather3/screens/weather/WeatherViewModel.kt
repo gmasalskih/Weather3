@@ -70,6 +70,9 @@ class WeatherViewModel(
         if (location == null) {
             GeocoderApi.getResponse("$lon,$lat") {
                 _currentLocation.value = it.first()
+                viewModelScope.launch(Dispatchers.IO){
+                    db.insert(it.first())
+                }
                 sendWeatherRequest()
             }
         } else {
