@@ -25,46 +25,42 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp">
 
-            <TextView
-                android:id="@+id/location_name"
-                android:layout_width="100dp"
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textSize="24sp"
-                app:locationName="@{location}"
+                android:orientation="vertical"
+                android:onClick="@{()->clickListener.onSelect(location)}"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/del_icon"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:hint="Location" />
+                app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/location_lat"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:locationLat="@{location}"
-                app:layout_constraintBottom_toBottomOf="@+id/location_name"
-                app:layout_constraintEnd_toStartOf="@+id/favorite_icon"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/location_name"
-                app:layout_constraintTop_toBottomOf="@+id/location_lon"
-                tools:hint="location_lat" />
+                <TextView
+                    android:id="@+id/location_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    app:locationName="@{location}"
+                    tools:hint="Location" />
 
-            <TextView
-                android:id="@+id/location_lon"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:locationLon="@{location}"
-                app:layout_constraintBottom_toTopOf="@+id/location_lat"
-                app:layout_constraintEnd_toStartOf="@+id/favorite_icon"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/location_name"
-                app:layout_constraintTop_toTopOf="@+id/location_name"
-                tools:hint="location_lon" />
+                <TextView
+                    android:id="@+id/address_line"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="address_line"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/del_icon"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/location_name"
+                    app:locationAddressLine="@{location}" />
+
+            </LinearLayout>
 
             <ImageView
-                android:id="@+id/favorite_icon"
+                android:id="@+id/del_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="@{()->clickListener.onClick(location)}"
+                android:onClick="@{()->clickListener.onDelete(location)}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

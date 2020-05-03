@@ -1,6 +1,5 @@
-package ru.gmasalskih.weather3.data.storege.db
+package ru.gmasalskih.weather3.data.storege
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import ru.gmasalskih.weather3.data.entity.Location
 
@@ -13,8 +12,14 @@ interface LocationsDao {
     @Query("SELECT * FROM locations WHERE lat = :lat AND lon = :lon")
     suspend fun getLocation(lat: Float, lon: Float): List<Location>
 
+    @Query("SELECT * FROM locations WHERE favorite = 1")
+    suspend fun getFavoriteLocations(): List<Location>
+
     @Query("SELECT * FROM locations WHERE name = :name")
     suspend fun getLocation(name: String): List<Location>
+
+    @Update
+    suspend fun updateLocation(location: Location)
 
     @Delete
     suspend fun delete(location: Location)

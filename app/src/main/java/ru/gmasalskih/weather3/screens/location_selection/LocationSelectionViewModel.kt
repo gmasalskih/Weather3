@@ -8,14 +8,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.api.GeocoderApi
-import ru.gmasalskih.weather3.data.storege.db.LocationsDB
-import ru.gmasalskih.weather3.data.storege.db.LocationsDao
+import ru.gmasalskih.weather3.data.storege.LocationsDB
+import ru.gmasalskih.weather3.data.storege.LocationsDao
 import ru.gmasalskih.weather3.utils.TAG_LOG
 import timber.log.Timber
 
-class LocationSelectionViewModel(private val app: Application) : AndroidViewModel(app) {
+class LocationSelectionViewModel(application: Application) : AndroidViewModel(application) {
 
-    val db: LocationsDao = LocationsDB.getInstance(app).locationsDao
+    val db: LocationsDao = LocationsDB.getInstance(getApplication()).locationsDao
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
 

@@ -1,7 +1,10 @@
 package ru.gmasalskih.weather3.screens.weather
 
+import android.content.Context
 import android.os.Bundle
 import android.view.*
+import android.view.inputmethod.InputMethodManager
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
@@ -22,7 +25,6 @@ class WeatherFragment : Fragment() {
 
     lateinit var binding: FragmentWeatherBinding
     private lateinit var observeLifeCycle: ObserveLifeCycle
-    private lateinit var viewModelFactory: WeatherViewModelFactory
     private lateinit var navController: NavController
     private lateinit var viewModel: WeatherViewModel
     private lateinit var args: WeatherFragmentArgs
@@ -38,15 +40,16 @@ class WeatherFragment : Fragment() {
             args = WeatherFragmentArgs.fromBundle(it)
         }
         activity?.let {
-            viewModelFactory = WeatherViewModelFactory(
-                lon = args.lon,
-                lat = args.lat,
-                app = it.application
-            )
+            viewModel = ViewModelProvider(
+                this, WeatherViewModelFactory(
+                    lon = args.lon,
+                    lat = args.lat,
+                    application = it.application
+                )
+            ).get(WeatherViewModel::class.java)
         }
         //
 
-        viewModel = ViewModelProvider(this, viewModelFactory).get(WeatherViewModel::class.java)
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
 
@@ -55,17 +58,23 @@ class WeatherFragment : Fragment() {
         return binding.root
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
+
         navController = view.findNavController()
-        viewModel.updateFavoriteLocationStatus()
+        viewModel.initLocation()
         initObserveViewModel()
+        Timber.i("AAA--- onViewCreated")
     }
+
 
     private fun initObserveViewModel() {
         viewModel.isLocationFavoriteSelected.observe(
-            viewLifecycleOwner,
-            Observer { event: Boolean ->
+            viewLifecycleOwner, Observer { event: Boolean ->
                 Timber.i("$TAG_LOG $event")
                 val icoFavorite: Int =
                     if (event) R.drawable.ic_favorite_black_24dp else R.drawable.ic_favorite_border_black_24dp
@@ -74,6 +83,7 @@ class WeatherFragment : Fragment() {
 
         viewModel.currentLocation.observe(viewLifecycleOwner, Observer { location: Location ->
             binding.locationName.text = location.name
+
         })
 
         viewModel.currentWeather.observe(viewLifecycleOwner, Observer { weather: Weather ->
@@ -84,9 +94,9 @@ class WeatherFragment : Fragment() {
 
         viewModel.isDateSelected.observe(viewLifecycleOwner, Observer { event: Boolean ->
             if (event) {
-                viewModel.currentWeather.value?.let { weather: Weather ->
+                viewModel.currentLocation.value?.let { location: Location ->
                     val action = WeatherFragmentDirections
-                        .actionWeatherFragmentToDateSelectionFragment(weather.location.name)
+                        .actionWeatherFragmentToDateSelectionFragment(location.name)
                     navController.navigate(action)
                 }
             }

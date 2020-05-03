@@ -10,7 +10,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Query
-import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.data.entity.Weather
 import ru.gmasalskih.weather3.data.entity.weather.BaseWeatherEntity
 import ru.gmasalskih.weather3.utils.TAG_LOG
@@ -49,9 +48,8 @@ object WeatherApi {
         APIWeather.create(WeatherApiService::class.java)
     }
 
-    fun getResponse(location: Location, callback: (Weather) -> Unit) {
-        Timber.i("$TAG_LOG $location ")
-        apiService.getWeather(lon = location.lon, lat = location.lat).enqueue(object :
+    fun getResponse(lon: Float, lat: Float, callback: (Weather) -> Unit) {
+        apiService.getWeather(lon = lon, lat = lat).enqueue(object :
             Callback<BaseWeatherEntity> {
             override fun onFailure(call: Call<BaseWeatherEntity>, t: Throwable) {
                 Timber.i("$TAG_LOG ${t.message}")
@@ -65,7 +63,6 @@ object WeatherApi {
                 if (body != null && response.isSuccessful) {
                     body.apply {
                         val weather = Weather(
-                            location = location,
                             temp = fact.temp,
                             timestamp = now_dt,
                             windSpeed = fact.wind_speed.toInt(),

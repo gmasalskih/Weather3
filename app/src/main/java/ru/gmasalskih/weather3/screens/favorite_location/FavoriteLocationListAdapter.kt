@@ -48,8 +48,9 @@ class FavoriteLocationListAdapter(private val clickListener: FavoriteLocationCli
         }
     }
 
-    class FavoriteLocationClickListener(val clickListener: (location: Location) -> Unit) {
-        fun onClick(location: Location) = clickListener(location)
+    class FavoriteLocationClickListener(val onDeleteClickListener: (location: Location) -> Unit, val onSelectClickListener: (location: Location) -> Unit) {
+        fun onDelete(location: Location) = onDeleteClickListener(location)
+        fun onSelect(location: Location) = onSelectClickListener(location)
     }
 }
 

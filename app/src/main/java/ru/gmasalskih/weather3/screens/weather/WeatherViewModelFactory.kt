@@ -8,7 +8,7 @@ import java.lang.IllegalArgumentException
 class WeatherViewModelFactory(
     private val lon: Float,
     private val lat: Float,
-    private val app: Application
+    private val application: Application
 ) :
     ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
@@ -16,7 +16,7 @@ class WeatherViewModelFactory(
             return WeatherViewModel(
                 lon = lon,
                 lat = lat,
-                application = app
+                application = application
             ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")

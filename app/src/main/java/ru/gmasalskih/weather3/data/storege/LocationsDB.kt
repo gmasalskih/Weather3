@@ -1,4 +1,4 @@
-package ru.gmasalskih.weather3.data.storege.db
+package ru.gmasalskih.weather3.data.storege
 
 import android.content.Context
 import androidx.room.Database
@@ -16,7 +16,8 @@ abstract class LocationsDB : RoomDatabase() {
 
         fun getInstance(context: Context): LocationsDB {
             synchronized(this) {
-                var instance = INSTANCE
+                var instance =
+                    INSTANCE
                 if (instance == null) {
                     instance = Room.databaseBuilder(
                         context.applicationContext,
@@ -29,6 +30,5 @@ abstract class LocationsDB : RoomDatabase() {
                 return instance
             }
         }
-
     }
 }

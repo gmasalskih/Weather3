@@ -1,29 +1,45 @@
 package ru.gmasalskih.weather3.screens.favorite_location
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.gmasalskih.weather3.data.entity.Location
-import ru.gmasalskih.weather3.data.IFavoriteLocationProvider
-import ru.gmasalskih.weather3.data.providers.FavoriteLocationProvider
+import ru.gmasalskih.weather3.data.storege.LocationsDB
 import ru.gmasalskih.weather3.utils.TAG_LOG
 import timber.log.Timber
 
-class FavoriteLocationViewModel : ViewModel() {
+class FavoriteLocationViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val favoriteLocationProvide: IFavoriteLocationProvider =
-        FavoriteLocationProvider
-    private var _favoriteCityList = MutableLiveData<List<Location>>()
+    private val db = LocationsDB.getInstance(getApplication()).locationsDao
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
+    private var _favoriteLocationList = MutableLiveData<List<Location>>()
     val favoriteLocationList: LiveData<List<Location>>
-    get() = _favoriteCityList
+    get() = _favoriteLocationList
 
     init {
-        _favoriteCityList.value = FavoriteLocationProvider.getFavoriteLocations()
+        coroutineScope.launch {
+            setFavoriteLocations(db.getFavoriteLocations())
+        }
     }
 
     fun onDeleteFavoriteCity(location: Location){
-        favoriteLocationProvide.removeLocation(location)
-        _favoriteCityList.value = FavoriteLocationProvider.getFavoriteLocations()
+        coroutineScope.launch {
+            db.updateLocation(location.apply {
+                isFavorite = false
+            })
+            setFavoriteLocations(db.getFavoriteLocations())
+        }
+    }
+
+    private suspend fun setFavoriteLocations(locations: List<Location>){
+        withContext(Dispatchers.Main){
+            _favoriteLocationList.value = locations
+        }
     }
 
     override fun onCleared() {

@@ -22,9 +22,12 @@ data class Location(
     val lat: Float = 0.0F,
 
     @ColumnInfo(name = "lon")
-    val lon: Float = 0.0F
-) {
+    val lon: Float = 0.0F,
+
+    @ColumnInfo(name = "favorite")
+    var isFavorite: Boolean = false,
+
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     var id: Long = 0L
-}
+)

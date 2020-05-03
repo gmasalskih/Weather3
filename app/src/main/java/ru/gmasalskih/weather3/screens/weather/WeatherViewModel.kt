@@ -5,15 +5,9 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.*
 import ru.gmasalskih.weather3.api.GeocoderApi
 import ru.gmasalskih.weather3.api.WeatherApi
-import ru.gmasalskih.weather3.data.ILocationProvider
-import ru.gmasalskih.weather3.data.IFavoriteLocationProvider
-import ru.gmasalskih.weather3.data.IWeatherProvider
 import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.data.entity.Weather
-import ru.gmasalskih.weather3.data.providers.LocationProvider
-import ru.gmasalskih.weather3.data.providers.FavoriteLocationProvider
-import ru.gmasalskih.weather3.data.providers.WeatherProvider
-import ru.gmasalskih.weather3.data.storege.db.LocationsDB
+import ru.gmasalskih.weather3.data.storege.LocationsDB
 import ru.gmasalskih.weather3.utils.TAG_LOG
 import timber.log.Timber
 
@@ -22,10 +16,7 @@ class WeatherViewModel(
     var lat: Float,
     application: Application
 ) : AndroidViewModel(application) {
-    private val weatherProvider: IWeatherProvider = WeatherProvider
-    private val favoriteLocationProvider: IFavoriteLocationProvider = FavoriteLocationProvider
-    private val locationProvider: ILocationProvider = LocationProvider
-    val db by lazy { LocationsDB.getInstance(getApplication()).locationsDao }
+    private val db by lazy { LocationsDB.getInstance(getApplication()).locationsDao }
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     private val _currentLocation = MutableLiveData<Location>()
@@ -53,55 +44,48 @@ class WeatherViewModel(
         get() = _isLocationFavoriteSelected
 
     init {
-        initLocation();
-        updateFavoriteLocationStatus()
         _isLocationSelected.value = false
         _isDateSelected.value = false
         _isLocationFavoriteSelected.value = false
         _isLocationWebPageSelected.value = false
-        Timber.i("$TAG_LOG WeatherViewModel created!")
+        sendWeatherRequest()
+        Timber.i("AAA--- WeatherViewModel created!")
     }
 
-    private fun initLocation() {
+    fun initLocation() {
         coroutineScope.launch {
-            val locations = db.getLocation(lat = lat, lon = lon)
-            if (locations.isNullOrEmpty()) {
+            if (db.getLocation(lat = lat, lon = lon).isNullOrEmpty()) {
                 GeocoderApi.getResponse("$lon,$lat") { listLocations ->
                     listLocations.first().let { location ->
                         coroutineScope.launch {
                             db.insert(location)
-                            setLocation(location)
+                            updateCurrentLocation()
                         }
                     }
                 }
             } else {
-                setLocation(locations.first())
+                updateCurrentLocation()
             }
         }
     }
 
-    private suspend fun setLocation(location: Location) {
-        withContext(Dispatchers.Main) {
-            _currentLocation.value = location
-            sendWeatherRequest()
+    suspend fun updateCurrentLocation() {
+        coroutineScope.launch {
+            val location = db.getLocation(lat=lat, lon = lon).first()
+            withContext(Dispatchers.Main){
+                _currentLocation.value = location
+                _isLocationFavoriteSelected.value = location.isFavorite
+            }
         }
     }
 
     private fun sendWeatherRequest() {
-        _currentLocation.value?.let { location: Location ->
-            WeatherApi.getResponse(location) { weather: Weather ->
-                _currentWeather.value = weather
-                weatherProvider.addWeather(weather)
-            }
+        WeatherApi.getResponse(lon = lon, lat = lat) { weather: Weather ->
+            _currentWeather.value = weather
         }
     }
 
-    fun updateFavoriteLocationStatus() {
-        _currentLocation.value?.let { location: Location ->
-            _isLocationFavoriteSelected.value =
-                favoriteLocationProvider.isLocationFavorite(location)
-        }
-    }
+
 
     // Click Event
     fun onLocationSelect() {
@@ -120,14 +104,12 @@ class WeatherViewModel(
     }
 
     fun onToggleFavoriteLocation() {
-        _isLocationFavoriteSelected.value?.let { event: Boolean ->
-            _currentLocation.value?.let { location: Location ->
-                if (event) {
-                    favoriteLocationProvider.removeLocation(location)
-                } else {
-                    favoriteLocationProvider.addLocation(location)
-                }
-                updateFavoriteLocationStatus()
+        coroutineScope.launch {
+            val location = db.getLocation(lat = lat, lon = lon).first()
+            _isLocationFavoriteSelected.value?.let { event: Boolean ->
+                location.isFavorite = !event
+                db.updateLocation(location)
+                updateCurrentLocation()
             }
         }
     }

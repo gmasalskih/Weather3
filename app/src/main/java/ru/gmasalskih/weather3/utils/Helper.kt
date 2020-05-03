@@ -9,8 +9,6 @@ import androidx.fragment.app.FragmentActivity
 import com.ahmadrosid.svgloader.SvgLoader
 import ru.gmasalskih.weather3.R
 import ru.gmasalskih.weather3.data.entity.Location
-import ru.gmasalskih.weather3.data.storege.db.LocationsDB
-import ru.gmasalskih.weather3.data.storege.db.LocationsDao
 
 const val DATE_PATTERN = "yyyy-MM-dd"
 const val TAG_LOG = "---"

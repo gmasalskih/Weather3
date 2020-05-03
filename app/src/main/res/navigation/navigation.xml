@@ -70,7 +70,11 @@
         android:id="@+id/favoriteLocationFragment"
         android:name="ru.gmasalskih.weather3.screens.favorite_location.FavoriteLocationFragment"
         android:label="@string/favorite_location"
-        tools:layout="@layout/fragment_favorite_location" />
+        tools:layout="@layout/fragment_favorite_location" >
+        <action
+            android:id="@+id/action_favoriteLocationFragment_to_weatherFragment"
+            app:destination="@id/weatherFragment" />
+    </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="ru.gmasalskih.weather3.screens.settings.SettingsFragment"
