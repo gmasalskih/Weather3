@@ -2,12 +2,12 @@ package ru.gmasalskih.weather3.screens.location_selection
 
 import android.app.Application
 import androidx.lifecycle.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.gmasalskih.weather3.data.entity.Location
-import ru.gmasalskih.weather3.data.ILocationProvider
 import ru.gmasalskih.weather3.api.GeocoderApi
-import ru.gmasalskih.weather3.data.providers.LocationProvider
 import ru.gmasalskih.weather3.data.storege.db.LocationsDB
 import ru.gmasalskih.weather3.data.storege.db.LocationsDao
 import ru.gmasalskih.weather3.utils.TAG_LOG
@@ -15,8 +15,8 @@ import timber.log.Timber
 
 class LocationSelectionViewModel(private val app: Application) : AndroidViewModel(app) {
 
-    private val locationProvider: ILocationProvider = LocationProvider
     val db: LocationsDao = LocationsDB.getInstance(app).locationsDao
+    private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
 
     private val _responseListLocation = MutableLiveData<List<Location>>()
@@ -25,11 +25,12 @@ class LocationSelectionViewModel(private val app: Application) : AndroidViewMode
 
     init {
         Timber.i("$TAG_LOG CitySelectionViewModel created!")
-
-//            _responseListLocation.value = db.getAllLocations().value
-//        viewModelScope.launch(Dispatchers.IO) {
-//        }
-//        _responseListLocation.value = locationProvider.getAllLocations()
+        coroutineScope.launch {
+            val locations = db.getAllLocations()
+            withContext(Dispatchers.Main){
+                _responseListLocation.value = locations
+            }
+        }
     }
 
     fun sendGeocoderRequest(locationName: String) {

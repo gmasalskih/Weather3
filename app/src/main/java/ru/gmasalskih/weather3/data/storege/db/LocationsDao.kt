@@ -7,21 +7,21 @@ import ru.gmasalskih.weather3.data.entity.Location
 @Dao
 interface LocationsDao {
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insert(location: Location)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(location: Location)
 
     @Query("SELECT * FROM locations WHERE lat = :lat AND lon = :lon")
-    fun getLocation(lat: Float, lon: Float): Location?
+    suspend fun getLocation(lat: Float, lon: Float): List<Location>
 
     @Query("SELECT * FROM locations WHERE name = :name")
-    fun getLocation(name: String): List<Location>
+    suspend fun getLocation(name: String): List<Location>
 
     @Delete
-    fun delete(location: Location)
+    suspend fun delete(location: Location)
 
     @Query("DELETE FROM locations")
-    fun clear()
+    suspend fun clear()
 
     @Query("SELECT * FROM locations ORDER BY name ASC")
-    fun getAllLocations(): LiveData<List<Location>>
+    suspend fun getAllLocations(): List<Location>
 }

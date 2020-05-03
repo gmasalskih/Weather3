@@ -16,7 +16,7 @@ class WeatherViewModelFactory(
             return WeatherViewModel(
                 lon = lon,
                 lat = lat,
-                app = app
+                application = app
             ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")

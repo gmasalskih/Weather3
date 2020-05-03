@@ -20,12 +20,13 @@ import timber.log.Timber
 class WeatherViewModel(
     var lon: Float,
     var lat: Float,
-    private var app: Application
-) : AndroidViewModel(app) {
+    application: Application
+) : AndroidViewModel(application) {
     private val weatherProvider: IWeatherProvider = WeatherProvider
     private val favoriteLocationProvider: IFavoriteLocationProvider = FavoriteLocationProvider
     private val locationProvider: ILocationProvider = LocationProvider
-    private val db = LocationsDB.getInstance(app).locationsDao
+    val db by lazy { LocationsDB.getInstance(getApplication()).locationsDao }
+    private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     private val _currentLocation = MutableLiveData<Location>()
     val currentLocation: LiveData<Location>
@@ -62,19 +63,25 @@ class WeatherViewModel(
     }
 
     private fun initLocation() {
-        var location: Location? = null
-        viewModelScope.launch(Dispatchers.IO) {
-            location = db.getLocation(lat = lat, lon = lon)
-        }
-        if (location == null) {
-            GeocoderApi.getResponse("$lon,$lat") {
-                _currentLocation.value = it.first()
-                viewModelScope.launch(Dispatchers.IO){
-                    db.insert(it.first())
+        coroutineScope.launch {
+            val locations = db.getLocation(lat = lat, lon = lon)
+            if (locations.isNullOrEmpty()) {
+                GeocoderApi.getResponse("$lon,$lat") { listLocations ->
+                    listLocations.first().let { location ->
+                        coroutineScope.launch {
+                            db.insert(location)
+                            setLocation(location)
+                        }
+                    }
                 }
-                sendWeatherRequest()
+            } else {
+                setLocation(locations.first())
             }
-        } else {
+        }
+    }
+
+    private suspend fun setLocation(location: Location) {
+        withContext(Dispatchers.Main) {
             _currentLocation.value = location
             sendWeatherRequest()
         }
