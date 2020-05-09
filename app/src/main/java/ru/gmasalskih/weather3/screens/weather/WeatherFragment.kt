@@ -1,10 +1,10 @@
 package ru.gmasalskih.weather3.screens.weather
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
@@ -15,6 +15,7 @@ import androidx.navigation.ui.NavigationUI
 import ru.gmasalskih.weather3.R
 import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.data.entity.Weather
+import ru.gmasalskih.weather3.data.storege.gps.CoordinatesProvider
 import ru.gmasalskih.weather3.databinding.FragmentWeatherBinding
 import ru.gmasalskih.weather3.utils.ObserveLifeCycle
 import ru.gmasalskih.weather3.utils.TAG_LOG
@@ -34,6 +35,7 @@ class WeatherFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         binding = FragmentWeatherBinding.inflate(inflater, container, false)
         //TODO() STUB! fix later
         arguments?.let {
@@ -119,6 +121,23 @@ class WeatherFragment : Fragment() {
                 }
             }
         })
+
+        viewModel.isCurrentLocationSelected.observe(viewLifecycleOwner, Observer { event: Boolean ->
+            if(event){
+                viewModel.initCoordinates(this)
+            }
+        })
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        Timber.i("GPS--- onRequestPermissionsResult")
+        if (requestCode == CoordinatesProvider.PERMISSION_ID && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            viewModel.initCoordinates(this)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

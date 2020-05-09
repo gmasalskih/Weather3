@@ -1,4 +1,4 @@
-package ru.gmasalskih.weather3.api
+package ru.gmasalskih.weather3.data.storege.internet
 
 import okhttp3.*
 import okhttp3.logging.*
@@ -45,7 +45,9 @@ interface GeocoderApiService {
 
 object GeocoderApi {
     private val apiService: GeocoderApiService by lazy {
-        APIGeocoder.create(GeocoderApiService::class.java)
+        APIGeocoder.create(
+            GeocoderApiService::class.java
+        )
     }
 
     fun getResponse(geocode: String, callback: (List<Location>) -> Unit) {
@@ -67,12 +69,24 @@ object GeocoderApi {
                                     fm.geoObject
                                 }.map { geoObject: GeoObject ->
                                     Location(
-                                        addressLine = getAddressLine(geoObject),
-                                        countryName = getCountryName(geoObject),
-                                        countyCode = getCountyCode(geoObject),
-                                        name = getName(geoObject),
-                                        lat = getLat(geoObject),
-                                        lon = getLon(geoObject)
+                                        addressLine = getAddressLine(
+                                            geoObject
+                                        ),
+                                        countryName = getCountryName(
+                                            geoObject
+                                        ),
+                                        countyCode = getCountyCode(
+                                            geoObject
+                                        ),
+                                        name = getName(
+                                            geoObject
+                                        ),
+                                        lat = getLat(
+                                            geoObject
+                                        ),
+                                        lon = getLon(
+                                            geoObject
+                                        )
                                     )
                                 }.toList()
                             callback(list)
@@ -83,6 +97,10 @@ object GeocoderApi {
                     }
                 }
             })
+    }
+
+    fun getResponse(lat: String, lon: String, callback: (List<Location>) -> Unit) {
+        getResponse("$lon,$lat", callback)
     }
 
     private fun getAddressLine(geoObject: GeoObject): String {
@@ -103,15 +121,15 @@ object GeocoderApi {
         return geoObject.name ?: ""
     }
 
-    private fun getLat(geoObject: GeoObject): Float {
+    private fun getLat(geoObject: GeoObject): String {
         return geoObject.point?.pos?.let {
-            it.split(" ")[1].toFloat()
-        } ?: 0.0F
+            it.split(" ")[1]
+        } ?: "0.0"
     }
 
-    private fun getLon(geoObject: GeoObject): Float {
+    private fun getLon(geoObject: GeoObject): String {
         return geoObject.point?.pos?.let {
-            it.split(" ")[0].toFloat()
-        } ?: 0.0F
+            it.split(" ")[0]
+        } ?: "0.0"
     }
 }

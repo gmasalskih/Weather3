@@ -1,4 +1,4 @@
-package ru.gmasalskih.weather3.api
+package ru.gmasalskih.weather3.data.storege.internet
 
 import okhttp3.*
 import okhttp3.logging.*
@@ -40,15 +40,16 @@ private val APIWeather = Retrofit.Builder()
 interface WeatherApiService {
     @Headers("X-Yandex-API-Key: $KEY_WEATHER")
     @GET("informers?lang=ru_RU")
-    fun getWeather(@Query("lat") lat: Float, @Query("lon") lon: Float): Call<BaseWeatherEntity>
+    fun getWeather(@Query("lat") lat: String, @Query("lon") lon: String): Call<BaseWeatherEntity>
 }
 
 object WeatherApi {
     private val apiService: WeatherApiService by lazy {
-        APIWeather.create(WeatherApiService::class.java)
+        APIWeather.create(
+            WeatherApiService::class.java)
     }
 
-    fun getResponse(lon: Float, lat: Float, callback: (Weather) -> Unit) {
+    fun getResponse(lon: String, lat: String, callback: (Weather) -> Unit) {
         apiService.getWeather(lon = lon, lat = lat).enqueue(object :
             Callback<BaseWeatherEntity> {
             override fun onFailure(call: Call<BaseWeatherEntity>, t: Throwable) {

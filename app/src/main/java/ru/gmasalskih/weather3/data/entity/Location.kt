@@ -19,10 +19,10 @@ data class Location(
     val countyCode: String = "",
 
     @ColumnInfo(name = "lat")
-    val lat: Float = 0.0F,
+    val lat: String = "0.0",
 
     @ColumnInfo(name = "lon")
-    val lon: Float = 0.0F,
+    val lon: String = "0.0",
 
     @ColumnInfo(name = "favorite")
     var isFavorite: Boolean = false,

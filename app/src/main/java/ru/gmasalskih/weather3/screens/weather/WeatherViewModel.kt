@@ -1,19 +1,22 @@
 package ru.gmasalskih.weather3.screens.weather
 
 import android.app.Application
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
 import kotlinx.coroutines.*
-import ru.gmasalskih.weather3.api.GeocoderApi
-import ru.gmasalskih.weather3.api.WeatherApi
+import ru.gmasalskih.weather3.data.storege.internet.GeocoderApi
+import ru.gmasalskih.weather3.data.storege.internet.WeatherApi
 import ru.gmasalskih.weather3.data.entity.Location
+import android.location.Location as Coordinates
 import ru.gmasalskih.weather3.data.entity.Weather
-import ru.gmasalskih.weather3.data.storege.LocationsDB
+import ru.gmasalskih.weather3.data.storege.db.LocationsDB
+import ru.gmasalskih.weather3.data.storege.gps.CoordinatesProvider
 import ru.gmasalskih.weather3.utils.TAG_LOG
 import timber.log.Timber
 
 class WeatherViewModel(
-    var lon: Float,
-    var lat: Float,
+    var lon: String,
+    var lat: String,
     application: Application
 ) : AndroidViewModel(application) {
     private val db by lazy { LocationsDB.getInstance(getApplication()).locationsDao }
@@ -43,6 +46,10 @@ class WeatherViewModel(
     val isLocationFavoriteSelected: LiveData<Boolean>
         get() = _isLocationFavoriteSelected
 
+    private val _isCurrentLocationSelected = MutableLiveData<Boolean>()
+    val isCurrentLocationSelected: LiveData<Boolean>
+        get() = _isCurrentLocationSelected
+
     init {
         _isLocationSelected.value = false
         _isDateSelected.value = false
@@ -52,11 +59,30 @@ class WeatherViewModel(
         Timber.i("AAA--- WeatherViewModel created!")
     }
 
+    fun initCoordinates(fragment: Fragment) {
+        Timber.i("GPS--- initCoordinates1")
+        CoordinatesProvider.getLastLocation(fragment) { coordinates: Coordinates ->
+            GeocoderApi.getResponse(
+                lat = coordinates.latitude.toString(),
+                lon = coordinates.longitude.toString()
+            ) {listLocations ->
+                listLocations.first().let { location ->
+                    lat = location.lat
+                    lon = location.lon
+                    initLocation()
+                }
+            }
+        }
+    }
+
     fun initLocation() {
         coroutineScope.launch {
+            Timber.i("DDD--- lat:$lat  lon:$lon ${db.getLocation(lat = lat, lon = lon)}")
             if (db.getLocation(lat = lat, lon = lon).isNullOrEmpty()) {
-                GeocoderApi.getResponse("$lon,$lat") { listLocations ->
+                Timber.i("SSS--- if")
+                GeocoderApi.getResponse(lat = lat, lon = lon) { listLocations ->
                     listLocations.first().let { location ->
+                        Timber.i("SSS--- if $location")
                         coroutineScope.launch {
                             db.insert(location)
                             updateCurrentLocation()
@@ -64,18 +90,23 @@ class WeatherViewModel(
                     }
                 }
             } else {
+                Timber.i("SSS--- else")
                 updateCurrentLocation()
             }
         }
     }
 
-    suspend fun updateCurrentLocation() {
+    private suspend fun updateCurrentLocation() {
         coroutineScope.launch {
-            val location = db.getLocation(lat=lat, lon = lon).first()
-            withContext(Dispatchers.Main){
-                _currentLocation.value = location
-                _isLocationFavoriteSelected.value = location.isFavorite
+            val location = db.getLocation(lat = lat, lon = lon).firstOrNull()
+            Timber.i("SSS--- $location")
+            if (location != null) {
+                withContext(Dispatchers.Main) {
+                    _currentLocation.value = location
+                    _isLocationFavoriteSelected.value = location.isFavorite
+                }
             }
+
         }
     }
 
@@ -84,7 +115,6 @@ class WeatherViewModel(
             _currentWeather.value = weather
         }
     }
-
 
 
     // Click Event
@@ -101,6 +131,11 @@ class WeatherViewModel(
     fun onDateSelect() {
         _isDateSelected.value = true
         _isDateSelected.value = false
+    }
+
+    fun onCurrentLocationSelected() {
+        _isCurrentLocationSelected.value = true
+        _isCurrentLocationSelected.value = false
     }
 
     fun onToggleFavoriteLocation() {

@@ -24,12 +24,12 @@
         </action>
         <argument
             android:name="lon"
-            app:argType="float"
-            android:defaultValue="37.617635" />
+            app:argType="string"
+            android:defaultValue="37.552996" />
         <argument
             android:name="lat"
-            app:argType="float"
-            android:defaultValue="55.755814" />
+            app:argType="string"
+            android:defaultValue="55.547037" />
     </fragment>
     <fragment
         android:id="@+id/aboutFragment"

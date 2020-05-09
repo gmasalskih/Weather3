@@ -9,7 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.gmasalskih.weather3.data.entity.Location
-import ru.gmasalskih.weather3.data.storege.LocationsDB
+import ru.gmasalskih.weather3.data.storege.db.LocationsDB
 import ru.gmasalskih.weather3.utils.TAG_LOG
 import timber.log.Timber
 

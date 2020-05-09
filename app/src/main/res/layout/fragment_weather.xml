@@ -121,6 +121,17 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <ImageView
+            android:id="@+id/current_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:onClick="@{()->viewModel.onCurrentLocationSelected()}"
+            android:src="@drawable/ic_location_on"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/favorite_location"
+            app:layout_constraintStart_toEndOf="@+id/location_web_page" />
+
+        <ImageView
             android:id="@+id/favorite_location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

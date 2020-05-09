@@ -1,4 +1,4 @@
-package ru.gmasalskih.weather3.data.storege
+package ru.gmasalskih.weather3.data.storege.db
 
 import android.content.Context
 import androidx.room.Database

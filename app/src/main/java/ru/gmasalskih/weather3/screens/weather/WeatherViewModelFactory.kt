@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModelProvider
 import java.lang.IllegalArgumentException
 
 class WeatherViewModelFactory(
-    private val lon: Float,
-    private val lat: Float,
+    private val lon: String,
+    private val lat: String,
     private val application: Application
 ) :
     ViewModelProvider.Factory {

@@ -39,6 +39,9 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "androidx.appcompat:appcompat:$version_appcompat"
 
+    //Locations
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
+
     //Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version_kotlin"
 

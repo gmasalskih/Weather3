@@ -1,4 +1,4 @@
-package ru.gmasalskih.weather3.data.storege
+package ru.gmasalskih.weather3.data.storege.db
 
 import androidx.room.*
 import ru.gmasalskih.weather3.data.entity.Location
@@ -6,11 +6,11 @@ import ru.gmasalskih.weather3.data.entity.Location
 @Dao
 interface LocationsDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(location: Location)
 
     @Query("SELECT * FROM locations WHERE lat = :lat AND lon = :lon")
-    suspend fun getLocation(lat: Float, lon: Float): List<Location>
+    suspend fun getLocation(lat: String, lon: String): List<Location>
 
     @Query("SELECT * FROM locations WHERE favorite = 1")
     suspend fun getFavoriteLocations(): List<Location>

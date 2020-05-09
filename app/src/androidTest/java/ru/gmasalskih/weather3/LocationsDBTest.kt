@@ -12,8 +12,8 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import ru.gmasalskih.weather3.data.entity.Location
-import ru.gmasalskih.weather3.data.storege.LocationsDB
-import ru.gmasalskih.weather3.data.storege.LocationsDao
+import ru.gmasalskih.weather3.data.storege.db.LocationsDB
+import ru.gmasalskih.weather3.data.storege.db.LocationsDao
 import java.io.IOException
 import java.lang.Exception
 
@@ -44,7 +44,7 @@ class LocationsDBTest {
         val location = Location(name = "City")
         coroutineScope.launch {
             locationsDao.insert(location)
-            val lastInsert = locationsDao.getLocation(0.0f, 0.0f)
+            val lastInsert = locationsDao.getLocation("0.0", "0.0")
             assertEquals(lastInsert.first().name, "City")
         }
     }
