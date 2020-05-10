@@ -25,11 +25,11 @@
         <argument
             android:name="lon"
             app:argType="string"
-            android:defaultValue="37.552996" />
+            android:defaultValue="0.0" />
         <argument
             android:name="lat"
             app:argType="string"
-            android:defaultValue="55.547037" />
+            android:defaultValue="0.0" />
     </fragment>
     <fragment
         android:id="@+id/aboutFragment"

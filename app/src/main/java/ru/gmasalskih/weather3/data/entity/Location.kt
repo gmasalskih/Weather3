@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "locations")
+@Entity(tableName = "locations", primaryKeys = ["lat", "lon"])
 data class Location(
     @ColumnInfo(name = "name")
     val name: String = "",
@@ -25,9 +25,5 @@ data class Location(
     val lon: String = "0.0",
 
     @ColumnInfo(name = "favorite")
-    var isFavorite: Boolean = false,
-
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id")
-    var id: Long = 0L
+    var isFavorite: Boolean = false
 )

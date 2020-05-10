@@ -17,10 +17,7 @@ import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.data.entity.Weather
 import ru.gmasalskih.weather3.data.storege.gps.CoordinatesProvider
 import ru.gmasalskih.weather3.databinding.FragmentWeatherBinding
-import ru.gmasalskih.weather3.utils.ObserveLifeCycle
-import ru.gmasalskih.weather3.utils.TAG_LOG
-import ru.gmasalskih.weather3.utils.setWeatherIcon
-import ru.gmasalskih.weather3.utils.toCoordinate
+import ru.gmasalskih.weather3.utils.*
 import timber.log.Timber
 
 class WeatherFragment : Fragment() {
@@ -55,7 +52,7 @@ class WeatherFragment : Fragment() {
 
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
-
+        initObserveViewModel()
         setHasOptionsMenu(true)
         observeLifeCycle = ObserveLifeCycle(lifecycle)
         return binding.root
@@ -64,15 +61,27 @@ class WeatherFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
-
         navController = view.findNavController()
-        viewModel.initLocation()
-        initObserveViewModel()
+        initLocation()
     }
 
+    private fun initLocation() {
+        if (args.lat == EMPTY_COORDINATE || args.lon == EMPTY_COORDINATE) {
+            val _lat = viewModel.getLastLocationLat()
+            val _lon = viewModel.getLastLocationLon()
+            if (_lat == EMPTY_COORDINATE || _lon == EMPTY_COORDINATE) {
+                Timber.i("ZZZ--- initLocation")
+                viewModel.initCoordinates(this)
+                return
+            } else {
+                viewModel.lat = _lat
+                viewModel.lon = _lon
+            }
+        }
+        viewModel.initLocation()
+    }
 
     private fun initObserveViewModel() {
         viewModel.isLocationFavoriteSelected.observe(
@@ -85,7 +94,7 @@ class WeatherFragment : Fragment() {
 
         viewModel.currentLocation.observe(viewLifecycleOwner, Observer { location: Location ->
             binding.locationName.text = location.name
-
+            viewModel.showLastSelectedLocationCoordinates()
         })
 
         viewModel.currentWeather.observe(viewLifecycleOwner, Observer { weather: Weather ->
@@ -123,7 +132,7 @@ class WeatherFragment : Fragment() {
         })
 
         viewModel.isCurrentLocationSelected.observe(viewLifecycleOwner, Observer { event: Boolean ->
-            if(event){
+            if (event) {
                 viewModel.initCoordinates(this)
             }
         })

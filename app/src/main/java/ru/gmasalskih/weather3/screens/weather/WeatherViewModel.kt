@@ -10,7 +10,9 @@ import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.data.entity.Weather
 import ru.gmasalskih.weather3.data.storege.db.LocationsDB
 import ru.gmasalskih.weather3.data.storege.gps.CoordinatesProvider
+import ru.gmasalskih.weather3.data.storege.local.SharedPreferencesProvider
 import ru.gmasalskih.weather3.utils.TAG_LOG
+import ru.gmasalskih.weather3.utils.toast
 import timber.log.Timber
 
 class WeatherViewModel(
@@ -59,27 +61,38 @@ class WeatherViewModel(
 
     fun initCoordinates(fragment: Fragment) {
         Timber.i("GPS--- initCoordinates1")
-        CoordinatesProvider.getLastLocation(fragment) { lat:String, lon:String ->
-            GeocoderApi.getResponse(
-                lat = lat,
-                lon = lon
-            ) {listLocations ->
+        CoordinatesProvider.getLastLocation(fragment) { lat: String, lon: String ->
+            GeocoderApi.getResponse(lat = lat, lon = lon) { listLocations ->
                 listLocations.first().let { location ->
                     Timber.i("GPS--- initCoordinates2 $location")
                     this.lat = location.lat
                     this.lon = location.lon
+                    setLastSelectedCoordinate(lat = location.lat, lon = location.lon)
                     initLocation()
                 }
             }
         }
     }
 
+    fun setLastSelectedCoordinate(lat: String, lon: String) {
+        SharedPreferencesProvider.setLastLocationCoordinates(
+            lat = lat,
+            lon = lon,
+            application = getApplication()
+        )
+    }
+
     fun initLocation() {
         coroutineScope.launch {
-            Timber.i("GPS--- initLocation lat:$lat  lon:$lon ${db.getLocation(lat = lat, lon = lon)}")
+            Timber.i(
+                "GPS--- initLocation lat:$lat  lon:$lon ${db.getLocation(
+                    lat = lat,
+                    lon = lon
+                )}"
+            )
             if (db.getLocation(lat = lat, lon = lon).isNullOrEmpty()) {
                 GeocoderApi.getResponse(lat = lat, lon = lon) { listLocations ->
-                    listLocations.first().let { location ->
+                    listLocations.firstOrNull()?.let { location ->
                         Timber.i("GPS--- initLocation if $location")
                         lat = location.lat
                         lon = location.lon
@@ -112,12 +125,20 @@ class WeatherViewModel(
         }
     }
 
+    fun getLastLocationLat() = SharedPreferencesProvider.getLastLocationLat(getApplication())
+    fun getLastLocationLon() = SharedPreferencesProvider.getLastLocationLon(getApplication())
+
+    fun showLastSelectedLocationCoordinates() {
+        val _lat = SharedPreferencesProvider.getLastLocationLat(getApplication())
+        val _lon = SharedPreferencesProvider.getLastLocationLon(getApplication())
+        "lat:$_lat lon:$_lon".toast(getApplication())
+    }
+
     private fun sendWeatherRequest() {
         WeatherApi.getResponse(lon = lon, lat = lat) { weather: Weather ->
             _currentWeather.value = weather
         }
     }
-
 
     // Click Event
     fun onLocationSelect() {

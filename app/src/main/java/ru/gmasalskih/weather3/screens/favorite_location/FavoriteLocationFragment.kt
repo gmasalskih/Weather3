@@ -12,6 +12,7 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import ru.gmasalskih.weather3.R
 import ru.gmasalskih.weather3.data.entity.Location
+import ru.gmasalskih.weather3.data.storege.local.SharedPreferencesProvider
 import ru.gmasalskih.weather3.databinding.FragmentFavoriteLocationBinding
 import ru.gmasalskih.weather3.utils.toast
 
@@ -55,6 +56,10 @@ class FavoriteLocationFragment : Fragment() {
                 lat = location.lat
                 lon = location.lon
             }
+        viewModel.setLastSelectedLocationCoordinates(
+            lat = location.lat,
+            lon = location.lon
+        )
         navController.navigate(action)
     }
 

@@ -10,6 +10,7 @@ import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.data.storege.internet.GeocoderApi
 import ru.gmasalskih.weather3.data.storege.db.LocationsDB
 import ru.gmasalskih.weather3.data.storege.db.LocationsDao
+import ru.gmasalskih.weather3.data.storege.local.SharedPreferencesProvider
 import ru.gmasalskih.weather3.utils.TAG_LOG
 import timber.log.Timber
 
@@ -27,7 +28,7 @@ class LocationSelectionViewModel(application: Application) : AndroidViewModel(ap
         Timber.i("$TAG_LOG CitySelectionViewModel created!")
         coroutineScope.launch {
             val locations = db.getAllLocations()
-            withContext(Dispatchers.Main){
+            withContext(Dispatchers.Main) {
                 _responseListLocation.value = locations
             }
         }
@@ -37,6 +38,20 @@ class LocationSelectionViewModel(application: Application) : AndroidViewModel(ap
         GeocoderApi.getResponse(locationName) {
             _responseListLocation.value = it
         }
+    }
+
+    fun addSelectedLocationToDB(location: Location) {
+        coroutineScope.launch {
+            db.insert(location)
+        }
+    }
+
+    fun setLastSelectedLocationCoordinates(lat: String, lon: String) {
+        SharedPreferencesProvider.setLastLocationCoordinates(
+            lat = lat,
+            lon = lon,
+            application = getApplication()
+        )
     }
 
     override fun onCleared() {

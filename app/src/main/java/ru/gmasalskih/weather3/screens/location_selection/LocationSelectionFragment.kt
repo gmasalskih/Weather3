@@ -28,7 +28,10 @@ class LocationSelectionFragment : Fragment() {
         binding = FragmentLocationSelectionBinding.inflate(inflater, container, false)
         activity?.let {
             viewModel =
-                ViewModelProvider(this, LocationSelectionViewModelFactory(application = it.application))
+                ViewModelProvider(
+                    this,
+                    LocationSelectionViewModelFactory(application = it.application)
+                )
                     .get(LocationSelectionViewModel::class.java)
         }
         adapter =
@@ -66,11 +69,13 @@ class LocationSelectionFragment : Fragment() {
     }
 
     private fun onCitySelected(location: Location) {
+        viewModel.addSelectedLocationToDB(location)
         val action = LocationSelectionFragmentDirections
             .actionLocationSelectionFragmentToWeatherFragment().apply {
                 lat = location.lat
                 lon = location.lon
             }
+        viewModel.setLastSelectedLocationCoordinates(lat = location.lat, lon = location.lon)
         navController.navigate(action)
     }
 }

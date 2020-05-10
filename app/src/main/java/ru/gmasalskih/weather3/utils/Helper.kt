@@ -11,6 +11,7 @@ import ru.gmasalskih.weather3.R
 import ru.gmasalskih.weather3.data.entity.Location
 
 const val TAG_LOG = "---"
+const val EMPTY_COORDINATE = "0.0"
 const val URL_WEATHER_ICON = "https://yastatic.net/weather/i/icons/blueye/color/svg/"
 
 fun String.toast(context: Context) {
@@ -35,14 +36,14 @@ fun TextView.setCityName(item: Location?) {
 @BindingAdapter("locationLat")
 fun TextView.setLocationLat(item: Location?) {
     item?.let { location: Location ->
-        text = location.lat.toString()
+        text = location.lat
     }
 }
 
 @BindingAdapter("locationLon")
 fun TextView.setLocationLon(item: Location?) {
     item?.let { location: Location ->
-        text = location.lon.toString()
+        text = location.lon
     }
 }
 
@@ -64,6 +65,13 @@ fun TextView.setLocationCountryName(item: Location?) {
 fun TextView.setLocationCountyCode(item: Location?) {
     item?.let { location: Location ->
         text = location.countyCode
+    }
+}
+
+@BindingAdapter("locationID")
+fun TextView.setLocationID(item: Location?){
+    item?.let {location: Location ->
+        text = "lat:${location.lat} lon:${location.lon}"
     }
 }
 
