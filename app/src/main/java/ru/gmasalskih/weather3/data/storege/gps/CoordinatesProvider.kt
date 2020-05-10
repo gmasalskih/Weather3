@@ -13,6 +13,7 @@ import android.os.Looper
 import android.provider.Settings
 import androidx.fragment.app.Fragment
 import com.google.android.gms.location.LocationServices.getFusedLocationProviderClient
+import ru.gmasalskih.weather3.utils.toCoordinate
 import ru.gmasalskih.weather3.utils.toast
 
 object CoordinatesProvider {
@@ -20,16 +21,20 @@ object CoordinatesProvider {
     const val PERMISSION_ID = 42
 
     @SuppressLint("MissingPermission")
-    fun getLastLocation(fragment: Fragment, callback: (Coordinates) -> Unit) {
+    fun getLastLocation(fragment: Fragment, callback: (lat: String, lon: String) -> Unit) {
         if (checkPermissions(fragment)) {
             if (isLocationEnabled(fragment)) {
-                val fusedLocationProviderClient = getFusedLocationProviderClient(fragment.requireActivity())
+                val fusedLocationProviderClient =
+                    getFusedLocationProviderClient(fragment.requireActivity())
                 fusedLocationProviderClient.lastLocation.addOnCompleteListener(fragment.requireActivity()) { task ->
                     val coordinates: Coordinates? = task.result
                     if (coordinates == null) {
                         requestNewLocationData(fusedLocationProviderClient, callback)
                     } else {
-                        callback(coordinates)
+                        callback(
+                            coordinates.latitude.toString().toCoordinate(),
+                            coordinates.longitude.toString().toCoordinate()
+                        )
                     }
                 }
             } else {
@@ -45,7 +50,7 @@ object CoordinatesProvider {
     @SuppressLint("MissingPermission")
     private fun requestNewLocationData(
         fusedLocationProviderClient: FusedLocationProviderClient,
-        callback: (Coordinates) -> Unit
+        callback: (lat: String, lon: String) -> Unit
     ) {
         val locationRequest = LocationRequest().apply {
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
@@ -56,7 +61,10 @@ object CoordinatesProvider {
         fusedLocationProviderClient.requestLocationUpdates(
             locationRequest, object : LocationCallback() {
                 override fun onLocationResult(locationResult: LocationResult) {
-                    callback(locationResult.lastLocation)
+                    callback(
+                        locationResult.lastLocation.latitude.toString().toCoordinate(),
+                        locationResult.lastLocation.longitude.toString().toCoordinate()
+                    )
                 }
             },
             Looper.myLooper()
@@ -64,7 +72,8 @@ object CoordinatesProvider {
     }
 
     private fun isLocationEnabled(fragment: Fragment): Boolean {
-        val locationManager = fragment.requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val locationManager =
+            fragment.requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
                 || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }

@@ -13,6 +13,7 @@ import retrofit2.http.Query
 import ru.gmasalskih.weather3.data.entity.Weather
 import ru.gmasalskih.weather3.data.entity.weather.BaseWeatherEntity
 import ru.gmasalskih.weather3.utils.TAG_LOG
+import ru.gmasalskih.weather3.utils.toCoordinate
 import timber.log.Timber
 
 private const val BASE_URL_WEATHER = "https://api.weather.yandex.ru/v1/"
@@ -50,7 +51,7 @@ object WeatherApi {
     }
 
     fun getResponse(lon: String, lat: String, callback: (Weather) -> Unit) {
-        apiService.getWeather(lon = lon, lat = lat).enqueue(object :
+        apiService.getWeather(lon = lon.toCoordinate(), lat = lat.toCoordinate()).enqueue(object :
             Callback<BaseWeatherEntity> {
             override fun onFailure(call: Call<BaseWeatherEntity>, t: Throwable) {
                 Timber.i("$TAG_LOG ${t.message}")

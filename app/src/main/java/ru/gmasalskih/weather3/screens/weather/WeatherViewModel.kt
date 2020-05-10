@@ -7,7 +7,6 @@ import kotlinx.coroutines.*
 import ru.gmasalskih.weather3.data.storege.internet.GeocoderApi
 import ru.gmasalskih.weather3.data.storege.internet.WeatherApi
 import ru.gmasalskih.weather3.data.entity.Location
-import android.location.Location as Coordinates
 import ru.gmasalskih.weather3.data.entity.Weather
 import ru.gmasalskih.weather3.data.storege.db.LocationsDB
 import ru.gmasalskih.weather3.data.storege.gps.CoordinatesProvider
@@ -56,19 +55,19 @@ class WeatherViewModel(
         _isLocationFavoriteSelected.value = false
         _isLocationWebPageSelected.value = false
         sendWeatherRequest()
-        Timber.i("AAA--- WeatherViewModel created!")
     }
 
     fun initCoordinates(fragment: Fragment) {
         Timber.i("GPS--- initCoordinates1")
-        CoordinatesProvider.getLastLocation(fragment) { coordinates: Coordinates ->
+        CoordinatesProvider.getLastLocation(fragment) { lat:String, lon:String ->
             GeocoderApi.getResponse(
-                lat = coordinates.latitude.toString(),
-                lon = coordinates.longitude.toString()
+                lat = lat,
+                lon = lon
             ) {listLocations ->
                 listLocations.first().let { location ->
-                    lat = location.lat
-                    lon = location.lon
+                    Timber.i("GPS--- initCoordinates2 $location")
+                    this.lat = location.lat
+                    this.lon = location.lon
                     initLocation()
                 }
             }
@@ -77,12 +76,13 @@ class WeatherViewModel(
 
     fun initLocation() {
         coroutineScope.launch {
-            Timber.i("DDD--- lat:$lat  lon:$lon ${db.getLocation(lat = lat, lon = lon)}")
+            Timber.i("GPS--- initLocation lat:$lat  lon:$lon ${db.getLocation(lat = lat, lon = lon)}")
             if (db.getLocation(lat = lat, lon = lon).isNullOrEmpty()) {
-                Timber.i("SSS--- if")
                 GeocoderApi.getResponse(lat = lat, lon = lon) { listLocations ->
                     listLocations.first().let { location ->
-                        Timber.i("SSS--- if $location")
+                        Timber.i("GPS--- initLocation if $location")
+                        lat = location.lat
+                        lon = location.lon
                         coroutineScope.launch {
                             db.insert(location)
                             updateCurrentLocation()
@@ -90,7 +90,7 @@ class WeatherViewModel(
                     }
                 }
             } else {
-                Timber.i("SSS--- else")
+                Timber.i("GPS--- initLocation else")
                 updateCurrentLocation()
             }
         }
@@ -98,12 +98,14 @@ class WeatherViewModel(
 
     private suspend fun updateCurrentLocation() {
         coroutineScope.launch {
+            Timber.i("GPS--- updateCurrentLocation: lat:$lat lon:$lon")
             val location = db.getLocation(lat = lat, lon = lon).firstOrNull()
-            Timber.i("SSS--- $location")
+            Timber.i("GPS--- updateCurrentLocation: $location")
             if (location != null) {
                 withContext(Dispatchers.Main) {
                     _currentLocation.value = location
                     _isLocationFavoriteSelected.value = location.isFavorite
+                    sendWeatherRequest()
                 }
             }
 

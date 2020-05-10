@@ -20,6 +20,7 @@ import ru.gmasalskih.weather3.databinding.FragmentWeatherBinding
 import ru.gmasalskih.weather3.utils.ObserveLifeCycle
 import ru.gmasalskih.weather3.utils.TAG_LOG
 import ru.gmasalskih.weather3.utils.setWeatherIcon
+import ru.gmasalskih.weather3.utils.toCoordinate
 import timber.log.Timber
 
 class WeatherFragment : Fragment() {
@@ -44,8 +45,8 @@ class WeatherFragment : Fragment() {
         activity?.let {
             viewModel = ViewModelProvider(
                 this, WeatherViewModelFactory(
-                    lon = args.lon,
-                    lat = args.lat,
+                    lon = args.lon.toCoordinate(),
+                    lat = args.lat.toCoordinate(),
                     application = it.application
                 )
             ).get(WeatherViewModel::class.java)
@@ -70,7 +71,6 @@ class WeatherFragment : Fragment() {
         navController = view.findNavController()
         viewModel.initLocation()
         initObserveViewModel()
-        Timber.i("AAA--- onViewCreated")
     }
 
 

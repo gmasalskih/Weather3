@@ -14,6 +14,7 @@ import ru.gmasalskih.weather3.data.entity.geocoder.BaseGeocoderEntity
 import ru.gmasalskih.weather3.data.entity.geocoder.FeatureMember
 import ru.gmasalskih.weather3.data.entity.geocoder.GeoObject
 import ru.gmasalskih.weather3.utils.TAG_LOG
+import ru.gmasalskih.weather3.utils.toCoordinate
 import timber.log.Timber
 
 private const val BASE_URL_GEOCODER = "https://geocode-maps.yandex.ru/1.x/"
@@ -100,7 +101,7 @@ object GeocoderApi {
     }
 
     fun getResponse(lat: String, lon: String, callback: (List<Location>) -> Unit) {
-        getResponse("$lon,$lat", callback)
+        getResponse("${lon.toCoordinate()},${lat.toCoordinate()}", callback)
     }
 
     private fun getAddressLine(geoObject: GeoObject): String {
@@ -123,13 +124,13 @@ object GeocoderApi {
 
     private fun getLat(geoObject: GeoObject): String {
         return geoObject.point?.pos?.let {
-            it.split(" ")[1]
+            it.split(" ")[1].toCoordinate()
         } ?: "0.0"
     }
 
     private fun getLon(geoObject: GeoObject): String {
         return geoObject.point?.pos?.let {
-            it.split(" ")[0]
+            it.split(" ")[0].toCoordinate()
         } ?: "0.0"
     }
 }

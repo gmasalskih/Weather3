@@ -10,12 +10,19 @@ import com.ahmadrosid.svgloader.SvgLoader
 import ru.gmasalskih.weather3.R
 import ru.gmasalskih.weather3.data.entity.Location
 
-const val DATE_PATTERN = "yyyy-MM-dd"
 const val TAG_LOG = "---"
 const val URL_WEATHER_ICON = "https://yastatic.net/weather/i/icons/blueye/color/svg/"
 
 fun String.toast(context: Context) {
     Toast.makeText(context, this, Toast.LENGTH_SHORT).show()
+}
+
+fun String.toCoordinate():String{
+    if (this.toDoubleOrNull()==null){
+        throw IllegalArgumentException("This string can not convert to coordinate")
+    } else{
+        return "${this.split(".")[0]}.${this.split(".")[1].take(4)}"
+    }
 }
 
 @BindingAdapter("locationName")
