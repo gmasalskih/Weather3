@@ -4,15 +4,10 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.data.storege.db.LocationsDB
 import ru.gmasalskih.weather3.data.storege.local.SharedPreferencesProvider
-import ru.gmasalskih.weather3.utils.TAG_LOG
-import timber.log.Timber
 
 class FavoriteLocationViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -53,6 +48,6 @@ class FavoriteLocationViewModel(application: Application) : AndroidViewModel(app
 
     override fun onCleared() {
         super.onCleared()
-        Timber.i("$TAG_LOG WeatherViewModel cleared!")
+        coroutineScope.cancel()
     }
 }

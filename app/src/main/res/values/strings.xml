@@ -6,7 +6,7 @@
     <string name="location_selection">locations selection</string>
     <string name="location_web_page">locations web page</string>
     <string name="date_selection">Date selection</string>
-    <string name="weather_location">Weather in the location</string>
+    <string name="weather_location">Current weather</string>
     <string name="about_text">This is my first training app!</string>
     <string name="item">Item</string>
     <string name="temp_format" translatable="false">%d℃</string>
@@ -16,9 +16,20 @@
     <string name="msg_favorite_location_deleted">was deleted</string>
     <string name="yes_btn">Yes</string>
     <string name="no_btn">No</string>
-    <string name="del_favorite_location_title">Delete favorite city</string>
-    <string name="del_favorite_location_msg">Are you sure you want to delete your favorite city?</string>
+    <string name="del_favorite_location_title">Delete favorite location</string>
+    <string name="del_favorite_location_msg">Are you sure what you want to delete your favorite location?</string>
     <string name="enter_location_name_hint">Enter location name</string>
     <string name="confirm_location_name_btn">Confirm</string>
     <string name="location_not_found">not found</string>
+    <string name="remove_locations">Clear search history</string>
+    <string name="remove_favorites_locations">Remove favorites locations</string>
+    <string name="remove">Remove</string>
+    <string name="clear">Clear</string>
+    <string name="clear_all_locations_msg">Are you sure you want to clear the entire search history?</string>
+    <string name="del_all_favorites_locations_msg">Are you sure what you want to delete all your favorites locations?</string>
+    <string name="clear_all_locations_title">Clear all search history</string>
+    <string name="del_all_favorites_locations_title">Delete favorite locations</string>
+    <string name="clear_all_locations_toast">Search history cleared</string>
+    <string name="del_all_favorites_locations_toast">Favorite locations deleted</string>
+    <string name="current_location_selected_toast">Current location selected</string>
 </resources>

@@ -12,7 +12,6 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import ru.gmasalskih.weather3.R
 import ru.gmasalskih.weather3.data.entity.Location
-import ru.gmasalskih.weather3.data.storege.local.SharedPreferencesProvider
 import ru.gmasalskih.weather3.databinding.FragmentFavoriteLocationBinding
 import ru.gmasalskih.weather3.utils.toast
 
@@ -28,14 +27,14 @@ class FavoriteLocationFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentFavoriteLocationBinding.inflate(inflater, container, false)
-        activity?.let {
-            viewModel = ViewModelProvider(this, FavoriteLocationViewModelFactory(it.application))
+        viewModel =
+            ViewModelProvider(this, FavoriteLocationViewModelFactory(requireActivity().application))
                 .get(FavoriteLocationViewModel::class.java)
-        }
+
         adapter =
             FavoriteLocationListAdapter(
                 FavoriteLocationListAdapter.FavoriteLocationClickListener(
-                    ::onDeleteClickListener,
+                    ::onDeleteFavoriteLocation,
                     ::onSelectClickListener
                 )
             )
@@ -44,10 +43,6 @@ class FavoriteLocationFragment : Fragment() {
         binding.lifecycleOwner = this
         binding.favoriteLocationsList.adapter = adapter
         return binding.root
-    }
-
-    private fun onDeleteClickListener(location: Location) {
-        onDeleteFavoriteLocation(location)
     }
 
     private fun onSelectClickListener(location: Location) {
@@ -64,25 +59,27 @@ class FavoriteLocationFragment : Fragment() {
     }
 
     private fun onDeleteFavoriteLocation(location: Location) {
-        activity?.let {
-            AlertDialog.Builder(it)
-                .setTitle("${resources.getText(R.string.del_favorite_location_title)} ${location.name}")
-                .setMessage(resources.getText(R.string.del_favorite_location_msg))
-                .setPositiveButton(resources.getText(R.string.yes_btn)) { _, _ ->
-                    viewModel.onDeleteFavoriteCity(location)
-                    "${location.name} ${resources.getText(R.string.msg_favorite_location_deleted)}".toast(
-                        it
-                    )
-                }
-                .setNegativeButton(resources.getText(R.string.no_btn), null)
-                .create()
-                .show()
-        }
+        AlertDialog.Builder(requireContext())
+            .setTitle("${resources.getText(R.string.del_favorite_location_title)} ${location.name}")
+            .setMessage(resources.getText(R.string.del_favorite_location_msg))
+            .setPositiveButton(resources.getText(R.string.yes_btn)) { _, _ ->
+                viewModel.onDeleteFavoriteCity(location)
+                "${location.name} ${resources.getText(R.string.msg_favorite_location_deleted)}".toast(
+                    requireContext()
+                )
+            }
+            .setNegativeButton(resources.getText(R.string.no_btn), null)
+            .create()
+            .show()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = view.findNavController()
+        initObserveViewModel()
+    }
+
+    private fun initObserveViewModel(){
         viewModel.favoriteLocationList.observe(viewLifecycleOwner, Observer {
             adapter.submitList(it)
         })

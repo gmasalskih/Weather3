@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -33,23 +32,15 @@ class WeatherFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         binding = FragmentWeatherBinding.inflate(inflater, container, false)
-        //TODO() STUB! fix later
-        arguments?.let {
-            args = WeatherFragmentArgs.fromBundle(it)
-        }
-        activity?.let {
-            viewModel = ViewModelProvider(
-                this, WeatherViewModelFactory(
-                    lon = args.lon.toCoordinate(),
-                    lat = args.lat.toCoordinate(),
-                    application = it.application
-                )
-            ).get(WeatherViewModel::class.java)
-        }
-        //
-
+        args = WeatherFragmentArgs.fromBundle(requireArguments())
+        viewModel = ViewModelProvider(
+            this, WeatherViewModelFactory(
+                lon = args.lon.toCoordinate(),
+                lat = args.lat.toCoordinate(),
+                application = requireActivity().application
+            )
+        ).get(WeatherViewModel::class.java)
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
         initObserveViewModel()
@@ -61,7 +52,8 @@ class WeatherFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm =
+            requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
         navController = view.findNavController()
         initLocation()
@@ -72,7 +64,6 @@ class WeatherFragment : Fragment() {
             val _lat = viewModel.getLastLocationLat()
             val _lon = viewModel.getLastLocationLon()
             if (_lat == EMPTY_COORDINATE || _lon == EMPTY_COORDINATE) {
-                Timber.i("ZZZ--- initLocation")
                 viewModel.initCoordinates(this)
                 return
             } else {
@@ -94,13 +85,10 @@ class WeatherFragment : Fragment() {
 
         viewModel.currentLocation.observe(viewLifecycleOwner, Observer { location: Location ->
             binding.locationName.text = location.name
-            viewModel.showLastSelectedLocationCoordinates()
         })
 
         viewModel.currentWeather.observe(viewLifecycleOwner, Observer { weather: Weather ->
-            activity?.let { activity: FragmentActivity ->
-                binding.weatherIcon.setWeatherIcon(activity, weather.icon)
-            }
+            binding.weatherIcon.setWeatherIcon(requireActivity(), weather.icon)
         })
 
         viewModel.isDateSelected.observe(viewLifecycleOwner, Observer { event: Boolean ->
@@ -134,6 +122,9 @@ class WeatherFragment : Fragment() {
         viewModel.isCurrentLocationSelected.observe(viewLifecycleOwner, Observer { event: Boolean ->
             if (event) {
                 viewModel.initCoordinates(this)
+                "${resources.getText(R.string.current_location_selected_toast)}".toast(
+                    requireContext()
+                )
             }
         })
     }
@@ -143,7 +134,6 @@ class WeatherFragment : Fragment() {
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-        Timber.i("GPS--- onRequestPermissionsResult")
         if (requestCode == CoordinatesProvider.PERMISSION_ID && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             viewModel.initCoordinates(this)
         }

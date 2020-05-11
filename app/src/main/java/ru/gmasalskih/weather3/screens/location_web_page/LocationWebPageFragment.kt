@@ -22,10 +22,8 @@ class LocationWebPageFragment : Fragment() {
     ): View? {
         binding = FragmentLocationWebPageBinding.inflate(inflater, container, false)
         webView = binding.webPageWeather
-        arguments?.let {
-            args = LocationWebPageFragmentArgs.fromBundle(it)
-        }
-        webView.webViewClient = object :WebViewClient(){
+        args = LocationWebPageFragmentArgs.fromBundle(requireArguments())
+        webView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
                 view?.loadUrl(url)
                 return true
@@ -44,9 +42,7 @@ class LocationWebPageFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.share -> {
-                activity?.let {
-                    startActivity(getShareIntent(it))
-                }
+                startActivity(getShareIntent(requireActivity()))
             }
         }
         return super.onOptionsItemSelected(item)

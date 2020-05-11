@@ -5,7 +5,6 @@
     tools:context=".screens.weather.WeatherFragment">
 
     <data>
-
         <variable
             name="viewModel"
             type="ru.gmasalskih.weather3.screens.weather.WeatherViewModel" />
@@ -29,7 +28,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:hint="2020.01.01" />
-
 
         <ImageView
             android:id="@+id/weather_icon"

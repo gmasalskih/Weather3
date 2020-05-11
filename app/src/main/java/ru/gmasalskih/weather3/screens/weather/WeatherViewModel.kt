@@ -60,11 +60,9 @@ class WeatherViewModel(
     }
 
     fun initCoordinates(fragment: Fragment) {
-        Timber.i("GPS--- initCoordinates1")
         CoordinatesProvider.getLastLocation(fragment) { lat: String, lon: String ->
             GeocoderApi.getResponse(lat = lat, lon = lon) { listLocations ->
                 listLocations.first().let { location ->
-                    Timber.i("GPS--- initCoordinates2 $location")
                     this.lat = location.lat
                     this.lon = location.lon
                     setLastSelectedCoordinate(lat = location.lat, lon = location.lon)
@@ -74,7 +72,7 @@ class WeatherViewModel(
         }
     }
 
-    fun setLastSelectedCoordinate(lat: String, lon: String) {
+    private fun setLastSelectedCoordinate(lat: String, lon: String) {
         SharedPreferencesProvider.setLastLocationCoordinates(
             lat = lat,
             lon = lon,
@@ -84,16 +82,9 @@ class WeatherViewModel(
 
     fun initLocation() {
         coroutineScope.launch {
-            Timber.i(
-                "GPS--- initLocation lat:$lat  lon:$lon ${db.getLocation(
-                    lat = lat,
-                    lon = lon
-                )}"
-            )
             if (db.getLocation(lat = lat, lon = lon).isNullOrEmpty()) {
                 GeocoderApi.getResponse(lat = lat, lon = lon) { listLocations ->
                     listLocations.firstOrNull()?.let { location ->
-                        Timber.i("GPS--- initLocation if $location")
                         lat = location.lat
                         lon = location.lon
                         coroutineScope.launch {
@@ -103,7 +94,6 @@ class WeatherViewModel(
                     }
                 }
             } else {
-                Timber.i("GPS--- initLocation else")
                 updateCurrentLocation()
             }
         }
@@ -111,9 +101,7 @@ class WeatherViewModel(
 
     private suspend fun updateCurrentLocation() {
         coroutineScope.launch {
-            Timber.i("GPS--- updateCurrentLocation: lat:$lat lon:$lon")
             val location = db.getLocation(lat = lat, lon = lon).firstOrNull()
-            Timber.i("GPS--- updateCurrentLocation: $location")
             if (location != null) {
                 withContext(Dispatchers.Main) {
                     _currentLocation.value = location
@@ -127,12 +115,6 @@ class WeatherViewModel(
 
     fun getLastLocationLat() = SharedPreferencesProvider.getLastLocationLat(getApplication())
     fun getLastLocationLon() = SharedPreferencesProvider.getLastLocationLon(getApplication())
-
-    fun showLastSelectedLocationCoordinates() {
-        val _lat = SharedPreferencesProvider.getLastLocationLat(getApplication())
-        val _lon = SharedPreferencesProvider.getLastLocationLon(getApplication())
-        "lat:$_lat lon:$_lon".toast(getApplication())
-    }
 
     private fun sendWeatherRequest() {
         WeatherApi.getResponse(lon = lon, lat = lat) { weather: Weather ->
@@ -175,6 +157,6 @@ class WeatherViewModel(
     override fun onCleared() {
         super.onCleared()
         viewModelScope.cancel()
-        Timber.i("$TAG_LOG WeatherViewModel cleared!")
+        coroutineScope.cancel()
     }
 }

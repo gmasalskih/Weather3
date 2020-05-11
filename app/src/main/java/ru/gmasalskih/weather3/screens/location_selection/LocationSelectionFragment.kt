@@ -26,14 +26,13 @@ class LocationSelectionFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentLocationSelectionBinding.inflate(inflater, container, false)
-        activity?.let {
-            viewModel =
-                ViewModelProvider(
-                    this,
-                    LocationSelectionViewModelFactory(application = it.application)
-                )
-                    .get(LocationSelectionViewModel::class.java)
-        }
+        viewModel =
+            ViewModelProvider(
+                this,
+                LocationSelectionViewModelFactory(application = requireActivity().application)
+            )
+                .get(LocationSelectionViewModel::class.java)
+
         adapter =
             SelectionLocationsListAdapter(SelectionLocationsListAdapter.SelectionLocationClickListener {
                 onCitySelected(it)
@@ -56,15 +55,13 @@ class LocationSelectionFragment : Fragment() {
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
     }
 
     private fun initObserveViewModel() {
-        viewModel.responseListLocation.observe(viewLifecycleOwner, Observer {
-            adapter.submitList(it)
+        viewModel.responseListLocation.observe(viewLifecycleOwner, Observer { listLocations ->
+            adapter.submitList(listLocations)
         })
     }
 

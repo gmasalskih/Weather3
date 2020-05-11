@@ -25,7 +25,10 @@ interface LocationsDao {
     suspend fun delete(location: Location)
 
     @Query("DELETE FROM locations")
-    suspend fun clear()
+    suspend fun clearAllLocations()
+
+    @Query("UPDATE locations SET favorite = 0 WHERE favorite = 1")
+    suspend fun clearAllFavoriteLocations()
 
     @Query("SELECT * FROM locations ORDER BY name ASC")
     suspend fun getAllLocations(): List<Location>
