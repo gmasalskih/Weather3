@@ -62,7 +62,7 @@ class WeatherViewModel(
     fun initCoordinates(fragment: Fragment) {
         CoordinatesProvider.getLastLocation(fragment) { lat: String, lon: String ->
             GeocoderApi.getResponse(lat = lat, lon = lon) { listLocations ->
-                listLocations.first().let { location ->
+                listLocations.firstOrNull()?.let { location ->
                     this.lat = location.lat
                     this.lon = location.lon
                     setLastSelectedCoordinate(lat = location.lat, lon = location.lon)
