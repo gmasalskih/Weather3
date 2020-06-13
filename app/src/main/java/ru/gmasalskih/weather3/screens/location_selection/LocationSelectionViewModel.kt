@@ -13,18 +13,11 @@ class LocationSelectionViewModel(application: Application) : AndroidViewModel(ap
     private val db by lazy { LocationsDB.getInstance(getApplication()).locationsDao }
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
-    private val _responseListLocation = MutableLiveData<List<Location>>()
+    val listLocation = db.getAllLocations()
+
+    private var _responseListLocation = MutableLiveData<List<Location>>()
     val responseListLocation: LiveData<List<Location>>
         get() = _responseListLocation
-
-    init {
-        coroutineScope.launch {
-            val locations = db.getAllLocations()
-            withContext(Dispatchers.Main) {
-                _responseListLocation.value = locations
-            }
-        }
-    }
 
     fun sendGeocoderRequest(locationName: String) {
         GeocoderApi.getResponse(locationName) {

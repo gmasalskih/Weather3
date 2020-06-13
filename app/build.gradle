@@ -15,10 +15,6 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-    configurations.all() {
-        resolutionStrategy.force "org.antlr:antlr4-runtime:4.7.1"
-        resolutionStrategy.force "org.antlr:antlr4-tool:4.7.1"
-    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -29,10 +25,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    dataBinding {
-        enabled = true
+    buildFeatures{
+        dataBinding = true
+        viewBinding = true
     }
-    viewBinding.enabled = true
 }
 
 dependencies {
@@ -80,7 +76,6 @@ dependencies {
     kapt "androidx.lifecycle:lifecycle-common-java8:$version_lifecycle"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$version_lifecycle"
 
-
     //Log
     implementation "com.jakewharton.timber:timber:$version_timber"
 
@@ -92,4 +87,7 @@ dependencies {
 
     //SvgLoader
     implementation "com.github.ar-android:AndroidSvgLoader:$version_svgloader"
+
+    //
+    implementation 'com.karumi:dexter:6.1.2'
 }

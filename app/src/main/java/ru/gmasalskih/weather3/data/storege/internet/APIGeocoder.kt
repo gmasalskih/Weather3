@@ -17,7 +17,6 @@ import ru.gmasalskih.weather3.utils.TAG_LOG
 import ru.gmasalskih.weather3.utils.toCoordinate
 import timber.log.Timber
 
-
 private const val BASE_URL_GEOCODER = "https://geocode-maps.yandex.ru/1.x/"
 private const val KEY_GEOCODER = "1d864ec2-c76a-4c6a-b324-a76756a06882"
 

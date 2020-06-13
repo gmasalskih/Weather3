@@ -12,17 +12,21 @@ import ru.gmasalskih.weather3.data.entity.Location
 
 const val TAG_LOG = "---"
 const val EMPTY_COORDINATE = "0.0"
+const val DEFAULT_LAT = "55.5470"
+const val DEFAULT_LON = "37.5530"
+
 const val URL_WEATHER_ICON = "https://yastatic.net/weather/i/icons/blueye/color/svg/"
 
 fun String.toast(context: Context) {
     Toast.makeText(context, this, Toast.LENGTH_SHORT).show()
 }
 
-fun String.toCoordinate():String{
-    if (this.toDoubleOrNull()==null){
+fun String.toCoordinate(): String {
+    if (this.toDoubleOrNull() == null) {
         throw IllegalArgumentException("This string can not convert to coordinate")
-    } else{
-        return "${this.split(".")[0]}.${this.split(".")[1].take(4)}"
+    } else {
+        val coordinate = this.split(".")
+        return "${coordinate[0]}.${coordinate[1].take(4)}"
     }
 }
 
@@ -69,8 +73,8 @@ fun TextView.setLocationCountyCode(item: Location?) {
 }
 
 @BindingAdapter("locationID")
-fun TextView.setLocationID(item: Location?){
-    item?.let {location: Location ->
+fun TextView.setLocationID(item: Location?) {
+    item?.let { location: Location ->
         text = "lat:${location.lat} lon:${location.lon}"
     }
 }

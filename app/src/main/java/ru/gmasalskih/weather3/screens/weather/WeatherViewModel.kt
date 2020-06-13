@@ -4,15 +4,16 @@ import android.app.Application
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
 import kotlinx.coroutines.*
+import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.data.storege.internet.GeocoderApi
 import ru.gmasalskih.weather3.data.storege.internet.WeatherApi
-import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.data.entity.Weather
 import ru.gmasalskih.weather3.data.storege.db.LocationsDB
 import ru.gmasalskih.weather3.data.storege.gps.CoordinatesProvider
 import ru.gmasalskih.weather3.data.storege.local.SharedPreferencesProvider
-import ru.gmasalskih.weather3.utils.TAG_LOG
-import ru.gmasalskih.weather3.utils.toast
+import ru.gmasalskih.weather3.utils.DEFAULT_LAT
+import ru.gmasalskih.weather3.utils.DEFAULT_LON
+import ru.gmasalskih.weather3.utils.EMPTY_COORDINATE
 import timber.log.Timber
 
 class WeatherViewModel(
@@ -22,6 +23,10 @@ class WeatherViewModel(
 ) : AndroidViewModel(application) {
     private val db by lazy { LocationsDB.getInstance(getApplication()).locationsDao }
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
+
+    private val _currentCoordinate = MutableLiveData<Pair<String, String>>()
+    val currentCoordinate: LiveData<Pair<String, String>>
+        get() = _currentCoordinate
 
     private val _currentLocation = MutableLiveData<Location>()
     val currentLocation: LiveData<Location>
@@ -43,10 +48,6 @@ class WeatherViewModel(
     val isDateSelected: LiveData<Boolean>
         get() = _isDateSelected
 
-    private val _isLocationFavoriteSelected = MutableLiveData<Boolean>()
-    val isLocationFavoriteSelected: LiveData<Boolean>
-        get() = _isLocationFavoriteSelected
-
     private val _isCurrentLocationSelected = MutableLiveData<Boolean>()
     val isCurrentLocationSelected: LiveData<Boolean>
         get() = _isCurrentLocationSelected
@@ -54,73 +55,50 @@ class WeatherViewModel(
     init {
         _isLocationSelected.value = false
         _isDateSelected.value = false
-        _isLocationFavoriteSelected.value = false
         _isLocationWebPageSelected.value = false
-        sendWeatherRequest()
     }
 
-    fun initCoordinates(fragment: Fragment) {
-        CoordinatesProvider.getLastLocation(fragment) { lat: String, lon: String ->
-            GeocoderApi.getResponse(lat = lat, lon = lon) { listLocations ->
-                listLocations.firstOrNull()?.let { location ->
-                    this.lat = location.lat
-                    this.lon = location.lon
-                    setLastSelectedCoordinate(lat = location.lat, lon = location.lon)
-                    initLocation()
-                }
+    fun initCoordinate(fragment: Fragment) {
+        if (isCoordinateEmpty(lat = this.lat, lon = this.lon)) {
+            if (isCoordinateEmpty(lat = getLastLat(), lon = getLastLon())) {
+                updateCurrentCoordinateFromGPS(fragment)
+            } else {
+                updateCurrentCoordinateFromSP()
             }
+        } else {
+            setCurrentCoordinate(lat = this.lat, lon = this.lon)
         }
     }
 
-    private fun setLastSelectedCoordinate(lat: String, lon: String) {
-        SharedPreferencesProvider.setLastLocationCoordinates(
-            lat = lat,
-            lon = lon,
-            application = getApplication()
-        )
-    }
-
-    fun initLocation() {
-        coroutineScope.launch {
-            if (db.getLocation(lat = lat, lon = lon).isNullOrEmpty()) {
-                GeocoderApi.getResponse(lat = lat, lon = lon) { listLocations ->
-                    listLocations.firstOrNull()?.let { location ->
-                        lat = location.lat
-                        lon = location.lon
-                        coroutineScope.launch {
-                            db.insert(location)
-                            updateCurrentLocation()
+    fun initLocation(lat: String, lon: String) {
+        GeocoderApi.getResponse(lat = lat, lon = lon) { listLocations ->
+            listLocations.firstOrNull()?.let { location ->
+                var myLocation:Location?
+                    coroutineScope.launch {
+                    myLocation = db.getLocation(lat = location.lat, lon = location.lon)
+                    if (myLocation == null) {
+                        db.insert(location)
+                        withContext(Dispatchers.Main) {
+                            _currentLocation.value = location
+                        }
+                    } else{
+                        withContext(Dispatchers.Main) {
+                            _currentLocation.value = myLocation
                         }
                     }
                 }
-            } else {
-                updateCurrentLocation()
             }
         }
     }
 
-    private suspend fun updateCurrentLocation() {
-        coroutineScope.launch {
-            val location = db.getLocation(lat = lat, lon = lon).firstOrNull()
-            if (location != null) {
-                withContext(Dispatchers.Main) {
-                    _currentLocation.value = location
-                    _isLocationFavoriteSelected.value = location.isFavorite
-                    sendWeatherRequest()
-                }
-            }
-
-        }
-    }
-
-    fun getLastLocationLat() = SharedPreferencesProvider.getLastLocationLat(getApplication())
-    fun getLastLocationLon() = SharedPreferencesProvider.getLastLocationLon(getApplication())
-
-    private fun sendWeatherRequest() {
-        WeatherApi.getResponse(lon = lon, lat = lat) { weather: Weather ->
+    fun initWeather(location: Location) {
+        WeatherApi.getResponse(lat = location.lat, lon = location.lon) { weather: Weather ->
             _currentWeather.value = weather
         }
     }
+
+    private fun getLastLat() = SharedPreferencesProvider.getLastLocationLat(getApplication())
+    private fun getLastLon() = SharedPreferencesProvider.getLastLocationLon(getApplication())
 
     // Click Event
     fun onLocationSelect() {
@@ -144,14 +122,41 @@ class WeatherViewModel(
     }
 
     fun onToggleFavoriteLocation() {
-        coroutineScope.launch {
-            val location = db.getLocation(lat = lat, lon = lon).first()
-            _isLocationFavoriteSelected.value?.let { event: Boolean ->
-                location.isFavorite = !event
-                db.updateLocation(location)
-                updateCurrentLocation()
+        currentLocation.value?.let { location ->
+            coroutineScope.launch {
+                db.updateLocation(location.apply { isFavorite = !isFavorite })
+                val myLocation = db.getLocation(lat = location.lat, lon = location.lon)
+                withContext(Dispatchers.Main) {
+                    _currentLocation.value = myLocation
+                }
             }
         }
+    }
+
+    private fun updateCurrentCoordinateFromSP() {
+        setCurrentCoordinate(
+            lat = SharedPreferencesProvider.getLastLocationLat(getApplication()),
+            lon = SharedPreferencesProvider.getLastLocationLon(getApplication())
+        )
+    }
+
+    fun updateCurrentCoordinateFromGPS(fragment: Fragment) {
+        CoordinatesProvider.getLastLocation(fragment) { lat: String, lon: String ->
+            if (lat == EMPTY_COORDINATE || lon == EMPTY_COORDINATE) {
+                setCurrentCoordinate(lat = DEFAULT_LAT, lon = DEFAULT_LON)
+            } else {
+                setCurrentCoordinate(lat = lat, lon = lon)
+            }
+            Timber.i(">>>+ $lat $lon")
+        }
+    }
+
+    private fun isCoordinateEmpty(lat: String, lon: String) =
+        lat == EMPTY_COORDINATE || lon == EMPTY_COORDINATE
+
+
+    private fun setCurrentCoordinate(lat: String, lon: String) {
+        _currentCoordinate.value = Pair(lat, lon)
     }
 
     override fun onCleared() {

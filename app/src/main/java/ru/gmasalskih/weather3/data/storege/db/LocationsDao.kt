@@ -1,22 +1,26 @@
 package ru.gmasalskih.weather3.data.storege.db
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import ru.gmasalskih.weather3.data.entity.Location
 
 @Dao
 interface LocationsDao {
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(location: Location)
-
     @Query("SELECT * FROM locations WHERE lat = :lat AND lon = :lon")
-    suspend fun getLocation(lat: String, lon: String): List<Location>
-
-    @Query("SELECT * FROM locations WHERE favorite = 1")
-    suspend fun getFavoriteLocations(): List<Location>
+    suspend fun getLocation(lat: String, lon: String): Location?
 
     @Query("SELECT * FROM locations WHERE name = :name")
-    suspend fun getLocation(name: String): List<Location>
+    fun getLocation(name: String): LiveData<List<Location>>
+
+    @Query("SELECT * FROM locations ORDER BY name ASC")
+    fun getAllLocations(): LiveData<List<Location>>
+
+    @Query("SELECT * FROM locations WHERE favorite = 1")
+    fun getFavoriteLocations(): LiveData<List<Location>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(location: Location)
 
     @Update
     suspend fun updateLocation(location: Location)
@@ -29,7 +33,4 @@ interface LocationsDao {
 
     @Query("UPDATE locations SET favorite = 0 WHERE favorite = 1")
     suspend fun clearAllFavoriteLocations()
-
-    @Query("SELECT * FROM locations ORDER BY name ASC")
-    suspend fun getAllLocations(): List<Location>
 }

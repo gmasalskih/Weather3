@@ -8,7 +8,6 @@
     android:background="@drawable/large_triangles"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="60dp"

@@ -49,7 +49,7 @@ class SelectionLocationsListAdapter(private val clickListener: SelectionLocation
         }
     }
 
-    class SelectionLocationClickListener(val clickListener: (locationSelection: Location) -> Unit) {
+    class SelectionLocationClickListener(private val clickListener: (locationSelection: Location) -> Unit) {
         fun onClick(locationSelection: Location) = clickListener(locationSelection)
     }
 }

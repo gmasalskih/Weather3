@@ -15,6 +15,7 @@ import ru.gmasalskih.weather3.R
 import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.data.entity.Weather
 import ru.gmasalskih.weather3.data.storege.gps.CoordinatesProvider
+import ru.gmasalskih.weather3.data.storege.local.SharedPreferencesProvider
 import ru.gmasalskih.weather3.databinding.FragmentWeatherBinding
 import ru.gmasalskih.weather3.utils.*
 import timber.log.Timber
@@ -46,9 +47,9 @@ class WeatherFragment : Fragment() {
         initObserveViewModel()
         setHasOptionsMenu(true)
         observeLifeCycle = ObserveLifeCycle(lifecycle)
+        viewModel.initCoordinate(this)
         return binding.root
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -56,38 +57,28 @@ class WeatherFragment : Fragment() {
             requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
         navController = view.findNavController()
-        initLocation()
     }
 
-    private fun initLocation() {
-        if (args.lat == EMPTY_COORDINATE || args.lon == EMPTY_COORDINATE) {
-            val _lat = viewModel.getLastLocationLat()
-            val _lon = viewModel.getLastLocationLon()
-            if (_lat == EMPTY_COORDINATE || _lon == EMPTY_COORDINATE) {
-                viewModel.initCoordinates(this)
-                return
-            } else {
-                viewModel.lat = _lat
-                viewModel.lon = _lon
-            }
-        }
-        viewModel.initLocation()
-    }
 
     private fun initObserveViewModel() {
-        viewModel.isLocationFavoriteSelected.observe(
-            viewLifecycleOwner, Observer { event: Boolean ->
-                Timber.i("$TAG_LOG $event")
-                val icoFavorite: Int =
-                    if (event) R.drawable.ic_favorite_black_24dp else R.drawable.ic_favorite_border_black_24dp
-                binding.favoriteLocation.setImageResource(icoFavorite)
-            })
+
+        viewModel.currentCoordinate.observe(viewLifecycleOwner, Observer {
+            Timber.i(">>>- $it")
+            viewModel.initLocation(lat = it.first, lon = it.second)
+        })
 
         viewModel.currentLocation.observe(viewLifecycleOwner, Observer { location: Location ->
-            binding.locationName.text = location.name
+            Timber.i(">>>- $location")
+            viewModel.initWeather(location)
+                binding.locationName.text = location.name
+                val icoFavorite: Int =
+                    if (location.isFavorite) R.drawable.ic_favorite_black_24dp else
+                        R.drawable.ic_favorite_border_black_24dp
+                binding.favoriteLocation.setImageResource(icoFavorite)
         })
 
         viewModel.currentWeather.observe(viewLifecycleOwner, Observer { weather: Weather ->
+            Timber.i(">>>- $weather")
             binding.weatherIcon.setWeatherIcon(requireActivity(), weather.icon)
         })
 
@@ -121,7 +112,7 @@ class WeatherFragment : Fragment() {
 
         viewModel.isCurrentLocationSelected.observe(viewLifecycleOwner, Observer { event: Boolean ->
             if (event) {
-                viewModel.initCoordinates(this)
+                viewModel.updateCurrentCoordinateFromGPS(this)
                 "${resources.getText(R.string.current_location_selected_toast)}".toast(
                     requireContext()
                 )
@@ -135,7 +126,7 @@ class WeatherFragment : Fragment() {
         grantResults: IntArray
     ) {
         if (requestCode == CoordinatesProvider.PERMISSION_ID && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            viewModel.initCoordinates(this)
+            viewModel.updateCurrentCoordinateFromGPS(this)
         }
     }
 
@@ -148,5 +139,7 @@ class WeatherFragment : Fragment() {
         return NavigationUI.onNavDestinationSelected(item, navController)
                 || super.onOptionsItemSelected(item)
     }
+
+
 }
 

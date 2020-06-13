@@ -60,6 +60,9 @@ class LocationSelectionFragment : Fragment() {
     }
 
     private fun initObserveViewModel() {
+        viewModel.listLocation.observe(viewLifecycleOwner, Observer { listLocations ->
+            adapter.submitList(listLocations)
+        })
         viewModel.responseListLocation.observe(viewLifecycleOwner, Observer { listLocations ->
             adapter.submitList(listLocations)
         })
