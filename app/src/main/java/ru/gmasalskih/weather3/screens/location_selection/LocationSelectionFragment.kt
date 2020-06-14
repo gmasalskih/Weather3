@@ -13,6 +13,7 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.databinding.FragmentLocationSelectionBinding
+import ru.gmasalskih.weather3.utils.toast
 
 class LocationSelectionFragment : Fragment() {
 
@@ -51,7 +52,7 @@ class LocationSelectionFragment : Fragment() {
 
         binding.enterLocationName.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                viewModel.sendGeocoderRequest(s.toString())
+                viewModel.setListLocationsFromApi(s.toString())
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -62,6 +63,9 @@ class LocationSelectionFragment : Fragment() {
     private fun initObserveViewModel() {
         viewModel.responseListLocation.observe(viewLifecycleOwner, Observer { listLocations ->
             adapter.submitList(listLocations)
+        })
+        viewModel.errorMassage.observe(viewLifecycleOwner, Observer {
+            it.toast(requireContext())
         })
     }
 

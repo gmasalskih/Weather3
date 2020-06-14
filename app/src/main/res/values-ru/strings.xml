@@ -31,4 +31,8 @@
     <string name="clear_all_locations_toast">Историю поиска очищена</string>
     <string name="del_all_favorites_locations_toast">Избранные места удалены</string>
     <string name="current_location_selected_toast">Выбрано текущее местоположение</string>
+    <string name="title_is_emty_current_location">Не найдено текущее местоволожение</string>
+    <string name="msg_is_emty_current_location">Не определено текущее местоположение!</string>
+    <string name="gps_btn_is_emty_current_location">Получить местоположение по GPS</string>
+    <string name="select_location_btn_is_emty_current_location">Выберать местоположение</string>
 </resources>

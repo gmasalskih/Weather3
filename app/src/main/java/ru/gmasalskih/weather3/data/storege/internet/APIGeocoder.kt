@@ -1,18 +1,21 @@
 package ru.gmasalskih.weather3.data.storege.internet
 
+import io.reactivex.Maybe
+import io.reactivex.Observable
+import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import okhttp3.*
 import okhttp3.logging.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
+import ru.gmasalskih.weather3.data.entity.Coordinates
 import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.data.entity.geocoder.BaseGeocoderEntity
-import ru.gmasalskih.weather3.data.entity.geocoder.FeatureMember
 import ru.gmasalskih.weather3.data.entity.geocoder.GeoObject
+import ru.gmasalskih.weather3.utils.EMPTY_COORDINATE
 import ru.gmasalskih.weather3.utils.TAG_LOG
 import ru.gmasalskih.weather3.utils.toCoordinate
 import timber.log.Timber
@@ -35,74 +38,48 @@ private val httpClient = OkHttpClient.Builder().apply {
 
 private val APIGeocoder = Retrofit.Builder()
     .addConverterFactory(GsonConverterFactory.create())
+    .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
     .baseUrl(BASE_URL_GEOCODER)
     .client(httpClient.build())
     .build()
 
 interface GeocoderApiService {
     @GET("?apikey=$KEY_GEOCODER&format=json&results=100&kind=locality")
-    fun getGeocoderEntity(@Query("geocode") geocode: String): Call<BaseGeocoderEntity?>
+    fun getGeocoderEntity(@Query("geocode") geocode: String): Maybe<BaseGeocoderEntity>
 }
 
 object GeocoderApi {
     private val apiService: GeocoderApiService by lazy {
-        APIGeocoder.create(
-            GeocoderApiService::class.java
-        )
+        APIGeocoder.create(GeocoderApiService::class.java)
     }
 
-    fun getResponse(geocode: String, callback: (List<Location>) -> Unit) {
-        apiService.getGeocoderEntity(geocode)
-            .enqueue(object : Callback<BaseGeocoderEntity?> {
-                override fun onFailure(call: Call<BaseGeocoderEntity?>, t: Throwable) {
-                    Timber.i("$TAG_LOG ${t.message}")
-                }
-
-                override fun onResponse(
-                    call: Call<BaseGeocoderEntity?>,
-                    response: Response<BaseGeocoderEntity?>
-                ) {
-                    val body = response.body()?.response?.geoObjectCollection?.featureMember
-                    if (body != null && response.isSuccessful) {
-                        body.let { listFM: List<FeatureMember> ->
-                            val list = listFM
-                                .mapNotNull { fm: FeatureMember ->
-                                    fm.geoObject
-                                }.map { geoObject: GeoObject ->
-                                    Location(
-                                        addressLine = getAddressLine(
-                                            geoObject
-                                        ),
-                                        countryName = getCountryName(
-                                            geoObject
-                                        ),
-                                        countyCode = getCountyCode(
-                                            geoObject
-                                        ),
-                                        name = getName(
-                                            geoObject
-                                        ),
-                                        lat = getLat(
-                                            geoObject
-                                        ),
-                                        lon = getLon(
-                                            geoObject
-                                        )
-                                    )
-                                }.toList()
-                            callback(list)
-                        }
-                    } else {
-                        // что-то пошло не по плану
-                        Timber.i("$TAG_LOG Код ответа сервера: ${response.code()} Данные с сервера ${response.raw()}")
-                    }
-                }
-            })
+    fun getListLocations(geocode: String): Maybe<List<Location>> {
+        return apiService.getGeocoderEntity(geocode)
+            .map {
+                it.response?.geoObjectCollection?.featureMember
+            }.flatMapObservable {
+                Observable.fromIterable(it)
+            }.map {
+                it.geoObject
+            }.filter {
+                getLat(it) != EMPTY_COORDINATE && getLon(it) != EMPTY_COORDINATE
+            }.map {
+                Location(
+                    addressLine = getAddressLine(it),
+                    countryName = getCountryName(it),
+                    countyCode = getCountyCode(it),
+                    name = getName(it),
+                    lat = getLat(it),
+                    lon = getLon(it)
+                )
+            }.toList()
+            .filter { !it.isNullOrEmpty() }
     }
 
-    fun getResponse(lat: String, lon: String, callback: (List<Location>) -> Unit) {
-        getResponse("${lon.toCoordinate()},${lat.toCoordinate()}", callback)
-    }
+    fun getLocation(coordinates: Coordinates): Maybe<Location> =
+        getListLocations("${coordinates.lon.toCoordinate()},${coordinates.lat.toCoordinate()}")
+            .flatMapObservable { Observable.fromIterable(it) }
+            .firstElement()
 
     private fun getAddressLine(geoObject: GeoObject): String {
         return geoObject.metaDataProperty?.geocoderMetaData?.text ?: ""
@@ -125,12 +102,12 @@ object GeocoderApi {
     private fun getLat(geoObject: GeoObject): String {
         return geoObject.point?.pos?.let {
             it.split(" ")[1].toCoordinate()
-        } ?: "0.0"
+        } ?: EMPTY_COORDINATE
     }
 
     private fun getLon(geoObject: GeoObject): String {
         return geoObject.point?.pos?.let {
             it.split(" ")[0].toCoordinate()
-        } ?: "0.0"
+        } ?: EMPTY_COORDINATE
     }
 }

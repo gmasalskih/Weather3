@@ -1,15 +1,16 @@
 package ru.gmasalskih.weather3.data.storege.internet
 
+import io.reactivex.Maybe
+import io.reactivex.schedulers.Schedulers
 import okhttp3.*
 import okhttp3.logging.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Query
+import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.data.entity.Weather
 import ru.gmasalskih.weather3.data.entity.weather.BaseWeatherEntity
 import ru.gmasalskih.weather3.utils.TAG_LOG
@@ -34,6 +35,7 @@ private val httpClient = OkHttpClient.Builder().apply {
 
 private val APIWeather = Retrofit.Builder()
     .addConverterFactory(GsonConverterFactory.create())
+    .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
     .baseUrl(BASE_URL_WEATHER)
     .client(httpClient.build())
     .build()
@@ -41,45 +43,29 @@ private val APIWeather = Retrofit.Builder()
 interface WeatherApiService {
     @Headers("X-Yandex-API-Key: $KEY_WEATHER")
     @GET("informers?lang=ru_RU")
-    fun getWeather(@Query("lat") lat: String, @Query("lon") lon: String): Call<BaseWeatherEntity>
+    fun getWeather(@Query("lat") lat: String, @Query("lon") lon: String): Maybe<BaseWeatherEntity>
 }
 
 object WeatherApi {
     private val apiService: WeatherApiService by lazy {
-        APIWeather.create(
-            WeatherApiService::class.java)
+        APIWeather.create(WeatherApiService::class.java)
     }
 
-    fun getResponse(lon: String, lat: String, callback: (Weather) -> Unit) {
-        apiService.getWeather(lon = lon.toCoordinate(), lat = lat.toCoordinate()).enqueue(object :
-            Callback<BaseWeatherEntity> {
-            override fun onFailure(call: Call<BaseWeatherEntity>, t: Throwable) {
-                Timber.i("$TAG_LOG ${t.message}")
+    fun getResponse(lon: String, lat: String): Maybe<Weather> {
+        return apiService.getWeather(lon = lon.toCoordinate(), lat = lat.toCoordinate())
+            .map {
+                Weather(
+                    temp = it.fact.temp,
+                    timestamp = it.now_dt,
+                    windSpeed = it.fact.wind_speed.toInt(),
+                    pressure = it.fact.pressure_mm,
+                    humidity = it.fact.humidity,
+                    icon = it.fact.icon,
+                    url = it.info.url
+                )
             }
-
-            override fun onResponse(
-                call: Call<BaseWeatherEntity>,
-                response: Response<BaseWeatherEntity>
-            ) {
-                val body = response.body()
-                if (body != null && response.isSuccessful) {
-                    body.apply {
-                        val weather = Weather(
-                            temp = fact.temp,
-                            timestamp = now_dt,
-                            windSpeed = fact.wind_speed.toInt(),
-                            pressure = fact.pressure_mm,
-                            humidity = fact.humidity,
-                            icon = fact.icon,
-                            url = info.url
-                        )
-                        callback(weather)
-                    }
-                } else {
-                    // что-то пошло не по плану
-                    Timber.i("$TAG_LOG Код ответа сервера: ${response.code()} Данные с сервера ${response.raw()}")
-                }
-            }
-        })
     }
+
+    fun getResponse(location: Location) = getResponse(lat = location.lat, lon = location.lon)
+
 }

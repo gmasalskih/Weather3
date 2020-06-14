@@ -10,9 +10,13 @@ import com.ahmadrosid.svgloader.SvgLoader
 import ru.gmasalskih.weather3.R
 import ru.gmasalskih.weather3.data.entity.Location
 
-const val TAG_LOG = "---"
+const val TAG_LOG = "LOG"
+const val TAG_ERR = "ERR"
 const val EMPTY_COORDINATE = "0.0"
 const val URL_WEATHER_ICON = "https://yastatic.net/weather/i/icons/blueye/color/svg/"
+const val APP_PREFERENCES = "appPreferences"
+
+fun isCoordinateEmpty(lat:String, lon:String) = lat== EMPTY_COORDINATE || lon == EMPTY_COORDINATE
 
 fun String.toast(context: Context) {
     Toast.makeText(context, this, Toast.LENGTH_SHORT).show()

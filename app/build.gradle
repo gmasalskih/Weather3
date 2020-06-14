@@ -29,10 +29,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    dataBinding {
-        enabled = true
+    buildFeatures{
+        dataBinding = true
+        viewBinding = true
     }
-    viewBinding.enabled = true
 }
 
 dependencies {
@@ -80,7 +80,6 @@ dependencies {
     kapt "androidx.lifecycle:lifecycle-common-java8:$version_lifecycle"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$version_lifecycle"
 
-
     //Log
     implementation "com.jakewharton.timber:timber:$version_timber"
 
@@ -92,4 +91,18 @@ dependencies {
 
     //SvgLoader
     implementation "com.github.ar-android:AndroidSvgLoader:$version_svgloader"
+
+    //DI
+    implementation "org.koin:koin-androidx-scope:$version_koin"
+    implementation "org.koin:koin-androidx-viewmodel:$version_koin"
+    implementation "org.koin:koin-androidx-fragment:$version_koin"
+
+    //Dexter - is an Android library that simplifies the process of requesting permissions at runtime.
+    implementation 'com.karumi:dexter:6.2.0'
+
+    //RX
+    implementation "io.reactivex.rxjava2:rxjava:2.2.19"
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    implementation "androidx.room:room-rxjava2:2.2.5"
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.9.0'
 }

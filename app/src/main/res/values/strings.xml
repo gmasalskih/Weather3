@@ -32,4 +32,9 @@
     <string name="clear_all_locations_toast">Search history cleared</string>
     <string name="del_all_favorites_locations_toast">Favorite locations deleted</string>
     <string name="current_location_selected_toast">Current location selected</string>
+    <string name="title_is_emty_current_location">Current location not found</string>
+    <string name="msg_is_emty_current_location">Can\'t find current location!</string>
+    <string name="gps_btn_is_emty_current_location">Get location by GPS</string>
+    <string name="select_location_btn_is_emty_current_location">Select location</string>
+
 </resources>

@@ -1,35 +1,32 @@
 package ru.gmasalskih.weather3.data.storege.db
 
 import androidx.room.*
+import io.reactivex.Completable
+import io.reactivex.Maybe
+import io.reactivex.Single
 import ru.gmasalskih.weather3.data.entity.Location
 
 @Dao
 interface LocationsDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(location: Location)
+    fun insert(location: Location) : Completable
 
     @Query("SELECT * FROM locations WHERE lat = :lat AND lon = :lon")
-    suspend fun getLocation(lat: String, lon: String): List<Location>
+    fun getLocation(lat: String, lon: String): Maybe<Location>
 
     @Query("SELECT * FROM locations WHERE favorite = 1")
-    suspend fun getFavoriteLocations(): List<Location>
-
-    @Query("SELECT * FROM locations WHERE name = :name")
-    suspend fun getLocation(name: String): List<Location>
+    fun getFavoriteLocations(): Maybe<List<Location>>
 
     @Update
-    suspend fun updateLocation(location: Location)
-
-    @Delete
-    suspend fun delete(location: Location)
+    fun updateLocation(location: Location) :Completable
 
     @Query("DELETE FROM locations")
-    suspend fun clearAllLocations()
+    fun clearAllLocations() : Completable
 
     @Query("UPDATE locations SET favorite = 0 WHERE favorite = 1")
-    suspend fun clearAllFavoriteLocations()
+    fun clearAllFavoriteLocations(): Completable
 
     @Query("SELECT * FROM locations ORDER BY name ASC")
-    suspend fun getAllLocations(): List<Location>
+    fun getAllLocations(): Maybe<List<Location>>
 }

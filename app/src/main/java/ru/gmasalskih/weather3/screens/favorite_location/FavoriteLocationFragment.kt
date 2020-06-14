@@ -83,6 +83,9 @@ class FavoriteLocationFragment : Fragment() {
         viewModel.favoriteLocationList.observe(viewLifecycleOwner, Observer {
             adapter.submitList(it)
         })
+        viewModel.errorMassage.observe(viewLifecycleOwner, Observer {
+            it.toast(requireContext())
+        })
     }
 }
 

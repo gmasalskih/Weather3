@@ -5,27 +5,31 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import ru.gmasalskih.weather3.R
+import ru.gmasalskih.weather3.data.entity.Coordinates
 import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.data.entity.Weather
 import ru.gmasalskih.weather3.data.storege.gps.CoordinatesProvider
 import ru.gmasalskih.weather3.databinding.FragmentWeatherBinding
 import ru.gmasalskih.weather3.utils.*
-import timber.log.Timber
 
 class WeatherFragment : Fragment() {
 
     lateinit var binding: FragmentWeatherBinding
     private lateinit var observeLifeCycle: ObserveLifeCycle
     private lateinit var navController: NavController
-    private lateinit var viewModel: WeatherViewModel
     private lateinit var args: WeatherFragmentArgs
+    val viewModel: WeatherViewModel by viewModel {
+        parametersOf(Coordinates(lat = args.lat.toCoordinate(), lon = args.lon.toCoordinate()))
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,13 +38,6 @@ class WeatherFragment : Fragment() {
     ): View? {
         binding = FragmentWeatherBinding.inflate(inflater, container, false)
         args = WeatherFragmentArgs.fromBundle(requireArguments())
-        viewModel = ViewModelProvider(
-            this, WeatherViewModelFactory(
-                lon = args.lon.toCoordinate(),
-                lat = args.lat.toCoordinate(),
-                application = requireActivity().application
-            )
-        ).get(WeatherViewModel::class.java)
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
         initObserveViewModel()
@@ -56,31 +53,37 @@ class WeatherFragment : Fragment() {
             requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
         navController = view.findNavController()
-        initLocation()
-    }
-
-    private fun initLocation() {
-        if (args.lat == EMPTY_COORDINATE || args.lon == EMPTY_COORDINATE) {
-            val _lat = viewModel.getLastLocationLat()
-            val _lon = viewModel.getLastLocationLon()
-            if (_lat == EMPTY_COORDINATE || _lon == EMPTY_COORDINATE) {
-                viewModel.initCoordinates(this)
-                return
-            } else {
-                viewModel.lat = _lat
-                viewModel.lon = _lon
-            }
-        }
-        viewModel.initLocation()
+        viewModel.initCoordinates()
     }
 
     private fun initObserveViewModel() {
-        viewModel.isLocationFavoriteSelected.observe(
+
+        viewModel.isCurrentCoordinateEmpty.observe(viewLifecycleOwner, Observer { event: Boolean ->
+            if (event) {
+                AlertDialog.Builder(requireContext())
+                    .setTitle(R.string.title_is_emty_current_location)
+                    .setMessage(R.string.msg_is_emty_current_location)
+                    .setPositiveButton(R.string.select_location_btn_is_emty_current_location) { _, _ ->
+                        val action = WeatherFragmentDirections
+                            .actionWeatherFragmentToLocationSelectionFragment()
+                        navController.navigate(action)
+                    }.setNegativeButton(R.string.gps_btn_is_emty_current_location) { _, _ ->
+                        //TODO Получить координаты по GPS
+                    }.create()
+                    .show()
+            }
+        })
+
+        viewModel.errorMassage.observe(viewLifecycleOwner, Observer {
+            it.toast(requireContext())
+        })
+
+        viewModel.isLocationFavorite.observe(
             viewLifecycleOwner, Observer { event: Boolean ->
-                Timber.i("$TAG_LOG $event")
-                val icoFavorite: Int =
-                    if (event) R.drawable.ic_favorite_black_24dp else R.drawable.ic_favorite_border_black_24dp
-                binding.favoriteLocation.setImageResource(icoFavorite)
+                //TODO починить выбор любимого города
+//                val icoFavorite: Int =
+//                    if (event) R.drawable.ic_favorite_black_24dp else R.drawable.ic_favorite_border_black_24dp
+//                binding.favoriteLocation.setImageResource(icoFavorite)
             })
 
         viewModel.currentLocation.observe(viewLifecycleOwner, Observer { location: Location ->
@@ -89,16 +92,6 @@ class WeatherFragment : Fragment() {
 
         viewModel.currentWeather.observe(viewLifecycleOwner, Observer { weather: Weather ->
             binding.weatherIcon.setWeatherIcon(requireActivity(), weather.icon)
-        })
-
-        viewModel.isDateSelected.observe(viewLifecycleOwner, Observer { event: Boolean ->
-            if (event) {
-                viewModel.currentLocation.value?.let { location: Location ->
-                    val action = WeatherFragmentDirections
-                        .actionWeatherFragmentToDateSelectionFragment(location.name)
-                    navController.navigate(action)
-                }
-            }
         })
 
         viewModel.isLocationSelected.observe(viewLifecycleOwner, Observer { event: Boolean ->
@@ -120,14 +113,13 @@ class WeatherFragment : Fragment() {
         })
 
         viewModel.isCurrentLocationSelected.observe(viewLifecycleOwner, Observer { event: Boolean ->
+            // TODO() починить получение координат по нажатию кнопки
             if (event) {
-                viewModel.initCoordinates(this)
-                "${resources.getText(R.string.current_location_selected_toast)}".toast(
-                    requireContext()
-                )
+
             }
         })
     }
+
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -135,7 +127,7 @@ class WeatherFragment : Fragment() {
         grantResults: IntArray
     ) {
         if (requestCode == CoordinatesProvider.PERMISSION_ID && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            viewModel.initCoordinates(this)
+//            viewModel.initCoordinates1(this)
         }
     }
 

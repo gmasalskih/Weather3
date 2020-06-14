@@ -1,31 +1,39 @@
 package ru.gmasalskih.weather3.screens.weather
 
-import android.app.Application
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
-import kotlinx.coroutines.*
+import io.reactivex.*
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
+import ru.gmasalskih.weather3.data.entity.Coordinates
 import ru.gmasalskih.weather3.data.storege.internet.GeocoderApi
-import ru.gmasalskih.weather3.data.storege.internet.WeatherApi
 import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.data.entity.Weather
-import ru.gmasalskih.weather3.data.storege.db.LocationsDB
-import ru.gmasalskih.weather3.data.storege.gps.CoordinatesProvider
+import ru.gmasalskih.weather3.data.storege.db.LocationsDao
+import ru.gmasalskih.weather3.data.storege.internet.WeatherApi
 import ru.gmasalskih.weather3.data.storege.local.SharedPreferencesProvider
-import ru.gmasalskih.weather3.utils.TAG_LOG
-import ru.gmasalskih.weather3.utils.toast
+import ru.gmasalskih.weather3.utils.TAG_ERR
 import timber.log.Timber
 
 class WeatherViewModel(
-    var lon: String,
-    var lat: String,
-    application: Application
-) : AndroidViewModel(application) {
-    private val db by lazy { LocationsDB.getInstance(getApplication()).locationsDao }
-    private val coroutineScope = CoroutineScope(Dispatchers.IO)
+    private var coordinates: Coordinates,
+    private val db: LocationsDao,
+    private val spp: SharedPreferencesProvider
+) : ViewModel() {
+
+    private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
     private val _currentLocation = MutableLiveData<Location>()
     val currentLocation: LiveData<Location>
         get() = _currentLocation
+
+    private val _errorMassage = MutableLiveData<String>()
+    val errorMassage: LiveData<String>
+        get() = _errorMassage
+
+    private val _isCurrentCoordinateEmpty = MutableLiveData<Boolean>()
+    val isCurrentCoordinateEmpty: LiveData<Boolean>
+        get() = _isCurrentCoordinateEmpty
 
     private val _currentWeather = MutableLiveData<Weather>()
     val currentWeather: LiveData<Weather>
@@ -39,87 +47,80 @@ class WeatherViewModel(
     val isLocationWebPageSelected: LiveData<Boolean>
         get() = _isLocationWebPageSelected
 
-    private val _isDateSelected = MutableLiveData<Boolean>()
-    val isDateSelected: LiveData<Boolean>
-        get() = _isDateSelected
-
-    private val _isLocationFavoriteSelected = MutableLiveData<Boolean>()
-    val isLocationFavoriteSelected: LiveData<Boolean>
-        get() = _isLocationFavoriteSelected
+    private val _isLocationFavorite = MutableLiveData<Boolean>()
+    val isLocationFavorite: LiveData<Boolean>
+        get() = _isLocationFavorite
 
     private val _isCurrentLocationSelected = MutableLiveData<Boolean>()
     val isCurrentLocationSelected: LiveData<Boolean>
         get() = _isCurrentLocationSelected
 
     init {
+        _isCurrentCoordinateEmpty.value = false
         _isLocationSelected.value = false
-        _isDateSelected.value = false
-        _isLocationFavoriteSelected.value = false
+        _isLocationFavorite.value = false
         _isLocationWebPageSelected.value = false
-        sendWeatherRequest()
     }
 
-    fun initCoordinates(fragment: Fragment) {
-        CoordinatesProvider.getLastLocation(fragment) { lat: String, lon: String ->
-            GeocoderApi.getResponse(lat = lat, lon = lon) { listLocations ->
-                listLocations.firstOrNull()?.let { location ->
-                    this.lat = location.lat
-                    this.lon = location.lon
-                    setLastSelectedCoordinate(lat = location.lat, lon = location.lon)
-                    initLocation()
-                }
-            }
-        }
+    fun initCoordinates() {
+        val fromLocal = Maybe.just(coordinates)
+            .filter { !it.isCoordinatesEmpty() }
+
+        val fromSP = Maybe.just(spp.getLastLocationCoordinates())
+            .filter { !it.isCoordinatesEmpty() }
+
+        val disposable = Maybe.concat(fromLocal, fromSP)
+            .subscribe({
+                initLocation(it)
+                _isCurrentCoordinateEmpty.value = false
+            }, {
+                _isCurrentCoordinateEmpty.value = true
+                Timber.d("$TAG_ERR ${it.message}")
+            }, {
+                _isCurrentCoordinateEmpty.value = true
+            })
+
+        compositeDisposable.add(disposable)
     }
 
-    private fun setLastSelectedCoordinate(lat: String, lon: String) {
-        SharedPreferencesProvider.setLastLocationCoordinates(
-            lat = lat,
-            lon = lon,
-            application = getApplication()
-        )
+    fun initLocation(coordinates: Coordinates) {
+        val fromDB = db.getLocation(lat = coordinates.lat, lon = coordinates.lon)
+            .map { Pair("fromDB", it) }
+        val fromApi = GeocoderApi.getLocation(coordinates)
+            .map { Pair("fromApi", it) }
+
+        val disposable = Maybe.concat(fromDB, fromApi)
+            .subscribeOn(Schedulers.io())
+            .filter { it.second.name != "" }
+            .doOnNext { if (it.first == "fromApi") db.insert(it.second) }
+            .map { it.second }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                initWeather(it)
+                _currentLocation.value = it
+                _isLocationFavorite.value = it.isFavorite
+            },{
+                _errorMassage.value = "Местоположение не найдено"
+                Timber.d("$TAG_ERR ${it.message}")
+            },{
+                _errorMassage.value = "Местоположение не найдено"
+            })
+
+        compositeDisposable.add(disposable)
     }
 
-    fun initLocation() {
-        coroutineScope.launch {
-            if (db.getLocation(lat = lat, lon = lon).isNullOrEmpty()) {
-                GeocoderApi.getResponse(lat = lat, lon = lon) { listLocations ->
-                    listLocations.firstOrNull()?.let { location ->
-                        lat = location.lat
-                        lon = location.lon
-                        coroutineScope.launch {
-                            db.insert(location)
-                            updateCurrentLocation()
-                        }
-                    }
-                }
-            } else {
-                updateCurrentLocation()
-            }
-        }
-    }
-
-    private suspend fun updateCurrentLocation() {
-        coroutineScope.launch {
-            val location = db.getLocation(lat = lat, lon = lon).firstOrNull()
-            if (location != null) {
-                withContext(Dispatchers.Main) {
-                    _currentLocation.value = location
-                    _isLocationFavoriteSelected.value = location.isFavorite
-                    sendWeatherRequest()
-                }
-            }
-
-        }
-    }
-
-    fun getLastLocationLat() = SharedPreferencesProvider.getLastLocationLat(getApplication())
-    fun getLastLocationLon() = SharedPreferencesProvider.getLastLocationLon(getApplication())
-
-    private fun sendWeatherRequest() {
-        WeatherApi.getResponse(lon = lon, lat = lat) { weather: Weather ->
-            _currentWeather.value = weather
-        }
+    fun initWeather(location: Location){
+        val disposable = WeatherApi.getResponse(location)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                _currentWeather.value = it
+            },{
+                _errorMassage.value = "Погода не найдена"
+                Timber.d("$TAG_ERR ${it.message}")
+            },{
+                _errorMassage.value = "Погода не найдена"
+            })
+        compositeDisposable.add(disposable)
     }
 
     // Click Event
@@ -133,30 +134,24 @@ class WeatherViewModel(
         _isLocationWebPageSelected.value = false
     }
 
-    fun onDateSelect() {
-        _isDateSelected.value = true
-        _isDateSelected.value = false
-    }
-
     fun onCurrentLocationSelected() {
         _isCurrentLocationSelected.value = true
         _isCurrentLocationSelected.value = false
     }
 
     fun onToggleFavoriteLocation() {
-        coroutineScope.launch {
-            val location = db.getLocation(lat = lat, lon = lon).first()
-            _isLocationFavoriteSelected.value?.let { event: Boolean ->
-                location.isFavorite = !event
-                db.updateLocation(location)
-                updateCurrentLocation()
-            }
-        }
+
+//        val location = db.getLocation(lat = lat, lon = lon).first()
+//        _isLocationFavoriteSelected.value?.let { event: Boolean ->
+//            location.isFavorite = !event
+//            db.updateLocation(location)
+//            updateCurrentLocation()
+//        }
+
     }
 
     override fun onCleared() {
         super.onCleared()
-        viewModelScope.cancel()
-        coroutineScope.cancel()
+        compositeDisposable.dispose()
     }
 }
