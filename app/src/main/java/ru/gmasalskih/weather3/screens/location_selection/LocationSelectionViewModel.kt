@@ -2,6 +2,8 @@ package ru.gmasalskih.weather3.screens.location_selection
 
 import android.app.Application
 import androidx.lifecycle.*
+import com.jakewharton.rxbinding3.InitialValueObservable
+import com.jakewharton.rxbinding3.widget.TextViewTextChangeEvent
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -29,40 +31,36 @@ class LocationSelectionViewModel(application: Application) : AndroidViewModel(ap
         setListLocationsFromDB()
     }
 
-    fun setListLocationsFromApi(locationName: String) {
-        var a = 0
-        var b = 0
+    private fun setListLocationsFromApi(locationName: String) {
         val disposable = GeocoderApi.getListLocations(locationName)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                Timber.i("AAA- a:${a++}")
                 _responseListLocation.value = it
-            },{
+            }, {
                 _errorMassage.value = "Что-то пошло не по плану: ${it.message}"
-            },{
-                _errorMassage.value = "Список пуст"
-                Timber.i("AAA- b:${b++}")
             })
         compositeDisposable.add(disposable)
     }
 
-    fun setListLocationsFromDB(){
-        val disposable = db.getAllLocations().subscribeOn(Schedulers.io())
+    private fun setListLocationsFromDB() {
+        val disposable = db.getAllLocations()
+            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .filter { !it.isNullOrEmpty() }
             .subscribe({
                 _responseListLocation.value = it
-            },{
+            }, {
                 _errorMassage.value = "Что-то пошло не по плану: ${it.message}"
-            },{
+            }, {
                 _errorMassage.value = "Список пуст!!!"
+                _responseListLocation.value = null
             })
         compositeDisposable.add(disposable)
     }
 
     fun addSelectedLocationToDB(location: Location) {
         val disposable = db.insert(location).subscribeOn(Schedulers.io())
-            .subscribe { Timber.i("$TAG_LOG локация добавлена в DB $location")}
+            .subscribe { Timber.i("$TAG_LOG локация добавлена в DB $location") }
         compositeDisposable.add(disposable)
     }
 
@@ -72,6 +70,18 @@ class LocationSelectionViewModel(application: Application) : AndroidViewModel(ap
             lon = lon,
             application = getApplication()
         )
+    }
+
+    fun locationFilter(charSequenceObservable: InitialValueObservable<TextViewTextChangeEvent>) {
+        val disposable = charSequenceObservable
+            .skipInitialValue()
+            .distinctUntilChanged()
+            .map { it.text.toString() }
+            .subscribe {
+                if (it.isEmpty()) setListLocationsFromDB()
+                else setListLocationsFromApi(it.toString())
+            }
+        compositeDisposable.add(disposable)
     }
 
     override fun onCleared() {

@@ -63,23 +63,18 @@ class WeatherViewModel(
     }
 
     fun initCoordinates() {
-        val fromLocal = Maybe.just(coordinates)
+        val disposable = Observable.just(coordinates, spp.getLastLocationCoordinates())
             .filter { !it.isCoordinatesEmpty() }
-
-        val fromSP = Maybe.just(spp.getLastLocationCoordinates())
-            .filter { !it.isCoordinatesEmpty() }
-
-        val disposable = Maybe.concat(fromLocal, fromSP)
-            .subscribe({
-                initLocation(it)
+            .firstElement()
+            .subscribe({ coordinates ->
                 _isCurrentCoordinateEmpty.value = false
+                initLocation(coordinates)
             }, {
                 _isCurrentCoordinateEmpty.value = true
                 Timber.d("$TAG_ERR ${it.message}")
             }, {
                 _isCurrentCoordinateEmpty.value = true
             })
-
         compositeDisposable.add(disposable)
     }
 
@@ -91,33 +86,34 @@ class WeatherViewModel(
 
         val disposable = Maybe.concat(fromDB, fromApi)
             .subscribeOn(Schedulers.io())
-            .filter { it.second.name != "" }
+            .filter { it.second.name.isNotEmpty() }
             .doOnNext { if (it.first == "fromApi") db.insert(it.second) }
             .map { it.second }
+            .firstElement()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 initWeather(it)
                 _currentLocation.value = it
                 _isLocationFavorite.value = it.isFavorite
-            },{
+            }, {
                 _errorMassage.value = "Местоположение не найдено"
                 Timber.d("$TAG_ERR ${it.message}")
-            },{
+            }, {
                 _errorMassage.value = "Местоположение не найдено"
             })
 
         compositeDisposable.add(disposable)
     }
 
-    fun initWeather(location: Location){
+    fun initWeather(location: Location) {
         val disposable = WeatherApi.getResponse(location)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 _currentWeather.value = it
-            },{
+            }, {
                 _errorMassage.value = "Погода не найдена"
                 Timber.d("$TAG_ERR ${it.message}")
-            },{
+            }, {
                 _errorMassage.value = "Погода не найдена"
             })
         compositeDisposable.add(disposable)

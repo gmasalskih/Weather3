@@ -20,6 +20,7 @@ import ru.gmasalskih.weather3.data.entity.Weather
 import ru.gmasalskih.weather3.data.storege.gps.CoordinatesProvider
 import ru.gmasalskih.weather3.databinding.FragmentWeatherBinding
 import ru.gmasalskih.weather3.utils.*
+import timber.log.Timber
 
 class WeatherFragment : Fragment() {
 
