@@ -15,8 +15,7 @@ const val TAG_ERR = "ERR"
 const val EMPTY_COORDINATE = "0.0"
 const val URL_WEATHER_ICON = "https://yastatic.net/weather/i/icons/blueye/color/svg/"
 const val APP_PREFERENCES = "appPreferences"
-
-fun isCoordinateEmpty(lat:String, lon:String) = lat== EMPTY_COORDINATE || lon == EMPTY_COORDINATE
+var USE_GPS = true
 
 fun String.toast(context: Context) {
     Toast.makeText(context, this, Toast.LENGTH_SHORT).show()

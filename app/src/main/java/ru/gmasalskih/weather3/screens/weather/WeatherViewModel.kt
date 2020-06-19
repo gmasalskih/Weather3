@@ -10,15 +10,18 @@ import ru.gmasalskih.weather3.data.storege.internet.GeocoderApi
 import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.data.entity.Weather
 import ru.gmasalskih.weather3.data.storege.db.LocationsDao
+import ru.gmasalskih.weather3.data.storege.gps.CoordinatesProvider
 import ru.gmasalskih.weather3.data.storege.internet.WeatherApi
 import ru.gmasalskih.weather3.data.storege.local.SharedPreferencesProvider
 import ru.gmasalskih.weather3.utils.TAG_ERR
+import ru.gmasalskih.weather3.utils.USE_GPS
 import timber.log.Timber
 
 class WeatherViewModel(
     private var coordinates: Coordinates,
     private val db: LocationsDao,
-    private val spp: SharedPreferencesProvider
+    private val spp: SharedPreferencesProvider,
+    private val cp: CoordinatesProvider
 ) : ViewModel() {
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
@@ -30,6 +33,10 @@ class WeatherViewModel(
     private val _errorMassage = MutableLiveData<String>()
     val errorMassage: LiveData<String>
         get() = _errorMassage
+
+    private val _isGPSAlloy = MutableLiveData<Boolean>()
+    val isGPSAlloy: LiveData<Boolean>
+        get() = _isGPSAlloy
 
     private val _isCurrentCoordinateEmpty = MutableLiveData<Boolean>()
     val isCurrentCoordinateEmpty: LiveData<Boolean>
@@ -60,6 +67,18 @@ class WeatherViewModel(
         _isLocationSelected.value = false
         _isLocationFavorite.value = false
         _isLocationWebPageSelected.value = false
+        _isGPSAlloy.value = USE_GPS
+    }
+
+    fun aaa() {
+        cp.retrieveLastKnownCoordinate(onSuccess = {
+            coordinates = it
+            initCoordinates()
+        }, onDeny = {
+
+        }, onEmpty = {
+
+        })
     }
 
     fun initCoordinates() {
@@ -78,7 +97,7 @@ class WeatherViewModel(
         compositeDisposable.add(disposable)
     }
 
-    fun initLocation(coordinates: Coordinates) {
+    private fun initLocation(coordinates: Coordinates) {
         val fromDB = db.getLocation(lat = coordinates.lat, lon = coordinates.lon)
             .map { Pair("fromDB", it) }
         val fromApi = GeocoderApi.getLocation(coordinates)
@@ -105,7 +124,7 @@ class WeatherViewModel(
         compositeDisposable.add(disposable)
     }
 
-    fun initWeather(location: Location) {
+    private fun initWeather(location: Location) {
         val disposable = WeatherApi.getResponse(location)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({

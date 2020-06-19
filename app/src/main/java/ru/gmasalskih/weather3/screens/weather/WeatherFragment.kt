@@ -1,7 +1,7 @@
 package ru.gmasalskih.weather3.screens.weather
 
+import android.annotation.SuppressLint
 import android.content.Context
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
@@ -17,7 +17,6 @@ import ru.gmasalskih.weather3.R
 import ru.gmasalskih.weather3.data.entity.Coordinates
 import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.data.entity.Weather
-import ru.gmasalskih.weather3.data.storege.gps.CoordinatesProvider
 import ru.gmasalskih.weather3.databinding.FragmentWeatherBinding
 import ru.gmasalskih.weather3.utils.*
 import timber.log.Timber
@@ -48,6 +47,7 @@ class WeatherFragment : Fragment() {
     }
 
 
+    @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val imm =
@@ -57,22 +57,28 @@ class WeatherFragment : Fragment() {
         viewModel.initCoordinates()
     }
 
+    private fun showAlertDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle(R.string.title_is_emty_current_location)
+            .setMessage(R.string.msg_is_emty_current_location)
+            .setPositiveButton(R.string.select_location_btn_is_emty_current_location) { _, _ ->
+                val action = WeatherFragmentDirections
+                    .actionWeatherFragmentToLocationSelectionFragment()
+                navController.navigate(action)
+            }.setNegativeButton(R.string.gps_btn_is_emty_current_location){_,_ ->
+
+            }.create()
+            .show()
+    }
+
     private fun initObserveViewModel() {
+        viewModel.isGPSAlloy.observe(viewLifecycleOwner, Observer { event: Boolean ->
+            binding.currentLocation.visibility = if (event) View.VISIBLE else View.GONE
+        })
 
         viewModel.isCurrentCoordinateEmpty.observe(viewLifecycleOwner, Observer { event: Boolean ->
-            if (event) {
-                AlertDialog.Builder(requireContext())
-                    .setTitle(R.string.title_is_emty_current_location)
-                    .setMessage(R.string.msg_is_emty_current_location)
-                    .setPositiveButton(R.string.select_location_btn_is_emty_current_location) { _, _ ->
-                        val action = WeatherFragmentDirections
-                            .actionWeatherFragmentToLocationSelectionFragment()
-                        navController.navigate(action)
-                    }.setNegativeButton(R.string.gps_btn_is_emty_current_location) { _, _ ->
-                        //TODO Получить координаты по GPS
-                    }.create()
-                    .show()
-            }
+            Timber.i("initCoordinates $event")
+            if (event) showAlertDialog()
         })
 
         viewModel.errorMassage.observe(viewLifecycleOwner, Observer {
@@ -119,17 +125,6 @@ class WeatherFragment : Fragment() {
 
             }
         })
-    }
-
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        if (requestCode == CoordinatesProvider.PERMISSION_ID && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//            viewModel.initCoordinates1(this)
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
