@@ -128,7 +128,6 @@ class WeatherViewModel(
             .firstElement()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-//                saveCurrentLocationOnDB(it)
                 initWeather(it)
                 initFavoriteLocation(it)
                 _currentLocation.value = it
@@ -141,17 +140,6 @@ class WeatherViewModel(
 
         compositeDisposable.add(disposable)
     }
-
-//    private fun saveCurrentLocationOnDB(location: Location){
-//        val disposable = db.getLocation(lat = location.lat, lon = location.lon)
-//            .subscribeOn(Schedulers.io())
-//            .doOnComplete {
-//                Timber.i("onToggleFavoriteLocation saveCurrentLocationOnDB")
-//                db.insert(location).subscribe()
-//            }
-//            .subscribe()
-//        compositeDisposable.add(disposable)
-//    }
 
     private fun initFavoriteLocation(location: Location){
         val disposable = db.getLocation(lat = location.lat, lon = location.lon)

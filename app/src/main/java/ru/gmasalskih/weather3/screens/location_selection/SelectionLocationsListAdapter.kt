@@ -38,7 +38,6 @@ class SelectionLocationsListAdapter(private val clickListener: SelectionLocation
         }
     }
 
-
     class DiffCallback : DiffUtil.ItemCallback<Location>() {
         override fun areItemsTheSame(oldItem: Location, newItem: Location): Boolean {
             return oldItem.addressLine == newItem.addressLine

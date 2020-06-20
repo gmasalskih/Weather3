@@ -4,7 +4,9 @@ import android.app.Application
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
-import ru.gmasalskih.weather3.di.weatherModel
+import ru.gmasalskih.weather3.di.locationSelectionModule
+import ru.gmasalskih.weather3.di.providersModule
+import ru.gmasalskih.weather3.di.weatherModule
 import timber.log.Timber
 
 class Weather3Application: Application() {
@@ -15,7 +17,7 @@ class Weather3Application: Application() {
         startKoin {
             androidLogger()
             androidContext(this@Weather3Application)
-            modules(weatherModel)
+            modules(providersModule,weatherModule, locationSelectionModule)
         }
     }
 }

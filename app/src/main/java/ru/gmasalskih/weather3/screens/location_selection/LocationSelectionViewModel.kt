@@ -1,20 +1,22 @@
 package ru.gmasalskih.weather3.screens.location_selection
 
-import android.app.Application
 import androidx.lifecycle.*
 import com.jakewharton.rxbinding3.InitialValueObservable
 import com.jakewharton.rxbinding3.widget.TextViewTextChangeEvent
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import ru.gmasalskih.weather3.data.entity.Coordinates
 import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.data.storege.internet.GeocoderApi
-import ru.gmasalskih.weather3.data.storege.db.LocationsDB
-import ru.gmasalskih.weather3.data.storege.local.SharedPreferencesProviderOld
+import ru.gmasalskih.weather3.data.storege.db.LocationsDao
+import ru.gmasalskih.weather3.data.storege.local.SharedPreferencesProvider
 
-class LocationSelectionViewModel(application: Application) : AndroidViewModel(application) {
+class LocationSelectionViewModel(
+    private val db: LocationsDao,
+    private val spp: SharedPreferencesProvider
+) : ViewModel() {
 
-    private val db by lazy { LocationsDB.getInstance(getApplication()).locationsDao }
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
     private val _responseListLocation = MutableLiveData<List<Location>>()
@@ -56,12 +58,8 @@ class LocationSelectionViewModel(application: Application) : AndroidViewModel(ap
         compositeDisposable.add(disposable)
     }
 
-    fun setLastSelectedLocationCoordinates(lat: String, lon: String) {
-        SharedPreferencesProviderOld.setLastLocationCoordinates(
-            lat = lat,
-            lon = lon,
-            application = getApplication()
-        )
+    fun setLastSelectedLocationCoordinates(coordinates: Coordinates) {
+        spp.setLastLocationCoordinates(coordinates)
     }
 
     fun locationFilter(charSequenceObservable: InitialValueObservable<TextViewTextChangeEvent>) {

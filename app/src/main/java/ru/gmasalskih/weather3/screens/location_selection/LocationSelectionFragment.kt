@@ -6,10 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import com.jakewharton.rxbinding3.widget.textChangeEvents
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import ru.gmasalskih.weather3.data.entity.Coordinates
 import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.databinding.FragmentLocationSelectionBinding
 import ru.gmasalskih.weather3.utils.toast
@@ -17,26 +18,18 @@ import ru.gmasalskih.weather3.utils.toast
 class LocationSelectionFragment : Fragment() {
 
     lateinit var binding: FragmentLocationSelectionBinding
-    lateinit var viewModel: LocationSelectionViewModel
     private lateinit var adapter: SelectionLocationsListAdapter
     private lateinit var navController: NavController
+    val viewModel: LocationSelectionViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentLocationSelectionBinding.inflate(inflater, container, false)
-        viewModel =
-            ViewModelProvider(
-                this,
-                LocationSelectionViewModelFactory(application = requireActivity().application)
-            )
-                .get(LocationSelectionViewModel::class.java)
-
-        adapter =
-            SelectionLocationsListAdapter(SelectionLocationsListAdapter.SelectionLocationClickListener {
-                onCitySelected(it)
-            })
+        adapter = SelectionLocationsListAdapter(
+            SelectionLocationsListAdapter.SelectionLocationClickListener { onCitySelected(it) }
+        )
 
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
@@ -66,7 +59,12 @@ class LocationSelectionFragment : Fragment() {
                 lat = location.lat
                 lon = location.lon
             }
-        viewModel.setLastSelectedLocationCoordinates(lat = location.lat, lon = location.lon)
+        viewModel.setLastSelectedLocationCoordinates(
+            Coordinates(
+                lat = location.lat,
+                lon = location.lon
+            )
+        )
         navController.navigate(action)
     }
 }
