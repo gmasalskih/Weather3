@@ -7,10 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.gmasalskih.weather3.R
+import ru.gmasalskih.weather3.data.entity.Coordinates
 import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.databinding.FragmentFavoriteLocationBinding
 import ru.gmasalskih.weather3.utils.toast
@@ -18,7 +19,7 @@ import ru.gmasalskih.weather3.utils.toast
 class FavoriteLocationFragment : Fragment() {
 
     lateinit var binding: FragmentFavoriteLocationBinding
-    lateinit var viewModel: FavoriteLocationViewModel
+    val viewModel: FavoriteLocationViewModel by viewModel()
     private lateinit var navController: NavController
     private lateinit var adapter: FavoriteLocationListAdapter
 
@@ -27,10 +28,6 @@ class FavoriteLocationFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentFavoriteLocationBinding.inflate(inflater, container, false)
-        viewModel =
-            ViewModelProvider(this, FavoriteLocationViewModelFactory(requireActivity().application))
-                .get(FavoriteLocationViewModel::class.java)
-
         adapter =
             FavoriteLocationListAdapter(
                 FavoriteLocationListAdapter.FavoriteLocationClickListener(
@@ -38,7 +35,6 @@ class FavoriteLocationFragment : Fragment() {
                     ::onSelectClickListener
                 )
             )
-
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
         binding.favoriteLocationsList.adapter = adapter
@@ -52,8 +48,7 @@ class FavoriteLocationFragment : Fragment() {
                 lon = location.lon
             }
         viewModel.setLastSelectedLocationCoordinates(
-            lat = location.lat,
-            lon = location.lon
+            coordinates = Coordinates(lat = location.lat, lon = location.lon)
         )
         navController.navigate(action)
     }
@@ -64,11 +59,7 @@ class FavoriteLocationFragment : Fragment() {
             .setMessage(resources.getText(R.string.del_favorite_location_msg))
             .setPositiveButton(resources.getText(R.string.yes_btn)) { _, _ ->
                 viewModel.onDeleteFavoriteCity(location)
-                "${location.name} ${resources.getText(R.string.msg_favorite_location_deleted)}".toast(
-                    requireContext()
-                )
-            }
-            .setNegativeButton(resources.getText(R.string.no_btn), null)
+            }.setNegativeButton(resources.getText(R.string.no_btn), null)
             .create()
             .show()
     }
@@ -79,13 +70,14 @@ class FavoriteLocationFragment : Fragment() {
         initObserveViewModel()
     }
 
-    private fun initObserveViewModel(){
+    private fun initObserveViewModel() {
         viewModel.favoriteLocationList.observe(viewLifecycleOwner, Observer {
             adapter.submitList(it)
         })
-        viewModel.errorMassage.observe(viewLifecycleOwner, Observer {
-            it.toast(requireContext())
-        })
+
+        viewModel.massage.observe(viewLifecycleOwner, Observer { it.toast(requireContext()) })
+
+        viewModel.errorMassage.observe(viewLifecycleOwner, Observer { it.toast(requireContext()) })
     }
 }
 

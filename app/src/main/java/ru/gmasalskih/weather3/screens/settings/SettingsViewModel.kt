@@ -1,31 +1,39 @@
 package ru.gmasalskih.weather3.screens.settings
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
-import ru.gmasalskih.weather3.data.storege.db.LocationsDB
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
+import ru.gmasalskih.weather3.data.storege.db.LocationsDao
 
-class SettingsViewModel(application: Application) : AndroidViewModel(application) {
-    private val db by lazy { LocationsDB.getInstance(getApplication()).locationsDao }
-    private val coroutineScope = CoroutineScope(Dispatchers.IO)
+class SettingsViewModel(private val db: LocationsDao) : ViewModel() {
+
+    private val compositeDisposable = CompositeDisposable()
+
+    private val _message = MutableLiveData<String>()
+    val message: LiveData<String>
+        get() = _message
 
     fun onClearHistory() {
-        coroutineScope.launch {
-            db.clearAllLocations()
-        }
+        val disposable = db.clearAllLocations()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { _message.value = "Clear history done" }
+        compositeDisposable.add(disposable)
     }
 
     fun onRemoveFavoritesLocations() {
-        coroutineScope.launch {
-            db.clearAllFavoriteLocations()
-        }
+        val disposable = db.clearAllFavoriteLocations()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { _message.value = "Remove favorites locations done" }
+        compositeDisposable.add(disposable)
     }
 
     override fun onCleared() {
         super.onCleared()
-        coroutineScope.cancel()
+        compositeDisposable.dispose()
     }
 }

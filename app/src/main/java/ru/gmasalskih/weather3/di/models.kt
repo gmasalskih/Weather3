@@ -11,20 +11,22 @@ import ru.gmasalskih.weather3.data.storege.db.LocationsDB
 import ru.gmasalskih.weather3.data.storege.db.LocationsDao
 import ru.gmasalskih.weather3.data.storege.gps.CoordinatesProvider
 import ru.gmasalskih.weather3.data.storege.local.SharedPreferencesProvider
+import ru.gmasalskih.weather3.screens.favorite_location.FavoriteLocationViewModel
 import ru.gmasalskih.weather3.screens.location_selection.LocationSelectionViewModel
+import ru.gmasalskih.weather3.screens.settings.SettingsViewModel
 import ru.gmasalskih.weather3.screens.weather.WeatherViewModel
 import ru.gmasalskih.weather3.utils.APP_PREFERENCES
 
 val providersModule = module {
-    single<LocationsDao> { LocationsDB.getInstance(androidApplication()).locationsDao }
-    single<CoordinatesProvider> { CoordinatesProvider(androidContext()) }
+    single { LocationsDB.getInstance(androidApplication()).locationsDao }
+    single { CoordinatesProvider(androidContext()) }
     single<SharedPreferences> {
         androidApplication().getSharedPreferences(
             APP_PREFERENCES,
             Context.MODE_PRIVATE
         )
     }
-    single<SharedPreferencesProvider> { SharedPreferencesProvider(get()) }
+    single { SharedPreferencesProvider(get()) }
 }
 
 val weatherModule = module {
@@ -45,4 +47,12 @@ val locationSelectionModule = module {
             spp = get()
         )
     }
+}
+
+val settingsModule = module {
+    viewModel { SettingsViewModel(db = get()) }
+}
+
+val favoriteLocationModule = module {
+    viewModel { FavoriteLocationViewModel(db = get(), spp = get()) }
 }

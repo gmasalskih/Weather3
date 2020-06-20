@@ -1,28 +1,32 @@
 package ru.gmasalskih.weather3.screens.favorite_location
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.*
+import ru.gmasalskih.weather3.data.entity.Coordinates
 import ru.gmasalskih.weather3.data.entity.Location
-import ru.gmasalskih.weather3.data.storege.db.LocationsDB
-import ru.gmasalskih.weather3.data.storege.local.SharedPreferencesProviderOld
+import ru.gmasalskih.weather3.data.storege.db.LocationsDao
+import ru.gmasalskih.weather3.data.storege.local.SharedPreferencesProvider
 import ru.gmasalskih.weather3.utils.TAG_ERR
 import timber.log.Timber
 
-class FavoriteLocationViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val db = LocationsDB.getInstance(getApplication()).locationsDao
+class FavoriteLocationViewModel(
+    private val db: LocationsDao,
+    private val spp: SharedPreferencesProvider
+) : ViewModel() {
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
     private var _favoriteLocationList = MutableLiveData<List<Location>>()
     val favoriteLocationList: LiveData<List<Location>>
         get() = _favoriteLocationList
+
+    private val _massage = MutableLiveData<String>()
+    val massage : LiveData<String>
+        get() = _massage
 
     private val _errorMassage = MutableLiveData<String>()
     val errorMassage: LiveData<String>
@@ -35,22 +39,22 @@ class FavoriteLocationViewModel(application: Application) : AndroidViewModel(app
     fun onDeleteFavoriteCity(location: Location) {
         val disposable = db.updateLocation(location.apply { isFavorite = false })
             .subscribeOn(Schedulers.io())
-            .subscribe { setFavoriteLocations() }
-
-
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                _massage.value = "Location $location was deleted"
+                setFavoriteLocations()
+            }
+        compositeDisposable.add(disposable)
     }
 
-    fun setLastSelectedLocationCoordinates(lat: String, lon: String) {
-        SharedPreferencesProviderOld.setLastLocationCoordinates(
-            lat = lat,
-            lon = lon,
-            application = getApplication()
-        )
+    fun setLastSelectedLocationCoordinates(coordinates: Coordinates) {
+        spp.setLastLocationCoordinates(coordinates)
     }
 
     private fun setFavoriteLocations() {
-        val disposable = db.getFavoriteLocations().subscribeOn(Schedulers.io())
-            .filter { !it.isNullOrEmpty() }
+        val disposable = db.getFavoriteLocations()
+            .subscribeOn(Schedulers.io())
+            .filter { it.isNotEmpty() }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 _favoriteLocationList.value = it
@@ -58,6 +62,7 @@ class FavoriteLocationViewModel(application: Application) : AndroidViewModel(app
                 _errorMassage.value = "Что-то пошло не по плану: ${it.message}"
                 Timber.d(it, "$TAG_ERR Что-то пошло не по плану")
             }, {
+                _favoriteLocationList.value = null
                 _errorMassage.value = "Список любимых городов пуст"
             })
         compositeDisposable.add(disposable)
