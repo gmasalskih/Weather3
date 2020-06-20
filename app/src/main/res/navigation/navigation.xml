@@ -14,9 +14,6 @@
             android:id="@+id/action_weatherFragment_to_locationSelectionFragment"
             app:destination="@id/locationSelectionFragment" />
         <action
-            android:id="@+id/action_weatherFragment_to_dateSelectionFragment"
-            app:destination="@id/dateSelectionFragment" />
-        <action
             android:id="@+id/action_weatherFragment_to_locationWebPageFragment"
             app:destination="@id/locationWebPageFragment" >
             <argument
@@ -43,7 +40,10 @@
         tools:layout="@layout/fragment_location_selection">
         <action
             android:id="@+id/action_locationSelectionFragment_to_weatherFragment"
-            app:destination="@id/weatherFragment" />
+            app:destination="@id/weatherFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/locationSelectionFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/locationWebPageFragment"
@@ -55,25 +55,16 @@
             app:argType="string" />
     </fragment>
     <fragment
-        android:id="@+id/dateSelectionFragment"
-        android:name="ru.gmasalskih.weather3.screens.date_selection.DateSelectionFragment"
-        android:label="@string/date_selection"
-        tools:layout="@layout/fragment_date_selection">
-        <action
-            android:id="@+id/action_dateSelectionFragment_to_weatherFragment"
-            app:destination="@id/weatherFragment" />
-        <argument
-            android:name="locationName"
-            app:argType="string" />
-    </fragment>
-    <fragment
         android:id="@+id/favoriteLocationFragment"
         android:name="ru.gmasalskih.weather3.screens.favorite_location.FavoriteLocationFragment"
         android:label="@string/favorite_location"
         tools:layout="@layout/fragment_favorite_location" >
         <action
             android:id="@+id/action_favoriteLocationFragment_to_weatherFragment"
-            app:destination="@id/weatherFragment" />
+            app:destination="@id/weatherFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/favoriteLocationFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"

@@ -1,6 +1,5 @@
 package ru.gmasalskih.weather3.screens.weather
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.*
@@ -19,7 +18,6 @@ import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.data.entity.Weather
 import ru.gmasalskih.weather3.databinding.FragmentWeatherBinding
 import ru.gmasalskih.weather3.utils.*
-import timber.log.Timber
 
 class WeatherFragment : Fragment() {
 
@@ -27,6 +25,8 @@ class WeatherFragment : Fragment() {
     private lateinit var observeLifeCycle: ObserveLifeCycle
     private lateinit var navController: NavController
     private lateinit var args: WeatherFragmentArgs
+    private lateinit var alertDialogNavigate :AlertDialog
+
     val viewModel: WeatherViewModel by viewModel {
         parametersOf(Coordinates(lat = args.lat.toCoordinate(), lon = args.lon.toCoordinate()))
     }
@@ -46,30 +46,32 @@ class WeatherFragment : Fragment() {
         return binding.root
     }
 
-
-    @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val imm =
             requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
         navController = view.findNavController()
+        alertDialogNavigate = createAlertDialogNavigate()
         viewModel.initCoordinates()
     }
 
-    private fun showAlertDialog() {
+    override fun onStop() {
+        super.onStop()
+        alertDialogNavigate.hide()
+    }
+
+    private fun createAlertDialogNavigate() =
         AlertDialog.Builder(requireContext())
             .setTitle(R.string.title_is_emty_current_location)
             .setMessage(R.string.msg_is_emty_current_location)
+            .setCancelable(false)
             .setPositiveButton(R.string.select_location_btn_is_emty_current_location) { _, _ ->
                 val action = WeatherFragmentDirections
                     .actionWeatherFragmentToLocationSelectionFragment()
                 navController.navigate(action)
-            }.setNegativeButton(R.string.gps_btn_is_emty_current_location){_,_ ->
-
             }.create()
-            .show()
-    }
+
 
     private fun initObserveViewModel() {
         viewModel.isGPSAlloy.observe(viewLifecycleOwner, Observer { event: Boolean ->
@@ -77,8 +79,7 @@ class WeatherFragment : Fragment() {
         })
 
         viewModel.isCurrentCoordinateEmpty.observe(viewLifecycleOwner, Observer { event: Boolean ->
-            Timber.i("initCoordinates $event")
-            if (event) showAlertDialog()
+            if (event) alertDialogNavigate.show() else alertDialogNavigate.hide()
         })
 
         viewModel.errorMassage.observe(viewLifecycleOwner, Observer {
@@ -87,10 +88,9 @@ class WeatherFragment : Fragment() {
 
         viewModel.isLocationFavorite.observe(
             viewLifecycleOwner, Observer { event: Boolean ->
-                //TODO починить выбор любимого города
-//                val icoFavorite: Int =
-//                    if (event) R.drawable.ic_favorite_black_24dp else R.drawable.ic_favorite_border_black_24dp
-//                binding.favoriteLocation.setImageResource(icoFavorite)
+                val icoFavorite: Int =
+                    if (event) R.drawable.ic_favorite_black_24dp else R.drawable.ic_favorite_border_black_24dp
+                binding.favoriteLocation.setImageResource(icoFavorite)
             })
 
         viewModel.currentLocation.observe(viewLifecycleOwner, Observer { location: Location ->
@@ -120,10 +120,7 @@ class WeatherFragment : Fragment() {
         })
 
         viewModel.isCurrentLocationSelected.observe(viewLifecycleOwner, Observer { event: Boolean ->
-            // TODO() починить получение координат по нажатию кнопки
-            if (event) {
-
-            }
+            if (event) viewModel.retrieveLastKnownCoordinate()
         })
     }
 

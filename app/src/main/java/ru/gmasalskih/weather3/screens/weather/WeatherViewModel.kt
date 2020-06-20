@@ -70,50 +70,68 @@ class WeatherViewModel(
         _isGPSAlloy.value = USE_GPS
     }
 
-    fun aaa() {
+    fun retrieveLastKnownCoordinate() {
+        val hasCoordinates = coordinates.isCoordinatesNotEmpty() ||
+                spp.getLastLocationCoordinates().isCoordinatesNotEmpty()
         cp.retrieveLastKnownCoordinate(onSuccess = {
-            coordinates = it
-            initCoordinates()
+            USE_GPS = true
+            _isGPSAlloy.value = USE_GPS
+            Timber.i("navigate onSuccess")
+            initLocation(it)
         }, onDeny = {
-
+            USE_GPS = false
+            _isGPSAlloy.value = USE_GPS
+            Timber.i("navigate onDeny")
+            if (hasCoordinates) initCoordinates()
+            else _isCurrentCoordinateEmpty.value = true
         }, onEmpty = {
-
+            if (hasCoordinates) initCoordinates()
+            else {
+                _errorMassage.value = "Нет данных с GPS"
+                _isCurrentCoordinateEmpty.value = true
+            }
+            Timber.i("navigate onEmpty")
         })
     }
 
     fun initCoordinates() {
         val disposable = Observable.just(coordinates, spp.getLastLocationCoordinates())
-            .filter { !it.isCoordinatesEmpty() }
+            .filter { it.isCoordinatesNotEmpty() }
             .firstElement()
             .subscribe({ coordinates ->
                 _isCurrentCoordinateEmpty.value = false
                 initLocation(coordinates)
             }, {
-                _isCurrentCoordinateEmpty.value = true
+                retrieveLastKnownCoordinate()
                 Timber.d("$TAG_ERR ${it.message}")
             }, {
-                _isCurrentCoordinateEmpty.value = true
+                retrieveLastKnownCoordinate()
             })
         compositeDisposable.add(disposable)
     }
 
     private fun initLocation(coordinates: Coordinates) {
-        val fromDB = db.getLocation(lat = coordinates.lat, lon = coordinates.lon)
-            .map { Pair("fromDB", it) }
-        val fromApi = GeocoderApi.getLocation(coordinates)
-            .map { Pair("fromApi", it) }
+        Timber.i("onToggleFavoriteLocation $coordinates")
+        val tagFromDB = "fromDB"
+        val tagFromApi = "fromApi"
 
-        val disposable = Maybe.concat(fromDB, fromApi)
+        val fromDB = db.getLocation(lat = coordinates.lat, lon = coordinates.lon)
+            .map { Pair(tagFromDB, it) }
+        val fromApi = GeocoderApi.getLocation(coordinates)
+            .map { Pair(tagFromApi, it) }
+
+        val disposable = Maybe.concat(fromApi, fromDB)
             .subscribeOn(Schedulers.io())
             .filter { it.second.name.isNotEmpty() }
-            .doOnNext { if (it.first == "fromApi") db.insert(it.second) }
+            .doOnNext { if(it.first == tagFromApi) db.insert(it.second).subscribe() }
             .map { it.second }
             .firstElement()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
+//                saveCurrentLocationOnDB(it)
                 initWeather(it)
+                initFavoriteLocation(it)
                 _currentLocation.value = it
-                _isLocationFavorite.value = it.isFavorite
             }, {
                 _errorMassage.value = "Местоположение не найдено"
                 Timber.d("$TAG_ERR ${it.message}")
@@ -121,6 +139,32 @@ class WeatherViewModel(
                 _errorMassage.value = "Местоположение не найдено"
             })
 
+        compositeDisposable.add(disposable)
+    }
+
+//    private fun saveCurrentLocationOnDB(location: Location){
+//        val disposable = db.getLocation(lat = location.lat, lon = location.lon)
+//            .subscribeOn(Schedulers.io())
+//            .doOnComplete {
+//                Timber.i("onToggleFavoriteLocation saveCurrentLocationOnDB")
+//                db.insert(location).subscribe()
+//            }
+//            .subscribe()
+//        compositeDisposable.add(disposable)
+//    }
+
+    private fun initFavoriteLocation(location: Location){
+        val disposable = db.getLocation(lat = location.lat, lon = location.lon)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                Timber.i("onToggleFavoriteLocation initFavoriteLocation $it")
+                _isLocationFavorite.value = it.isFavorite
+            },{
+                _isLocationFavorite.value = false
+            },{
+                _isLocationFavorite.value = false
+            })
         compositeDisposable.add(disposable)
     }
 
@@ -156,17 +200,22 @@ class WeatherViewModel(
 
     fun onToggleFavoriteLocation() {
 
-//        val location = db.getLocation(lat = lat, lon = lon).first()
-//        _isLocationFavoriteSelected.value?.let { event: Boolean ->
-//            location.isFavorite = !event
-//            db.updateLocation(location)
-//            updateCurrentLocation()
-//        }
-
+        _currentLocation.value?.let { location ->
+            val newLocation = location.apply { isFavorite = !isFavorite }
+            Timber.i("onToggleFavoriteLocation $newLocation")
+            val disposable = db.updateLocation(newLocation)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    _isLocationFavorite.value = newLocation.isFavorite
+                }
+            compositeDisposable.add(disposable)
+        }
     }
 
     override fun onCleared() {
         super.onCleared()
+        Timber.i("navigate onCleared")
         compositeDisposable.dispose()
     }
 }

@@ -61,7 +61,6 @@ class LocationSelectionFragment : Fragment() {
     }
 
     private fun onCitySelected(location: Location) {
-        viewModel.addSelectedLocationToDB(location)
         val action = LocationSelectionFragmentDirections
             .actionLocationSelectionFragmentToWeatherFragment().apply {
                 lat = location.lat

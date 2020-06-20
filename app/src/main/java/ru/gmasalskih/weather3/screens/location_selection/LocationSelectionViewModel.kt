@@ -11,8 +11,6 @@ import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.data.storege.internet.GeocoderApi
 import ru.gmasalskih.weather3.data.storege.db.LocationsDB
 import ru.gmasalskih.weather3.data.storege.local.SharedPreferencesProviderOld
-import ru.gmasalskih.weather3.utils.TAG_LOG
-import timber.log.Timber
 
 class LocationSelectionViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -55,12 +53,6 @@ class LocationSelectionViewModel(application: Application) : AndroidViewModel(ap
                 _errorMassage.value = "Список пуст!!!"
                 _responseListLocation.value = null
             })
-        compositeDisposable.add(disposable)
-    }
-
-    fun addSelectedLocationToDB(location: Location) {
-        val disposable = db.insert(location).subscribeOn(Schedulers.io())
-            .subscribe { Timber.i("$TAG_LOG локация добавлена в DB $location") }
         compositeDisposable.add(disposable)
     }
 
