@@ -56,7 +56,7 @@ object WeatherApi {
             .map {
                 Weather(
                     temp = it.fact.temp,
-                    timestamp = it.now_dt,
+                    timestamp = it.forecast.date,
                     windSpeed = it.fact.wind_speed.toInt(),
                     pressure = it.fact.pressure_mm,
                     humidity = it.fact.humidity,

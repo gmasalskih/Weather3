@@ -21,10 +21,10 @@ fun String.toast(context: Context) {
     Toast.makeText(context, this, Toast.LENGTH_SHORT).show()
 }
 
-fun String.toCoordinate():String{
-    if (this.toDoubleOrNull()==null){
+fun String.toCoordinate(): String {
+    if (this.toDoubleOrNull() == null) {
         throw IllegalArgumentException("This string can not convert to coordinate")
-    } else{
+    } else {
         return "${this.split(".")[0]}.${this.split(".")[1].take(4)}"
     }
 }
@@ -36,31 +36,10 @@ fun TextView.setCityName(item: Location?) {
     }
 }
 
-@BindingAdapter("locationLat")
-fun TextView.setLocationLat(item: Location?) {
-    item?.let { location: Location ->
-        text = location.lat
-    }
-}
-
-@BindingAdapter("locationLon")
-fun TextView.setLocationLon(item: Location?) {
-    item?.let { location: Location ->
-        text = location.lon
-    }
-}
-
 @BindingAdapter("locationAddressLine")
 fun TextView.setLocationAddressLine(item: Location?) {
     item?.let { location: Location ->
         text = location.addressLine
-    }
-}
-
-@BindingAdapter("locationCountryName")
-fun TextView.setLocationCountryName(item: Location?) {
-    item?.let { location: Location ->
-        text = location.countryName
     }
 }
 
@@ -72,8 +51,8 @@ fun TextView.setLocationCountyCode(item: Location?) {
 }
 
 @BindingAdapter("locationID")
-fun TextView.setLocationID(item: Location?){
-    item?.let {location: Location ->
+fun TextView.setLocationID(item: Location?) {
+    item?.let { location: Location ->
         text = "lat:${location.lat} lon:${location.lon}"
     }
 }
