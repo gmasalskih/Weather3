@@ -1,8 +1,6 @@
 package ru.gmasalskih.weather3.data.entity.geocoder
 
 import com.google.gson.annotations.SerializedName
-import ru.gmasalskih.weather3.data.entity.geocoder.Address
-import ru.gmasalskih.weather3.data.entity.geocoder.AddressDetails
 
 data class GeocoderMetaData (
     @SerializedName("precision")

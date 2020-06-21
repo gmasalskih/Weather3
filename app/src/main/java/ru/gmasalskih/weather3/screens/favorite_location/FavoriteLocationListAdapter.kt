@@ -53,4 +53,3 @@ class FavoriteLocationListAdapter(private val clickListener: FavoriteLocationCli
         fun onSelect(location: Location) = onSelectClickListener(location)
     }
 }
-

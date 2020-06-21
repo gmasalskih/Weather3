@@ -80,4 +80,3 @@ class FavoriteLocationFragment : Fragment() {
         viewModel.errorMassage.observe(viewLifecycleOwner, Observer { it.toast(requireContext()) })
     }
 }
-

@@ -30,7 +30,6 @@ class LocationSelectionFragment : Fragment() {
         adapter = SelectionLocationsListAdapter(
             SelectionLocationsListAdapter.SelectionLocationClickListener { onCitySelected(it) }
         )
-
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
         binding.selectionLocationList.adapter = adapter

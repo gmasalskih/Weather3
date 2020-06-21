@@ -67,5 +67,4 @@ object WeatherApi {
     }
 
     fun getResponse(location: Location) = getResponse(lat = location.lat, lon = location.lon)
-
 }

@@ -31,9 +31,7 @@ class SettingsFragment : Fragment() {
     }
 
     private fun initObserveViewModel() {
-
         viewModel.message.observe(viewLifecycleOwner, Observer { it.toast(requireContext()) })
-
         binding.removeLocationBtn.setOnClickListener {
             AlertDialog.Builder(requireContext())
                 .setTitle(resources.getText(R.string.clear_all_locations_title))

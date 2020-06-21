@@ -3,7 +3,6 @@ package ru.gmasalskih.weather3.data.storege.db
 import androidx.room.*
 import io.reactivex.Completable
 import io.reactivex.Maybe
-import io.reactivex.Single
 import ru.gmasalskih.weather3.data.entity.Location
 
 @Dao

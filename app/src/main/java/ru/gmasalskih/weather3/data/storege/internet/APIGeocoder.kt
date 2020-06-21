@@ -2,7 +2,6 @@ package ru.gmasalskih.weather3.data.storege.internet
 
 import io.reactivex.Maybe
 import io.reactivex.Observable
-import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import okhttp3.*
 import okhttp3.logging.*
@@ -24,17 +23,14 @@ private const val BASE_URL_GEOCODER = "https://geocode-maps.yandex.ru/1.x/"
 private const val KEY_GEOCODER = "1d864ec2-c76a-4c6a-b324-a76756a06882"
 
 private val log = object : HttpLoggingInterceptor.Logger {
-    override fun log(message: String) {
-        Timber.i("$TAG_LOG $message")
-    }
+    override fun log(message: String) { Timber.i("$TAG_LOG $message") }
 }
 
 private val logging = HttpLoggingInterceptor(log).apply {
     setLevel(HttpLoggingInterceptor.Level.BODY)
 }
-private val httpClient = OkHttpClient.Builder().apply {
-    addInterceptor(logging)
-}
+
+private val httpClient = OkHttpClient.Builder().apply { addInterceptor(logging) }
 
 private val APIGeocoder = Retrofit.Builder()
     .addConverterFactory(GsonConverterFactory.create())

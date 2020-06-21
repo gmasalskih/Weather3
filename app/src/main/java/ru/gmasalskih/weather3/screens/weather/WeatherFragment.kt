@@ -72,7 +72,6 @@ class WeatherFragment : Fragment() {
                 navController.navigate(action)
             }.create()
 
-
     private fun initObserveViewModel() {
         viewModel.isGPSAlloy.observe(viewLifecycleOwner, Observer { event: Boolean ->
             binding.currentLocation.visibility = if (event) View.VISIBLE else View.GONE
@@ -134,4 +133,3 @@ class WeatherFragment : Fragment() {
                 || super.onOptionsItemSelected(item)
     }
 }
-

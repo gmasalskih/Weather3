@@ -8,7 +8,6 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import ru.gmasalskih.weather3.data.entity.Coordinates
 import ru.gmasalskih.weather3.data.storege.db.LocationsDB
-import ru.gmasalskih.weather3.data.storege.db.LocationsDao
 import ru.gmasalskih.weather3.data.storege.gps.CoordinatesProvider
 import ru.gmasalskih.weather3.data.storege.local.SharedPreferencesProvider
 import ru.gmasalskih.weather3.screens.favorite_location.FavoriteLocationViewModel

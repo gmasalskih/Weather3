@@ -1,7 +1,6 @@
 package ru.gmasalskih.weather3.data.entity.geocoder
 
 import com.google.gson.annotations.SerializedName
-import ru.gmasalskih.weather3.data.entity.geocoder.BoundedBy
 
 data class GeocoderResponseMetaData (
     @SerializedName("boundedBy") val boundedBy : BoundedBy?,

@@ -114,12 +114,10 @@ class WeatherViewModel(
         Timber.i("onToggleFavoriteLocation $coordinates")
         val tagFromDB = "fromDB"
         val tagFromApi = "fromApi"
-
         val fromDB = db.getLocation(lat = coordinates.lat, lon = coordinates.lon)
             .map { Pair(tagFromDB, it) }
         val fromApi = GeocoderApi.getLocation(coordinates)
             .map { Pair(tagFromApi, it) }
-
         val disposable = Maybe.concat(fromApi, fromDB)
             .subscribeOn(Schedulers.io())
             .filter { it.second.name.isNotEmpty() }
@@ -137,7 +135,6 @@ class WeatherViewModel(
             }, {
                 _errorMassage.value = "Местоположение не найдено"
             })
-
         compositeDisposable.add(disposable)
     }
 
@@ -187,7 +184,6 @@ class WeatherViewModel(
     }
 
     fun onToggleFavoriteLocation() {
-
         _currentLocation.value?.let { location ->
             val newLocation = location.apply { isFavorite = !isFavorite }
             Timber.i("onToggleFavoriteLocation $newLocation")

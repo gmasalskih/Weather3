@@ -44,7 +44,6 @@ class CoordinatesProvider(private val context: Context) {
                                 )
                             }
                         }
-
                     } else {
                         onDeny()
                     }
