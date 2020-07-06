@@ -18,6 +18,7 @@ import ru.gmasalskih.weather3.data.entity.Location
 import ru.gmasalskih.weather3.data.entity.Weather
 import ru.gmasalskih.weather3.databinding.FragmentWeatherBinding
 import ru.gmasalskih.weather3.utils.*
+import timber.log.Timber
 
 class WeatherFragment : Fragment() {
 
@@ -119,6 +120,7 @@ class WeatherFragment : Fragment() {
         })
 
         viewModel.isCurrentLocationSelected.observe(viewLifecycleOwner, Observer { event: Boolean ->
+            Timber.i("isCurrentLocationSelected")
             if (event) viewModel.retrieveLastKnownCoordinate()
         })
     }

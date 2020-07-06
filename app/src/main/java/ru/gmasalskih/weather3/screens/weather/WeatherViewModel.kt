@@ -71,6 +71,7 @@ class WeatherViewModel(
     }
 
     fun retrieveLastKnownCoordinate() {
+        Timber.i("navigate retrieveLastKnownCoordinate")
         val hasCoordinates = coordinates.isCoordinatesNotEmpty() ||
                 spp.getLastLocationCoordinates().isCoordinatesNotEmpty()
         cp.retrieveLastKnownCoordinate(onSuccess = {
@@ -85,11 +86,9 @@ class WeatherViewModel(
             if (hasCoordinates) initCoordinates()
             else _isCurrentCoordinateEmpty.value = true
         }, onEmpty = {
+            _errorMassage.value = "Нет данных с GPS"
             if (hasCoordinates) initCoordinates()
-            else {
-                _errorMassage.value = "Нет данных с GPS"
-                _isCurrentCoordinateEmpty.value = true
-            }
+            else { _isCurrentCoordinateEmpty.value = true }
             Timber.i("navigate onEmpty")
         })
     }
@@ -128,6 +127,7 @@ class WeatherViewModel(
             .subscribe({
                 initWeather(it)
                 initFavoriteLocation(it)
+                _currentLocation.postValue(it)
                 _currentLocation.value = it
             }, {
                 _errorMassage.value = "Местоположение не найдено"
